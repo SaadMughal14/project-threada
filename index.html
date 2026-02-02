@@ -17,7 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Fraunces:ital,opsz,wght@1,9..144,900&family=Satoshi:wght@400;700;900&family=Courier+Prime&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Fraunces:ital,opsz,wght@1,9..144,900&family=Satoshi:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --brand-primary: #D97B8D; 
@@ -67,7 +67,7 @@
             animation: spin-360 10s linear infinite;
         }
 
-        /* Responsive Title Sizing - Clamp adjusted to ensure 7 chars fit mobile width */
+        /* Responsive Title Sizing */
         .text-hero { 
             font-size: clamp(2.8rem, 11.5vw, 15rem); 
             line-height: 0.8;
@@ -87,16 +87,50 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Thermal Receipt Print Styles */
         .thermal-receipt { display: none; }
 
         @media print {
           @page { size: 80mm auto; margin: 0; }
-          html, body { background: white !important; width: 80mm !important; margin: 0 !important; padding: 0 !important; }
+          html, body { 
+            background: white !important; 
+            width: 80mm !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            -webkit-print-color-adjust: exact; 
+          }
           #root > div > *:not(#order-success-overlay) { display: none !important; }
           header, main, footer, .no-print { display: none !important; }
-          #order-success-overlay { display: block !important; position: static !important; width: 80mm !important; visibility: visible !important; }
-          .thermal-receipt, .thermal-receipt * { display: block !important; visibility: visible !important; color: black !important; }
-          .thermal-receipt { width: 80mm !important; padding: 6mm 4mm !important; font-family: 'Courier Prime', monospace !important; text-align: center; background: white !important; }
+          #order-success-overlay { 
+            display: block !important; 
+            position: static !important; 
+            width: 80mm !important; 
+            visibility: visible !important; 
+            background: white !important;
+            height: auto !important;
+            overflow: visible !important;
+            transform: none !important;
+          }
+          /* Hide the interactive UI, show only thermal receipt */
+          #order-success-overlay > div:first-child { display: none !important; }
+          
+          .thermal-receipt { 
+            display: block !important; 
+            visibility: visible !important; 
+            width: 80mm !important; 
+            padding: 8mm 6mm !important; 
+            font-family: 'Courier Prime', monospace !important; 
+            text-align: center; 
+            background: white !important;
+            color: black !important;
+            line-height: 1.2;
+          }
+          .thermal-receipt h1 { font-family: 'Dancing Script', cursive !important; font-size: 28pt !important; margin-bottom: 5mm; }
+          .thermal-receipt .logo-bw { width: 30mm; height: 30mm; margin: 0 auto 5mm; }
+          .thermal-receipt .separator { border-top: 1px dashed black; margin: 4mm 0; }
+          .thermal-receipt .flex-row { display: flex; justify-content: space-between; text-align: left; }
+          .thermal-receipt .bold { font-weight: 700; }
+          .thermal-receipt .footer-text { font-size: 8pt; margin-top: 4mm; opacity: 0.8; }
         }
         
         .ease-expo-out { transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1); }

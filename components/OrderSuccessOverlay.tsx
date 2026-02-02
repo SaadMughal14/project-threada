@@ -16,10 +16,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  // Timing Logic:
-  // 0-2 mins: Baking (Phase 1)
-  // 2-5 mins: Delivery (Phase 2)
-  // 5+ mins: Delivered (Phase 3)
   const BAKING_DURATION = 120000; 
   const DELIVERY_DURATION = 180000; 
   const TOTAL_DURATION = BAKING_DURATION + DELIVERY_DURATION;
@@ -77,15 +73,19 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
     }
   };
 
+  const currentDate = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
   return (
     <div 
       ref={containerRef} 
       className="fixed inset-0 z-[400] bg-[#F2DCE0] transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none"
       id="order-success-overlay"
     >
+      {/* Screen Interactive UI */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-12 scrollbar-hide touch-pan-y no-scrollbar"
+        className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-12 scrollbar-hide touch-pan-y no-scrollbar no-print"
         data-lenis-prevent
       >
         <div className="max-w-lg mx-auto w-full space-y-4 md:space-y-6 flex flex-col min-h-full pb-20">
@@ -106,7 +106,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             </button>
           </div>
 
-          {/* Card 1: Status (White Card) */}
+          {/* Card 1: Status */}
           <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[300px] md:min-h-[450px]">
              <div className="w-full flex justify-end mb-2">
                 <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
@@ -140,7 +140,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5"/></svg>
                           </div>
                         </div>
-                        {/* Brand Logo for confirmation */}
                         <div className="w-10 h-10 md:w-12 md:h-12 logo-spin-wrapper opacity-40">
                           <svg viewBox="0 0 100 100" className="w-full h-full">
                             <circle cx="50" cy="50" r="45" fill="#D97B8D" />
@@ -159,7 +158,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
              </div>
           </div>
 
-          {/* Card 2: Selection (Dark Card) */}
+          {/* Card 2: Selection */}
           <div className="bg-[#1C1C1C] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white space-y-6 shadow-2xl">
              <div className="space-y-1">
                 <p className="text-[8px] font-black tracking-[0.3em] text-[#D97B8D] uppercase">Your Selection</p>
@@ -210,7 +209,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3 pt-4 no-print flex-shrink-0">
+          <div className="space-y-3 pt-4 flex-shrink-0">
             <div className="flex gap-3">
               <button 
                 onClick={() => window.print()} 
@@ -235,6 +234,129 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               Back to Studio
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* THERMAL RECEIPT (Print Only) */}
+      <div className="thermal-receipt">
+        <h1>Receipt</h1>
+        
+        {/* Black & White Logo */}
+        <div className="logo-bw">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="black" strokeWidth="2" />
+            <circle cx="50" cy="50" r="43" fill="black" />
+            <circle cx="35" cy="35" r="5" fill="white" />
+            <circle cx="65" cy="40" r="6" fill="white" />
+            <circle cx="45" cy="65" r="7" fill="white" />
+            <circle cx="70" cy="70" r="4" fill="white" />
+            <circle cx="25" cy="60" r="4" fill="white" />
+          </svg>
+        </div>
+
+        <div className="bold" style={{ fontSize: '14pt', letterSpacing: '2px', marginBottom: '1mm' }}>GRAVITY STUDIO</div>
+        <div style={{ fontSize: '9pt' }}>Phase 6, DHA</div>
+        <div style={{ fontSize: '9pt' }}>Tel: (850) GRAVITY-STUDIO</div>
+
+        <div className="separator"></div>
+        <div className="flex-row">
+          <span>Date: {currentDate}</span>
+          <span>{currentTime}</span>
+        </div>
+        <div className="separator"></div>
+
+        {/* Item List */}
+        <div style={{ textAlign: 'left', marginBottom: '2mm' }}>
+          {order.items.map((item: any) => (
+            <div key={item.id} className="flex-row" style={{ marginBottom: '1mm' }}>
+              <span>{item.quantity}x {item.name}</span>
+              <span>Rs.{parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="separator"></div>
+        <div className="flex-row bold" style={{ fontSize: '11pt' }}>
+          <span>TOTAL PAID</span>
+          <span>Rs.{order.total}.00</span>
+        </div>
+        <div className="flex-row" style={{ marginTop: '1mm' }}>
+          <span>Sub-total</span>
+          <span>Rs.{order.total}.00</span>
+        </div>
+        <div className="flex-row">
+          <span>Sales Tax (0%)</span>
+          <span>Rs.0.00</span>
+        </div>
+        <div className="flex-row">
+          <span>Balance</span>
+          <span>Rs.0.00</span>
+        </div>
+        <div className="separator"></div>
+
+        <div style={{ textAlign: 'left' }}>
+          <div className="bold" style={{ marginBottom: '1mm' }}>DELIVERY TO:</div>
+          <div className="bold">{order.customer.name}</div>
+          <div>{order.customer.address}</div>
+          <div>Contact: {order.customer.phone}</div>
+        </div>
+
+        <div style={{ marginTop: '8mm' }}>
+          {/* Barcode SVG matching the reference */}
+          <svg width="100%" height="40" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" width="2" height="40" fill="black" />
+            <rect x="4" width="1" height="40" fill="black" />
+            <rect x="7" width="3" height="40" fill="black" />
+            <rect x="12" width="1" height="40" fill="black" />
+            <rect x="15" width="2" height="40" fill="black" />
+            <rect x="20" width="1" height="40" fill="black" />
+            <rect x="23" width="4" height="40" fill="black" />
+            <rect x="29" width="1" height="40" fill="black" />
+            <rect x="32" width="2" height="40" fill="black" />
+            <rect x="36" width="3" height="40" fill="black" />
+            <rect x="41" width="1" height="40" fill="black" />
+            <rect x="44" width="2" height="40" fill="black" />
+            <rect x="48" width="1" height="40" fill="black" />
+            <rect x="51" width="4" height="40" fill="black" />
+            <rect x="57" width="1" height="40" fill="black" />
+            <rect x="60" width="2" height="40" fill="black" />
+            <rect x="64" width="3" height="40" fill="black" />
+            <rect x="69" width="1" height="40" fill="black" />
+            <rect x="72" width="2" height="40" fill="black" />
+            <rect x="76" width="1" height="40" fill="black" />
+            <rect x="79" width="4" height="40" fill="black" />
+            <rect x="85" width="1" height="40" fill="black" />
+            <rect x="88" width="2" height="40" fill="black" />
+            <rect x="92" width="3" height="40" fill="black" />
+            <rect x="97" width="1" height="40" fill="black" />
+            <rect x="100" width="2" height="40" fill="black" />
+            <rect x="104" width="1" height="40" fill="black" />
+            <rect x="107" width="4" height="40" fill="black" />
+            <rect x="113" width="1" height="40" fill="black" />
+            <rect x="116" width="2" height="40" fill="black" />
+            <rect x="120" width="3" height="40" fill="black" />
+            <rect x="125" width="1" height="40" fill="black" />
+            <rect x="128" width="2" height="40" fill="black" />
+            <rect x="132" width="1" height="40" fill="black" />
+            <rect x="135" width="4" height="40" fill="black" />
+            <rect x="141" width="1" height="40" fill="black" />
+            <rect x="144" width="2" height="40" fill="black" />
+            <rect x="148" width="3" height="40" fill="black" />
+            <rect x="153" width="1" height="40" fill="black" />
+            <rect x="156" width="2" height="40" fill="black" />
+            <rect x="160" width="1" height="40" fill="black" />
+            <rect x="163" width="4" height="40" fill="black" />
+            <rect x="169" width="1" height="40" fill="black" />
+            <rect x="172" width="2" height="40" fill="black" />
+            <rect x="176" width="3" height="40" fill="black" />
+            <rect x="181" width="1" height="40" fill="black" />
+            <rect x="184" width="2" height="40" fill="black" />
+            <rect x="188" width="1" height="40" fill="black" />
+            <rect x="191" width="4" height="40" fill="black" />
+            <rect x="197" width="3" height="40" fill="black" />
+          </svg>
+          <div style={{ fontSize: '7pt', marginTop: '1mm' }}>SCAN FOR STUDIO MENU</div>
+          <div className="footer-text">© GRAVITY PIZZERIA STUDIO</div>
         </div>
       </div>
 
