@@ -1,4 +1,3 @@
-
 import { PizzaProduct } from './types';
 
 export interface PizzaProductExtended extends PizzaProduct {
@@ -70,7 +69,8 @@ export const PIZZAS: PizzaProductExtended[] = [
 ];
 
 export const COLORS = {
-  burntSienna: '#D4AF37', 
+  brandPrimary: '#D97B8D', 
+  brandLight: '#F2DCE0',
   deepBasil: '#1C1C1C',    
   creamVanilla: '#FDFCFB', 
 };

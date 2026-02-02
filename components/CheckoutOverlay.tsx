@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -99,7 +98,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       embeds: [{
         title: "🍪 New Order - Ready for Baking",
         description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
-        color: 13938487, 
+        color: 14252941, // Brand Pink #D97B8D
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
@@ -129,8 +128,8 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   return (
     <div ref={containerRef} className="fixed inset-0 z-[300] bg-[#FDFCFB] transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none">
       <div className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-black/5 flex-shrink-0 bg-[#FDFCFB] z-20">
-        <h2 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tighter text-[#1C1C1C]">Check<span className="text-[#D4AF37]">out</span></h2>
-        <button onClick={onClose} className="p-3 bg-black text-white rounded-full hover:bg-[#D4AF37] transition-colors shadow-xl">
+        <h2 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tighter text-[#1C1C1C]">Check<span className="text-[#D97B8D]">out</span></h2>
+        <button onClick={onClose} className="p-3 bg-black text-white rounded-full hover:bg-[#D97B8D] transition-colors shadow-xl">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
@@ -148,15 +147,15 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
               <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Delivery Details
             </h3>
             <div className="grid gap-4 md:gap-6">
-              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-              <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+              <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
             </div>
             {step === 'info' && (
               <button 
                 onClick={() => { setStep('payment'); scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }} 
                 disabled={!formData.name || !formData.phone || !formData.address} 
-                className="w-full bg-black text-[#D4AF37] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] md:text-[12px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all"
+                className="w-full bg-black text-[#D97B8D] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] md:text-[12px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all"
               >
                 Next Step
               </button>
@@ -170,11 +169,11 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
             </h3>
             
             <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-black/5 opacity-50'}`}>
+              <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
                 <span className="text-3xl md:text-4xl">💵</span>
                 <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Cash on Delivery</span>
               </button>
-              <button onClick={() => setPaymentMethod('digital')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-black/5 opacity-50'}`}>
+              <button onClick={() => setPaymentMethod('digital')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
                 <span className="text-3xl md:text-4xl">📱</span>
                 <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Bank Transfer</span>
               </button>
@@ -188,7 +187,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                     <button 
                       key={p.id}
                       onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
-                      className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-black/5 opacity-60'}`}
+                      className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D97B8D] bg-[#F2DCE0]/50' : 'border-black/5 opacity-60'}`}
                       style={{ borderColor: selectedProvider === p.id ? p.color : undefined }}
                     >
                       <div className={`transition-transform duration-300 ${selectedProvider === p.id ? 'scale-110' : 'group-hover:scale-105'}`}>
@@ -202,17 +201,17 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                 </div>
 
                 {selectedProvider && (
-                  <div className="bg-[#1C1C1C] text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D4AF37]/20">
+                  <div className="bg-[#1C1C1C] text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D97B8D]/20">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account Holder</p>
+                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Holder</p>
                         <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</p>
                       </div>
                       <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account Number</p>
+                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Number</p>
                         <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10">
                           <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</p>
-                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] font-black text-[#D4AF37] border border-[#D4AF37]/30 px-3 py-1.5 rounded uppercase hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all">COPY</button>
+                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] font-black text-[#D97B8D] border border-[#D97B8D]/30 px-3 py-1.5 rounded uppercase hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all">COPY</button>
                         </div>
                       </div>
                     </div>
@@ -221,12 +220,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                       <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
                       <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className={`w-full py-5 border-2 border-dashed rounded-xl flex items-center justify-center gap-3 transition-all ${screenshot ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-white/10 hover:border-white/30'}`}
+                        className={`w-full py-5 border-2 border-dashed rounded-xl flex items-center justify-center gap-3 transition-all ${screenshot ? 'border-[#D97B8D] bg-[#F2DCE0]/20' : 'border-white/10 hover:border-white/30'}`}
                       >
                         {screenshot ? (
                           <div className="flex items-center gap-3">
                             <span className="text-lg">✅</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-[#D4AF37]">Receipt Attached</span>
+                            <span className="font-black uppercase text-[9px] tracking-widest text-[#D97B8D]">Receipt Attached</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
@@ -248,7 +247,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                 <button 
                   onClick={submitOrder} 
                   disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))} 
-                  className="flex-[2] bg-[#D4AF37] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
+                  className="flex-[2] bg-[#D97B8D] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
                 >
                   {isSubmitting ? 'Processing...' : 'Finish Order'}
                 </button>
@@ -261,7 +260,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       <div className="p-6 md:px-12 md:py-8 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0 z-30 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
         <div>
           <p className="font-black uppercase text-[7px] md:text-[8px] tracking-[0.6em] text-black/30 mb-1">Total to Pay</p>
-          <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D4AF37] leading-none">Rs. {totalPrice}</p>
+          <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D97B8D] leading-none">Rs. {totalPrice}</p>
         </div>
         <div className="text-right hidden sm:block">
           <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>

@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -78,11 +77,11 @@ const HandStory: React.FC = () => {
             {/* Main Content Area */}
             <div className="w-full text-center z-40">
                 <h2 ref={textRef} className="font-display text-[14vw] md:text-[11vw] font-black uppercase text-[#1C1C1C] leading-[0.75] tracking-[-0.07em] select-none">
-                    GRAV<span className="text-[#D4AF37]">ITY</span>
+                    GRAV<span className="text-[#D97B8D]">ITY</span>
                 </h2>
                 
                 <div className="flex justify-center mt-10 md:mt-16">
-                  <button className="bg-[#1C1C1C] text-[#FDFCFB] flex items-center gap-6 px-12 md:px-20 py-5 md:py-7 rounded-full font-black uppercase tracking-[0.4em] text-[10px] md:text-[12px] shadow-[0_25px_60px_rgba(0,0,0,0.3)] hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all group active:scale-95">
+                  <button className="bg-[#1C1C1C] text-[#FDFCFB] flex items-center gap-6 px-12 md:px-20 py-5 md:py-7 rounded-full font-black uppercase tracking-[0.4em] text-[10px] md:text-[12px] shadow-[0_25px_60px_rgba(0,0,0,0.3)] hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all group active:scale-95">
                       VISIT STUDIO
                       <svg className="group-hover:translate-x-2 transition-transform" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
                   </button>

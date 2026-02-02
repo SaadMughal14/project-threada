@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -77,8 +76,8 @@ const PizzaSection: React.FC<{
           </div>
 
           <div className={`flex items-center gap-4 pt-2 justify-center ${isEven ? 'md:justify-start' : 'md:justify-end'}`}>
-            <span className="text-4xl md:text-6xl font-display font-black text-[#D4AF37] tracking-tighter leading-none">{pizza.price}</span>
-            <button onClick={() => onAddToCart(pizza)} className="bg-[#D4AF37] text-[#1C1C1C] px-6 md:px-10 py-2.5 md:py-4 rounded-full font-black uppercase text-[9px] md:text-[11px] tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-md">Add to Cart</button>
+            <span className="text-4xl md:text-6xl font-display font-black text-[#D97B8D] tracking-tighter leading-none">{pizza.price}</span>
+            <button onClick={() => onAddToCart(pizza)} className="bg-[#D97B8D] text-[#1C1C1C] px-6 md:px-10 py-2.5 md:py-4 rounded-full font-black uppercase text-[9px] md:text-[11px] tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-md">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -98,7 +97,7 @@ const GustoRotator: React.FC<{
       <div className="py-8 md:py-16 bg-black/40 text-center border-y border-white/5 relative overflow-hidden">
          <h3 className="font-display text-[10vw] md:text-[8vw] text-white font-black uppercase tracking-tighter opacity-[0.015] leading-none absolute inset-0 flex items-center justify-center select-none pointer-events-none">{category}</h3>
          <div className="relative z-10 px-6">
-            <h4 className="font-display text-2xl md:text-4xl text-[#D4AF37] font-black uppercase tracking-tighter">{category} Collection</h4>
+            <h4 className="font-display text-2xl md:text-4xl text-[#D97B8D] font-black uppercase tracking-tighter">{category} Collection</h4>
             <p className="font-black text-white/10 uppercase text-[7px] tracking-0.4em mt-1.5">GRAVITY CORE STUDIO</p>
          </div>
       </div>

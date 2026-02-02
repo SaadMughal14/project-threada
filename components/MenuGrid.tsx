@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -37,7 +36,7 @@ const MenuGrid: React.FC = () => {
       <div className="max-w-7xl mx-auto space-y-12 md:space-y-24">
         <div className="section-header flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <h2 className="font-display text-5xl md:text-7xl font-black uppercase tracking-tighter text-[#1C1C1C] leading-[0.8]">
-            Studio<br/><span className="text-[#D4AF37]">Icons</span>
+            Studio<br/><span className="text-[#D97B8D]">Icons</span>
           </h2>
           <p className="max-w-sm font-black uppercase text-[8px] md:text-[10px] tracking-[0.3em] opacity-40 leading-relaxed italic">
             A selection of our most coveted fire-forged artifacts. Each piece is unique.
