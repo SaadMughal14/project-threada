@@ -38,6 +38,22 @@ const CATEGORIES = [
   { name: 'Sides', icon: 'https://i.imgur.com/5weD7SB.png', type: 'image' }
 ] as const;
 
+// Attractive animated cookie for the cart
+const CartVisualCookie = () => (
+  <div className="relative w-24 h-24 mx-auto mb-4 animate-bounce-slow">
+    <div className="absolute inset-0 bg-[#D97B8D]/20 blur-2xl rounded-full animate-pulse"></div>
+    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl logo-spin-wrapper">
+      <circle cx="50" cy="50" r="45" fill="#D97B8D" />
+      <circle cx="30" cy="30" r="6" fill="#4A3728" />
+      <circle cx="70" cy="35" r="7" fill="#4A3728" />
+      <circle cx="45" cy="70" r="8" fill="#4A3728" />
+      <circle cx="75" cy="75" r="5" fill="#4A3728" />
+      <circle cx="20" cy="60" r="4" fill="#4A3728" />
+    </svg>
+    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-black/20 blur-md rounded-full"></div>
+  </div>
+);
+
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Cookies');
@@ -54,16 +70,47 @@ const App: React.FC = () => {
   const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
-    // Check for receipt data in URL (for Kitchen Print functionality)
+    // Scroll Lock Logic
+    if (isCartOpen || isCheckoutOpen || showSuccess) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isCartOpen, isCheckoutOpen, showSuccess]);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const receiptData = params.get('receipt');
     if (receiptData) {
       try {
-        const decoded = JSON.parse(atob(decodeURIComponent(receiptData)));
-        setActiveOrder(decoded);
+        const decodedStr = decodeURIComponent(escape(atob(decodeURIComponent(receiptData))));
+        const slim = JSON.parse(decodedStr);
+        
+        const hydratedItems = slim.items.map((item: any) => {
+          const product = PIZZAS.find(p => p.id === item.id);
+          if (!product) return null;
+          return {
+            ...product,
+            quantity: item.q,
+            selectedSize: product.sizeOptions.find(s => s.name === item.s) || product.sizeOptions[0]
+          };
+        }).filter(Boolean) as CartItem[];
+
+        const hydratedOrder: OrderDetails = {
+          id: slim.id,
+          items: hydratedItems,
+          total: slim.p,
+          customer: slim.customer,
+          kitchenInstructions: slim.kn,
+          paymentMethod: slim.pm,
+          timestamp: slim.t,
+          placedAt: slim.at || Date.now()
+        };
+
+        setActiveOrder(hydratedOrder);
         setShowSuccess(true);
       } catch (e) {
-        console.error("Failed to load receipt from URL", e);
+        console.error("Failed to load/hydrate receipt from URL", e);
       }
     }
 
@@ -89,7 +136,6 @@ const App: React.FC = () => {
       });
     });
 
-    // Mark as mounted to enable transitions safely without flickering on load
     setIsMounted(true);
 
     return () => { lenis.destroy(); };
@@ -147,7 +193,6 @@ const App: React.FC = () => {
 
   const handleCloseSuccess = () => {
     setShowSuccess(false);
-    // Cleanup URL to prevent success screen showing up again on reload
     if (window.location.search.includes('receipt')) {
       const newUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
@@ -236,24 +281,25 @@ const App: React.FC = () => {
         onClose={handleCloseSuccess} 
       />
 
-      {/* Cart Drawer - transition classes conditionally applied after mount to fix reload flicker */}
-      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : ''} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      {/* Cart Drawer - fixed transition flickering on load */}
+      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : 'opacity-0'} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'pointer-events-none'}`}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
-        <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+        <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
           <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
             <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
             <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D97B8D] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col no-scrollbar">
              {cart.length === 0 ? (
-               <div className="flex flex-col items-center justify-center h-full opacity-20 text-white space-y-4 text-center">
-                 <span className="text-6xl">🛒</span>
+               <div className="flex flex-col items-center justify-center flex-1 opacity-20 text-white space-y-4 text-center">
+                 <CartVisualCookie />
                  <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
                </div>
              ) : (
                <div className="space-y-6">
+                 <CartVisualCookie />
                  {cart.map((item, idx) => (
-                   <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group">
+                   <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group animate-in slide-in-from-right duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
                      <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
                      <div className="flex-1">
                         <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
@@ -343,6 +389,16 @@ const App: React.FC = () => {
           </div>
         </footer>
       </main>
+
+      <style>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 4s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };
