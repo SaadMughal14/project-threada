@@ -88,7 +88,8 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       items: cartItems,
       total: totalPrice,
       customer: formData,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      placedAt: Date.now()
     };
 
     const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);

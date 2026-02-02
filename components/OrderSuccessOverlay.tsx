@@ -69,10 +69,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
   useEffect(() => {
     let interval: number;
-    if (isOpen) {
-      const startTime = Date.now();
-      interval = window.setInterval(() => {
-        const elapsed = Date.now() - startTime;
+    if (isOpen && order?.placedAt) {
+      const updateProgress = () => {
+        const elapsed = Date.now() - order.placedAt;
         if (elapsed < BAKING_DURATION) {
           setPhase('baking');
           setProgress((elapsed / BAKING_DURATION) * 100);
@@ -84,10 +83,13 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           setPhase('completed');
           setProgress(100);
         }
-      }, 500);
+      };
+
+      updateProgress(); // Immediate check
+      interval = window.setInterval(updateProgress, 500);
     }
     return () => { if (interval) clearInterval(interval); };
-  }, [isOpen]);
+  }, [isOpen, order?.placedAt]);
 
   useGSAP(() => {
     if (isOpen) {
@@ -102,7 +104,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const getETAText = () => {
     if (phase === 'baking') return "5 MINS";
     if (phase === 'delivering') {
-      const minsLeft = Math.ceil((TOTAL_DURATION - (progress / 100 * DELIVERY_DURATION + BAKING_DURATION)) / 60000);
+      const totalElapsed = Date.now() - (order.placedAt || Date.now());
+      const minsLeft = Math.ceil((TOTAL_DURATION - totalElapsed) / 60000);
       return minsLeft > 0 ? `${minsLeft} MINS` : "1 MIN";
     }
     return "ARRIVED";

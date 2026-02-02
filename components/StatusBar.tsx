@@ -4,25 +4,33 @@ const StatusBar: React.FC<{ activeOrder: any | null; onShowReceipt?: () => void 
   const [status, setStatus] = useState("Baking your order");
   const [timeLeft, setTimeLeft] = useState(5); // Minutes
   
+  const BAKING_DURATION = 120000; 
+  const TOTAL_DURATION = 300000;
+
   useEffect(() => {
-    if (!activeOrder) return;
+    if (!activeOrder || !activeOrder.placedAt) return;
     
-    // Status updates based on the 5-minute lifecycle
-    const timer1 = setTimeout(() => setStatus("Cooling down"), 120000); // After Phase 1 (2 mins)
-    const timer2 = setTimeout(() => setStatus("Out for delivery"), 130000); // Start of Phase 2
-    const timer3 = setTimeout(() => setStatus("Order Delivered"), 300000); // Total 5 mins
+    const updateStatus = () => {
+      const elapsed = Date.now() - activeOrder.placedAt;
+      
+      if (elapsed < BAKING_DURATION) {
+        setStatus("Baking your order");
+      } else if (elapsed < 130000) {
+        setStatus("Cooling down");
+      } else if (elapsed < TOTAL_DURATION) {
+        setStatus("Out for delivery");
+      } else {
+        setStatus("Order Delivered");
+      }
 
-    // Simple 1-minute interval for ETA update
-    const etaInterval = setInterval(() => {
-      setTimeLeft(prev => Math.max(0, prev - 1));
-    }, 60000);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearInterval(etaInterval);
+      const remainingMins = Math.ceil((TOTAL_DURATION - elapsed) / 60000);
+      setTimeLeft(Math.max(0, remainingMins));
     };
+
+    updateStatus(); // Initial check
+    const interval = setInterval(updateStatus, 5000); // Check every 5s
+
+    return () => clearInterval(interval);
   }, [activeOrder]);
 
   if (!activeOrder) return null;
@@ -41,7 +49,9 @@ const StatusBar: React.FC<{ activeOrder: any | null; onShowReceipt?: () => void 
       <div className="flex items-center gap-3 md:gap-6 flex-shrink-0">
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] md:text-[14px] animate-bounce">🛵</span>
-          <span className="text-[#FDFCFB] font-black uppercase text-[8px] md:text-[10px] tracking-[0.2em] whitespace-nowrap">ETA: {timeLeft} MIN</span>
+          <span className="text-[#FDFCFB] font-black uppercase text-[8px] md:text-[10px] tracking-[0.2em] whitespace-nowrap">
+            {timeLeft > 0 ? `ETA: ${timeLeft} MIN` : "ARRIVED"}
+          </span>
         </div>
         
         <button 
