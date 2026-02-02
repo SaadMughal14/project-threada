@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -104,32 +103,32 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
 
           {/* Card 1: Status (White Card) */}
-          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[220px] md:min-h-[350px]">
+          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[280px] md:min-h-[420px]">
              <div className="w-full flex justify-end mb-2">
                 <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
              </div>
              
-             <div className="flex flex-col items-center gap-4 text-center flex-1 justify-center">
-                <h3 className="font-display text-lg md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
-                  {phase === 'baking' ? 'FORGING THE COOKIE' : phase === 'delivering' ? 'GRAVITY IS PULLING' : 'DELIVERED TO YOU'}
+             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center">
+                <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
+                  {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'GRAVITY IS PULLING' : 'DELIVERED TO YOU'}
                 </h3>
                 
-                <div className="relative w-20 h-20 md:w-40 md:h-40 flex items-center justify-center">
+                <div className="relative w-32 h-32 md:w-56 md:h-56 flex items-center justify-center">
                   {phase === 'baking' ? (
-                     <div className="w-full h-full relative">
-                        <img src="https://i.imgur.com/PxuIhOT.gif" className="w-full h-full object-cover rounded-2xl grayscale" />
-                        <div className="absolute inset-0 bg-[#D97B8D]/10 rounded-2xl"></div>
+                     <div className="w-full h-full relative group">
+                        <img src="https://i.imgur.com/PxuIhOT.gif" className="w-full h-full object-cover rounded-3xl shadow-2xl transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
                      </div>
                   ) : phase === 'delivering' ? (
-                     <span className="text-6xl animate-wiggle">🛵</span>
+                     <span className="text-7xl animate-wiggle">🛵</span>
                   ) : (
-                     <span className="text-6xl">🏠</span>
+                     <span className="text-7xl">🏠</span>
                   )}
                 </div>
              </div>
 
-             <div className="w-full h-1 bg-black/5 rounded-full mt-6 relative overflow-hidden">
-                <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700" style={{ width: `${progress}%` }}></div>
+             <div className="w-full h-1.5 bg-black/5 rounded-full mt-6 relative overflow-hidden">
+                <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700 shadow-[0_0_10px_#D97B8D]" style={{ width: `${progress}%` }}></div>
              </div>
           </div>
 
@@ -204,7 +203,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             
             <button 
               onClick={onClose} 
-              className="w-full bg-[#1C1C1C] text-white py-4 md:py-5 rounded-full font-black uppercase text-[9px] tracking-[0.3em] flex items-center justify-center hover:bg-[#D97B8D] transition-colors active:scale-95"
+              className="w-full bg-[#1C1C1C] text-white py-4 md:py-5 rounded-2xl font-black uppercase text-[9px] tracking-[0.3em] flex items-center justify-center hover:bg-[#D97B8D] transition-colors active:scale-95 shadow-lg"
             >
               Back to Studio
             </button>

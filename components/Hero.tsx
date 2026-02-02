@@ -93,14 +93,14 @@ const Hero: React.FC = () => {
   }, { scope: container });
 
   return (
-    <section container ref={container} className="h-[75dvh] md:h-[90dvh] w-full flex items-center justify-center relative bg-[#F2DCE0] overflow-hidden">
+    <section ref={container} className="h-[75dvh] md:h-[90dvh] w-full flex items-center justify-center relative bg-[#F2DCE0] overflow-hidden">
       
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#F2DCE0]/40 via-transparent to-[#F2DCE0]/90 z-10"></div>
         <video 
           ref={videoRef}
           autoPlay muted loop playsInline 
-          className="w-full h-full object-cover scale-105 opacity-[0.2] will-change-transform grayscale"
+          className="w-full h-full object-cover scale-105 opacity-[0.35] will-change-transform grayscale"
         >
           <source src="https://player.vimeo.com/external/494248848.sd.mp4?s=91480c5e648f572111756570c91550c82270923e&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
         </video>
