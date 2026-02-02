@@ -63,14 +63,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
   if (!isOpen || !order) return null;
 
-  // Realistic Bake Colors: Pale Dough to Warm Golden Brown
-  const getBakedColor = (p: number) => {
-    const r = Math.round(245 - (245 - 139) * (p / 100));
-    const g = Math.round(230 - (230 - 90) * (p / 100));
-    const b = Math.round(200 - (200 - 43) * (p / 100));
-    return `rgb(${r}, ${g}, ${b})`;
-  };
-
   const getETAText = () => {
     if (phase === 'baking') return "5 MINS";
     if (phase === 'delivering') {
@@ -109,8 +101,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
 
           {/* Status Animation Card */}
-          <div className="bg-[#1C1C1C] rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden min-h-[350px] md:min-h-[450px] flex flex-col items-center justify-center">
-            {/* Warm Oven Glow */}
+          <div className="bg-[#1C1C1C] rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden min-h-[400px] md:min-h-[550px] flex flex-col items-center justify-center">
+            {/* Ambient Background Glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08)_0%,transparent_70%)] animate-pulse pointer-events-none"></div>
             
             <div className="absolute top-6 right-8 md:top-10 md:right-12 text-right z-10">
@@ -123,59 +115,27 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             {/* Animation Core */}
             <div className="flex-1 flex flex-col items-center justify-center py-6 w-full relative">
               {phase === 'baking' && (
-                <div className="flex flex-col items-center gap-8 md:gap-12 relative w-full">
-                   {/* Oven Visual */}
-                   <div className="relative w-44 h-44 md:w-64 md:h-64 flex items-center justify-center">
-                      <div 
-                        className="absolute inset-0 rounded-full blur-[40px] opacity-40 transition-colors duration-1000" 
-                        style={{ backgroundColor: progress > 50 ? '#E67E22' : '#D4AF37' }}
-                      ></div>
-                      
-                      <div 
-                        className="relative z-10 transition-transform duration-1000 ease-out"
-                        style={{ transform: `scale(${0.9 + (progress/100) * 0.15})` }}
-                      >
-                         <svg viewBox="0 0 100 100" className="w-32 h-32 md:w-48 md:h-48 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                            <circle 
-                              cx="50" cy="50" r="45" 
-                              fill={getBakedColor(progress)} 
-                              className="transition-colors duration-1000" 
-                            />
-                            <path 
-                              d="M30 40 Q40 45 35 55 M60 30 Q65 40 75 35 M45 75 Q55 70 65 80" 
-                              fill="none" 
-                              stroke="rgba(0,0,0,0.15)" 
-                              strokeWidth="1.5" 
-                              strokeLinecap="round"
-                              style={{ opacity: progress / 100 }}
-                            />
-                            <g style={{ filter: `blur(${Math.max(0, (progress - 60) / 20)}px)` }}>
-                               <circle cx="35" cy="35" r="5" fill="#2B1B10" />
-                               <circle cx="65" cy="40" r="6" fill="#2B1B10" />
-                               <circle cx="45" cy="65" r="7" fill="#2B1B10" />
-                               <circle cx="70" cy="70" r="4" fill="#2B1B10" />
-                            </g>
-                         </svg>
-                      </div>
-
-                      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-                         {[...Array(6)].map((_, i) => (
-                           <div 
-                             key={i}
-                             className="absolute bottom-0 w-1 h-8 bg-gradient-to-t from-white/10 to-transparent blur-md animate-steam"
-                             style={{ 
-                               left: `${20 + i * 15}%`, 
-                               animationDelay: `${i * 0.5}s`,
-                               opacity: progress / 100 * 0.5 
-                             }}
-                           ></div>
-                         ))}
-                      </div>
+                <div className="flex flex-col items-center gap-10 md:gap-14 relative w-full animate-in fade-in duration-700 pt-16 md:pt-20">
+                   {/* Elegant GIF Frame for Baking Phase */}
+                   <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border-4 border-[#D4AF37] shadow-[0_30px_70px_rgba(212,175,55,0.25)] bg-black/20">
+                      <img 
+                        src="https://i.imgur.com/PxuIhOT.gif" 
+                        alt="Baking your order" 
+                        className="w-full h-full object-cover grayscale-0 scale-110"
+                      />
+                      {/* Glass Overlay Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none"></div>
+                      <div className="absolute inset-0 ring-1 ring-white/10 rounded-[inherit] pointer-events-none"></div>
                    </div>
 
-                   <div className="space-y-2 text-center">
-                     <p className="font-black text-[10px] md:text-[12px] tracking-[0.5em] text-[#D4AF37] uppercase animate-pulse">FRESH FROM THE OVEN</p>
-                     <p className="text-white/20 font-black text-[8px] uppercase tracking-[0.3em]">Baking Progress: {Math.round(progress)}%</p>
+                   <div className="space-y-4 text-center">
+                     <p className="font-black text-[11px] md:text-[13px] tracking-[0.5em] text-[#D4AF37] uppercase animate-pulse">FRESH FROM THE OVEN</p>
+                     <div className="flex flex-col items-center gap-2">
+                        <p className="text-white/30 font-black text-[9px] uppercase tracking-[0.4em]">Heat Factor: {Math.round(progress)}%</p>
+                        <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
+                           <div className="h-full bg-[#D4AF37] transition-all duration-500 shadow-[0_0_10px_#D4AF37]" style={{ width: `${progress}%` }}></div>
+                        </div>
+                     </div>
                    </div>
                 </div>
               )}
@@ -198,11 +158,11 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               )}
 
               {phase === 'completed' && (
-                <div className="flex flex-col items-center gap-4">
-                   <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-[#D4AF37]/10 flex items-center justify-center border-4 border-[#D4AF37] shadow-[0_0_50px_rgba(212,175,55,0.3)] animate-in zoom-in duration-700">
-                      <span className="text-7xl md:text-8xl">🏠</span>
+                <div className="flex flex-col items-center gap-6 animate-in zoom-in fade-in duration-700">
+                   <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-[#D4AF37]/10 flex items-center justify-center border-4 border-[#D4AF37] shadow-[0_0_80px_rgba(212,175,55,0.2)]">
+                      <span className="text-7xl md:text-9xl">🏠</span>
                    </div>
-                   <div className="bg-[#D4AF37] text-[#1C1C1C] text-[10px] font-black px-8 py-3 rounded-full uppercase tracking-[0.4em] shadow-xl">ORDER ARRIVED</div>
+                   <div className="bg-[#D4AF37] text-[#1C1C1C] text-[10px] md:text-[12px] font-black px-10 py-4 rounded-full uppercase tracking-[0.4em] shadow-xl">ORDER ARRIVED</div>
                 </div>
               )}
             </div>
@@ -271,6 +231,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               onClick={() => window.print()} 
               className="flex-1 bg-[#1C1C1C] text-[#FDFCFB] py-5 rounded-full font-black uppercase text-[10px] tracking-[0.4em] flex items-center justify-center gap-3 hover:bg-[#D4AF37] hover:text-[#1C1C1C] active:scale-95 transition-all shadow-xl"
             >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 4H8v-4h8v4z"/></svg>
               Print Receipt
             </button>
             <button 
@@ -288,13 +249,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           0%, 100% { transform: rotate(-5deg); }
           50% { transform: rotate(5deg); }
         }
-        @keyframes steam {
-          0% { transform: translateY(0) scale(1); opacity: 0; }
-          50% { opacity: 1; }
-          100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-        }
         .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
-        .animate-steam { animation: steam 2s ease-out infinite; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
