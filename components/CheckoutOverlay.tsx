@@ -105,7 +105,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
           { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
         ],
-        footer: { text: "GUSTO | Fresh from the Oven." },
+        footer: { text: "GRAVITY | Sculpted by Heat." },
         timestamp: new Date().toISOString()
       }]
     };
@@ -264,8 +264,8 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
           <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D4AF37] leading-none">Rs. {totalPrice}</p>
         </div>
         <div className="text-right hidden sm:block">
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GUSTO</p>
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">BAKERY</p>
+          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>
+          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">STUDIO</p>
         </div>
       </div>
 

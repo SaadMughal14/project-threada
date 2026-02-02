@@ -89,7 +89,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             <div className="space-y-1">
               <p className="font-black text-[#D4AF37] text-[9px] md:text-[10px] tracking-[0.4em] uppercase">Order Confirmed</p>
               <h1 className="font-display text-4xl md:text-8xl font-black text-[#1C1C1C] leading-[0.85] tracking-tighter">
-                GUS<span className="text-[#D4AF37]">TO</span><br/>RECEIPT
+                GRAV<span className="text-[#D4AF37]">ITY</span><br/>RECEIPT
               </h1>
             </div>
             <button 
@@ -217,7 +217,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               </div>
 
               <div className="bg-[#1C1C1C]/5 rounded-[2rem] md:rounded-[2.5rem] p-8 border border-black/5 flex flex-col justify-center gap-4">
-                <p className="text-[9px] font-black tracking-[0.5em] text-[#1C1C1C]/30 uppercase">Bakery Note</p>
+                <p className="text-[9px] font-black tracking-[0.5em] text-[#1C1C1C]/30 uppercase">Studio Note</p>
                 <p className="italic text-[#1C1C1C]/60 font-black text-xs md:text-base leading-relaxed uppercase tracking-tighter">
                   "Your cookies are on the way! We're making sure they reach you warm and fresh."
                 </p>

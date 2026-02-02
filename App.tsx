@@ -145,7 +145,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CookieLogo />
           <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase transition-colors">
-            <span className={scrolled ? "text-[#1C1C1C]" : "text-[#FDFCFB]"}>GUS</span><span className="text-[#D4AF37]">TO</span>
+            <span className={scrolled ? "text-[#1C1C1C]" : "text-[#FDFCFB]"}>GRAV</span><span className="text-[#D4AF37]">ITY</span>
           </span>
         </div>
         <button 
@@ -270,14 +270,14 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Bakery</p>
+                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Studio</p>
                 <p className="text-[12px] font-bold opacity-30 leading-relaxed max-w-xs italic">
                   "Every batch is handmade. Every cookie is baked fresh for you."
                 </p>
               </div>
             </div>
             <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5 text-[7px] uppercase font-black tracking-[0.6em]">
-              <p className="opacity-15">©2025 GUSTO BAKERY</p>
+              <p className="opacity-15">©2025 GRAVITY STUDIO</p>
               <a href="https://saad-mughal-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-black border border-[#D4AF37]/30 px-6 py-2.5 rounded-full text-[#D4AF37] text-[7px] font-black uppercase tracking-[0.2em] hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all">
                  Curated by Saad
               </a>
