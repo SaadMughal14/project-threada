@@ -177,20 +177,25 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                   ) : phase === 'delivering' ? (
                      <DeliveryRider />
                   ) : (
-                     <div className="relative flex flex-col items-center gap-4">
-                        <div className="relative">
+                     <div className="relative flex flex-col items-center justify-center">
+                        <div className="relative flex items-center justify-center">
+                          {/* House Icon */}
                           <span className="text-8xl md:text-9xl">🏠</span>
-                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                          
+                          {/* Cookie Logo "Inside" the house door area */}
+                          <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-8 h-8 md:w-12 md:h-12 logo-spin-wrapper">
+                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                              <circle cx="50" cy="50" r="45" fill="#D97B8D" />
+                              <circle cx="35" cy="35" r="5" fill="#4A3728" />
+                              <circle cx="65" cy="40" r="6" fill="#4A3728" />
+                              <circle cx="45" cy="65" r="7" fill="#4A3728" />
+                            </svg>
+                          </div>
+
+                          {/* Checkmark Circle on top right of house */}
+                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10">
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5"/></svg>
                           </div>
-                        </div>
-                        <div className="w-10 h-10 md:w-12 md:h-12 logo-spin-wrapper opacity-40">
-                          <svg viewBox="0 0 100 100" className="w-full h-full">
-                            <circle cx="50" cy="50" r="45" fill="#D97B8D" />
-                            <circle cx="35" cy="35" r="5" fill="#4A3728" />
-                            <circle cx="65" cy="40" r="6" fill="#4A3728" />
-                            <circle cx="45" cy="65" r="7" fill="#4A3728" />
-                          </svg>
                         </div>
                      </div>
                   )}
