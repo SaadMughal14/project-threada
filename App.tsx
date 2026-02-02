@@ -281,8 +281,8 @@ const App: React.FC = () => {
         onClose={handleCloseSuccess} 
       />
 
-      {/* Cart Drawer - fixed transition flickering on load */}
-      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : 'opacity-0'} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'pointer-events-none'}`}>
+      {/* Cart Drawer - Corrected classes to prevent unwanted global blur */}
+      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : ''} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
         <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
           <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
