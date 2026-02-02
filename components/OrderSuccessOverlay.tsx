@@ -16,6 +16,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   
+  // Timing Logic:
+  // 0-2 mins: Baking (Phase 1)
+  // 2-5 mins: Delivery (Phase 2)
+  // 5+ mins: Delivered (Phase 3)
   const BAKING_DURATION = 120000; 
   const DELIVERY_DURATION = 180000; 
   const TOTAL_DURATION = BAKING_DURATION + DELIVERY_DURATION;
@@ -55,8 +59,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const getETAText = () => {
     if (phase === 'baking') return "5 MINS";
     if (phase === 'delivering') {
-      const minsLeft = Math.ceil((DELIVERY_DURATION - (progress / 100 * DELIVERY_DURATION)) / 60000);
-      return `${minsLeft} MINS`;
+      const minsLeft = Math.ceil((TOTAL_DURATION - (progress / 100 * DELIVERY_DURATION + BAKING_DURATION)) / 60000);
+      return minsLeft > 0 ? `${minsLeft} MINS` : "1 MIN";
     }
     return "ARRIVED";
   };
@@ -103,32 +107,55 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
 
           {/* Card 1: Status (White Card) */}
-          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[280px] md:min-h-[420px]">
+          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[300px] md:min-h-[450px]">
              <div className="w-full flex justify-end mb-2">
                 <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
              </div>
              
-             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center">
+             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center w-full">
                 <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
-                  {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'GRAVITY IS PULLING' : 'DELIVERED TO YOU'}
+                  {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'OUT FOR DELIVERY' : 'ORDER DELIVERED'}
                 </h3>
                 
-                <div className="relative w-32 h-32 md:w-56 md:h-56 flex items-center justify-center">
+                <div className="relative w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
                   {phase === 'baking' ? (
                      <div className="w-full h-full relative group">
-                        <img src="https://i.imgur.com/PxuIhOT.gif" className="w-full h-full object-cover rounded-3xl shadow-2xl transition-transform duration-700" />
+                        <img 
+                          src="https://i.imgur.com/PxuIhOT.gif" 
+                          className="w-full h-full object-cover rounded-3xl shadow-2xl transition-transform duration-700" 
+                          alt="Baking Animation"
+                        />
                         <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
                      </div>
                   ) : phase === 'delivering' ? (
-                     <span className="text-7xl animate-wiggle">🛵</span>
+                     <div className="flex flex-col items-center gap-4">
+                        <span className="text-8xl md:text-9xl animate-wiggle">🛵</span>
+                        <p className="text-[#D97B8D] font-black text-[10px] tracking-widest animate-pulse">GRAVITY IS PULLING...</p>
+                     </div>
                   ) : (
-                     <span className="text-7xl">🏠</span>
+                     <div className="relative flex flex-col items-center gap-4">
+                        <div className="relative">
+                          <span className="text-8xl md:text-9xl">🏠</span>
+                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5"/></svg>
+                          </div>
+                        </div>
+                        {/* Brand Logo for confirmation */}
+                        <div className="w-10 h-10 md:w-12 md:h-12 logo-spin-wrapper opacity-40">
+                          <svg viewBox="0 0 100 100" className="w-full h-full">
+                            <circle cx="50" cy="50" r="45" fill="#D97B8D" />
+                            <circle cx="35" cy="35" r="5" fill="#4A3728" />
+                            <circle cx="65" cy="40" r="6" fill="#4A3728" />
+                            <circle cx="45" cy="65" r="7" fill="#4A3728" />
+                          </svg>
+                        </div>
+                     </div>
                   )}
                 </div>
              </div>
 
-             <div className="w-full h-1.5 bg-black/5 rounded-full mt-6 relative overflow-hidden">
-                <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700 shadow-[0_0_10px_#D97B8D]" style={{ width: `${progress}%` }}></div>
+             <div className="w-full h-2 bg-black/5 rounded-full mt-6 relative overflow-hidden">
+                <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700 shadow-[0_0_15px_#D97B8D]" style={{ width: `${progress}%` }}></div>
              </div>
           </div>
 
