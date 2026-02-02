@@ -138,9 +138,8 @@ const Hero: React.FC = () => {
         
         <div className="studio-details flex flex-col items-center mt-4 md:mt-10 text-center space-y-4 md:space-y-8">
            <div className="flex items-center gap-3 md:gap-10 opacity-30 w-full justify-center px-4">
-             <div className="h-[1px] flex-1 max-w-[40px] md:max-w-[150px] bg-[#D4AF37]"></div>
+             {/* Horizontal lines removed for a cleaner, non-cheap look */}
              <span className="font-black uppercase text-[8px] md:text-[14px] tracking-[0.5em] md:tracking-[1em] whitespace-nowrap text-[#FDFCFB]">Sculpted by Heat</span>
-             <div className="h-[1px] flex-1 max-w-[40px] md:max-w-[150px] bg-[#D4AF37]"></div>
            </div>
            
            <div className="space-y-2 px-2">

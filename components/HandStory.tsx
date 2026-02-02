@@ -70,10 +70,10 @@ const HandStory: React.FC = () => {
             {/* Artifact Wrapper */}
             <div ref={handRef} className="z-20 relative flex justify-center w-full mb-12 md:mb-20">
                 <div className="relative group">
-                     {/* Main Cookie Bowl Image */}
+                     {/* Main Cookie Bowl Image - Updated to user provided URL */}
                      <div className="w-56 h-72 md:w-80 md:h-[420px] bg-[#1C1C1C] rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.3)] overflow-hidden border border-white/10 -rotate-2 group-hover:rotate-0 transition-transform duration-1000">
                         <img 
-                            src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=800&auto=format&fit=crop" 
+                            src="https://i.imgur.com/ggie0fy.jpeg" 
                             className="w-full h-full object-cover" 
                             alt="Signature Bowl" 
                         />
