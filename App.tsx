@@ -10,12 +10,13 @@ import GustoRotator from './components/GustoRotator';
 import CheckoutOverlay from './components/CheckoutOverlay';
 import OrderSuccessOverlay from './components/OrderSuccessOverlay';
 import StatusBar from './components/StatusBar';
-import { PIZZAS, PizzaProductExtended } from './constants';
+import { PIZZAS, PizzaProductExtended, SizeOption } from './constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface CartItem extends PizzaProductExtended {
   quantity: number;
+  selectedSize: SizeOption;
 }
 
 interface OrderDetails {
@@ -89,22 +90,32 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setTotalPrice(cart.reduce((acc, item) => {
-      const numericPrice = parseInt(item.price.replace(/[^\d]/g, ''));
+      const numericPrice = parseInt(item.selectedSize.price.replace(/[^\d]/g, ''));
       return acc + (numericPrice * item.quantity);
     }, 0));
   }, [cart]);
 
-  const addToCart = (pizza: PizzaProductExtended) => {
+  const addToCart = (pizza: PizzaProductExtended, size: SizeOption) => {
     setCart(prev => {
-      const existing = prev.find(item => item.id === pizza.id);
-      if (existing) return prev.map(item => item.id === pizza.id ? { ...item, quantity: item.quantity + 1 } : item);
-      return [...prev, { ...pizza, quantity: 1 }];
+      const existing = prev.find(item => item.id === pizza.id && item.selectedSize.name === size.name);
+      if (existing) {
+        return prev.map(item => 
+          (item.id === pizza.id && item.selectedSize.name === size.name) 
+            ? { ...item, quantity: item.quantity + 1 } 
+            : item
+        );
+      }
+      return [...prev, { ...pizza, quantity: 1, selectedSize: size }];
     });
     setIsCartOpen(true);
   };
 
-  const updateQuantity = (id: string, delta: number) => {
-    setCart(prev => prev.map(item => item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item).filter(item => item.quantity > 0));
+  const updateQuantity = (id: string, sizeName: string, delta: number) => {
+    setCart(prev => prev.map(item => 
+      (item.id === id && item.selectedSize.name === sizeName) 
+        ? { ...item, quantity: Math.max(0, item.quantity + delta) } 
+        : item
+    ).filter(item => item.quantity > 0));
   };
 
   const handleOrderComplete = (orderData: OrderDetails) => {
@@ -211,14 +222,17 @@ const App: React.FC = () => {
                  <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
                </div>
              ) : (
-               cart.map(item => (
-                 <div key={item.id} className="flex gap-4 items-center group">
+               cart.map((item, idx) => (
+                 <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group">
                    <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
-                   <div className="flex-1 text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
+                   <div className="flex-1">
+                      <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
+                      <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
+                   </div>
                    <div className="flex items-center gap-3 text-[#D97B8D] font-black">
-                     <button onClick={() => updateQuantity(item.id, -1)} className="hover:scale-125 transition-transform">-</button>
+                     <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
                      <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
-                     <button onClick={() => updateQuantity(item.id, 1)} className="hover:scale-125 transition-transform">+</button>
+                     <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
                    </div>
                  </div>
                ))

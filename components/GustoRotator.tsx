@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { PIZZAS, PizzaProductExtended } from '../constants';
+import { PIZZAS, PizzaProductExtended, SizeOption } from '../constants';
 
 const getIngredientEmoji = (name: string) => {
   const map: Record<string, string> = {
@@ -21,10 +21,11 @@ const getIngredientEmoji = (name: string) => {
 const PizzaSection: React.FC<{ 
   pizza: PizzaProductExtended, 
   index: number,
-  onAddToCart: (p: PizzaProductExtended) => void 
+  onAddToCart: (p: PizzaProductExtended, s: SizeOption) => void 
 }> = ({ pizza, index, onAddToCart }) => {
   const container = useRef<HTMLDivElement>(null);
   const pizzaRef = useRef<HTMLDivElement>(null);
+  const [selectedSize, setSelectedSize] = useState<SizeOption>(pizza.sizeOptions[0]);
   const isEven = index % 2 === 0;
 
   const isLightBg = ['vanilla', 'lemon', 'sea-salt-crusts'].includes(pizza.id);
@@ -75,9 +76,28 @@ const PizzaSection: React.FC<{
             ))}
           </div>
 
-          <div className={`flex items-center gap-4 pt-2 justify-center ${isEven ? 'md:justify-start' : 'md:justify-end'}`}>
-            <span className="text-4xl md:text-6xl font-display font-black text-[#D97B8D] tracking-tighter leading-none">{pizza.price}</span>
-            <button onClick={() => onAddToCart(pizza)} className="bg-[#D97B8D] text-[#1C1C1C] px-6 md:px-10 py-2.5 md:py-4 rounded-full font-black uppercase text-[9px] md:text-[11px] tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-md">Add to Cart</button>
+          <div className={`space-y-3 pt-2 ${isEven ? 'md:items-start' : 'md:items-end'} flex flex-col items-center`}>
+            <p className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.4em] opacity-40">Select Serving</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {pizza.sizeOptions.map((option) => (
+                <button
+                  key={option.name}
+                  onClick={() => setSelectedSize(option)}
+                  className={`px-3 md:px-5 py-2 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all border-2 ${
+                    selectedSize.name === option.name
+                      ? 'bg-[#D97B8D] border-[#D97B8D] text-[#1C1C1C] shadow-lg scale-105'
+                      : 'bg-white/5 border-white/10 hover:border-white/30 text-white opacity-60'
+                  }`}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={`flex items-center gap-4 pt-4 justify-center ${isEven ? 'md:justify-start' : 'md:justify-end'}`}>
+            <span className="text-4xl md:text-6xl font-display font-black text-[#D97B8D] tracking-tighter leading-none">{selectedSize.price}</span>
+            <button onClick={() => onAddToCart(pizza, selectedSize)} className="bg-[#D97B8D] text-[#1C1C1C] px-6 md:px-10 py-2.5 md:py-4 rounded-full font-black uppercase text-[9px] md:text-[11px] tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-md">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -86,7 +106,7 @@ const PizzaSection: React.FC<{
 };
 
 const GustoRotator: React.FC<{ 
-  onAddToCart: (p: PizzaProductExtended) => void, 
+  onAddToCart: (p: PizzaProductExtended, s: SizeOption) => void, 
   category: string 
 }> = ({ onAddToCart, category }) => {
   const filteredProducts = PIZZAS.filter(p => p.category === category);

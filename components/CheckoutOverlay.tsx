@@ -1,12 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { PizzaProductExtended } from '../constants';
+import { PizzaProductExtended, SizeOption } from '../constants';
+
+interface CartItem extends PizzaProductExtended {
+  quantity: number;
+  selectedSize: SizeOption;
+}
 
 interface CheckoutOverlayProps {
   isOpen: boolean;
   onClose: () => void;
-  cartItems: (PizzaProductExtended & { quantity: number })[];
+  cartItems: CartItem[];
   totalPrice: number;
   onOrderSuccess: (orderData: any) => void;
   orderNotes: string;
@@ -103,7 +108,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         color: 14252941, // Brand Pink #D97B8D
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
-          { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
+          { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
           { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
         ],
         footer: { text: "GRAVITY | Sculpted by Heat." },

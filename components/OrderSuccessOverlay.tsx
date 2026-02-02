@@ -215,18 +215,18 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
              <div className="space-y-1">
                 <p className="text-[8px] font-black tracking-[0.3em] text-[#D97B8D] uppercase">Your Selection</p>
                 <div className="space-y-4 pt-2">
-                  {order.items.map((item: any) => (
-                    <div key={item.id} className="flex justify-between items-center group">
+                  {order.items.map((item: any, idx: number) => (
+                    <div key={`${item.id}-${idx}`} className="flex justify-between items-center group">
                       <div className="flex gap-4 items-center">
                         <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
                            <img src={item.image} className="w-full h-full object-cover" />
                         </div>
                         <div>
                           <h4 className="font-display text-xs md:text-lg font-black uppercase tracking-tighter leading-none">{item.name}</h4>
-                          <p className="text-[7px] font-black text-[#D97B8D] uppercase tracking-widest mt-1">QTY: {item.quantity}</p>
+                          <p className="text-[7px] font-black text-[#D97B8D] uppercase tracking-widest mt-1">QTY: {item.quantity} • {item.selectedSize.name}</p>
                         </div>
                       </div>
-                      <span className="font-display text-sm md:text-2xl font-black tracking-tighter">Rs. {parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity}</span>
+                      <span className="font-display text-sm md:text-2xl font-black tracking-tighter">Rs. {parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}</span>
                     </div>
                   ))}
                 </div>
@@ -320,10 +320,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
         {/* Item List */}
         <div style={{ textAlign: 'left', marginBottom: '2mm' }}>
-          {order.items.map((item: any) => (
-            <div key={item.id} className="flex-row" style={{ marginBottom: '1.5mm' }}>
-              <span>{item.quantity}x {item.name}</span>
-              <span>Rs.{parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
+          {order.items.map((item: any, idx: number) => (
+            <div key={`${item.id}-${idx}`} className="flex-row" style={{ marginBottom: '1.5mm' }}>
+              <span>{item.quantity}x {item.name} ({item.selectedSize.name})</span>
+              <span>Rs.{parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
             </div>
           ))}
         </div>
