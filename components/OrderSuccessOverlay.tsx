@@ -10,6 +10,53 @@ interface SuccessProps {
 
 type OrderPhase = 'baking' | 'delivering' | 'completed';
 
+const DeliveryRider = () => (
+  <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center overflow-hidden">
+    {/* Motion Lines (Air moving backward) */}
+    <div className="absolute left-0 w-full h-full pointer-events-none">
+      <div className="motion-line line-1 absolute top-[45%] left-4 w-8 h-1 bg-[#1C1C1C]/10 rounded-full"></div>
+      <div className="motion-line line-2 absolute top-[55%] left-0 w-12 h-1 bg-[#1C1C1C]/10 rounded-full"></div>
+      <div className="motion-line line-3 absolute top-[50%] left-8 w-6 h-1 bg-[#1C1C1C]/10 rounded-full"></div>
+    </div>
+
+    {/* The Rider Vehicle */}
+    <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-drive-bounce">
+      {/* Wheels */}
+      <circle cx="65" cy="155" r="18" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="4" />
+      <circle cx="65" cy="155" r="10" fill="#1C1C1C" />
+      
+      <circle cx="135" cy="155" r="18" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="4" />
+      <circle cx="135" cy="155" r="10" fill="#1C1C1C" />
+
+      {/* Main Body (The Scooter/Vehicle) */}
+      <path 
+        d="M50 135 Q50 85 100 85 L140 85 Q150 85 150 100 L150 135 Z" 
+        fill="#D97B8D" 
+        stroke="#1C1C1C" 
+        strokeWidth="4" 
+      />
+
+      {/* Handlebar */}
+      <path d="M65 85 L55 65 L65 60" fill="none" stroke="#1C1C1C" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Rider Head & Cap */}
+      <circle cx="105" cy="65" r="15" fill="#E8B9A7" /> {/* Skin Tone */}
+      <path d="M90 65 A15 15 0 0 1 120 65 Z" fill="#1C1C1C" /> {/* Cap */}
+
+      {/* Delivery Box */}
+      <rect x="120" y="55" r="4" width="35" height="30" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="3" />
+      
+      {/* Cookie Logo on Box */}
+      <g transform="translate(125, 60) scale(0.25)">
+        <circle cx="50" cy="50" r="45" fill="#D97B8D" />
+        <circle cx="35" cy="35" r="5" fill="#4A3728" />
+        <circle cx="65" cy="40" r="6" fill="#4A3728" />
+        <circle cx="45" cy="65" r="7" fill="#4A3728" />
+      </g>
+    </svg>
+  </div>
+);
+
 const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose }) => {
   const [phase, setPhase] = useState<OrderPhase>('baking');
   const [progress, setProgress] = useState(0); 
@@ -128,10 +175,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                         <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
                      </div>
                   ) : phase === 'delivering' ? (
-                     <div className="flex flex-col items-center gap-4">
-                        <span className="text-8xl md:text-9xl animate-wiggle">🛵</span>
-                        <p className="text-[#D97B8D] font-black text-[10px] tracking-widest animate-pulse">GRAVITY IS PULLING...</p>
-                     </div>
+                     <DeliveryRider />
                   ) : (
                      <div className="relative flex flex-col items-center gap-4">
                         <div className="relative">
@@ -365,7 +409,20 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           0%, 100% { transform: rotate(-5deg); }
           50% { transform: rotate(5deg); }
         }
-        .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
+        @keyframes drive-bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        @keyframes motion-move {
+          0% { transform: translateX(0); opacity: 0; }
+          20% { opacity: 1; }
+          100% { transform: translateX(-100px); opacity: 0; }
+        }
+        .animate-drive-bounce { animation: drive-bounce 0.3s ease-in-out infinite; }
+        .motion-line { animation: motion-move 0.6s linear infinite; }
+        .line-1 { animation-delay: 0.1s; }
+        .line-2 { animation-delay: 0.3s; }
+        .line-3 { animation-delay: 0.5s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
