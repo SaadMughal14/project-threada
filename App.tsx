@@ -23,7 +23,9 @@ interface OrderDetails {
   items: CartItem[];
   total: number;
   customer: { name: string; phone: string; address: string };
+  paymentMethod: 'cash' | 'digital';
   timestamp: string;
+  placedAt: number;
 }
 
 const CATEGORIES = [

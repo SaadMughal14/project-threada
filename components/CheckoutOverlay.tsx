@@ -88,6 +88,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       items: cartItems,
       total: totalPrice,
       customer: formData,
+      paymentMethod: paymentMethod,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       placedAt: Date.now()
     };

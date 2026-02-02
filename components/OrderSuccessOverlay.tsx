@@ -239,7 +239,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                 </div>
                 <div className="flex justify-between items-center">
                    <p className="text-[8px] font-black tracking-[0.3em] text-white/40 uppercase">Payment Status</p>
-                   <span className="bg-white/10 text-white/60 text-[7px] font-black px-3 py-1.5 rounded uppercase tracking-widest">Cash on Delivery</span>
+                   <span className="bg-white/10 text-white/60 text-[7px] font-black px-3 py-1.5 rounded uppercase tracking-widest">
+                     {order.paymentMethod === 'digital' ? 'Digital Payment Received' : 'Cash on Delivery'}
+                   </span>
                 </div>
              </div>
           </div>
@@ -328,7 +330,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
         <div className="separator"></div>
         <div className="flex-row bold" style={{ fontSize: '12pt' }}>
-          <span>TOTAL PAID</span>
+          <span>{order.paymentMethod === 'digital' ? 'TOTAL PAID' : 'TOTAL DUE'}</span>
           <span>Rs.{order.total}.00</span>
         </div>
         <div className="flex-row" style={{ marginTop: '2mm' }}>
@@ -336,12 +338,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           <span>Rs.{order.total}.00</span>
         </div>
         <div className="flex-row">
-          <span>Sales Tax (0%)</span>
-          <span>Rs.0.00</span>
+          <span>Amount Paid</span>
+          <span>Rs.{order.paymentMethod === 'digital' ? `${order.total}.00` : '0.00'}</span>
         </div>
         <div className="flex-row">
-          <span>Balance</span>
-          <span>Rs.0.00</span>
+          <span>Balance Due</span>
+          <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
         </div>
         <div className="separator"></div>
 
