@@ -322,7 +322,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       <div className="thermal-receipt">
         <h1>Receipt</h1>
         
-        {/* Black & White Brand Logo */}
+        {/* Black & White Brand Logo (Smaller) */}
         <div className="logo-bw">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="45" fill="black" />
@@ -334,60 +334,50 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </svg>
         </div>
 
-        <div className="bold" style={{ fontSize: '16pt', letterSpacing: '2px', marginBottom: '1mm' }}>GRAVITY STUDIO</div>
-        <div style={{ fontSize: '10pt' }}>Phase 6, DHA</div>
-        <div style={{ fontSize: '10pt' }}>Tel: (850) GRAVITY-STUDIO</div>
+        <div className="bold" style={{ fontSize: '13pt', letterSpacing: '1px', marginBottom: '0.5mm' }}>GRAVITY STUDIO</div>
+        <div style={{ fontSize: '9pt' }}>Phase 6, DHA, Karachi</div>
+        <div style={{ fontSize: '9pt' }}>Order ID: #{order.id}</div>
 
         <div className="separator"></div>
-        <div className="flex-row">
-          <span>Date: {currentDate}</span>
+        <div className="flex-row" style={{ fontSize: '8pt' }}>
+          <span>{currentDate}</span>
           <span>{currentTime}</span>
         </div>
         <div className="separator"></div>
 
-        {/* Item List */}
-        <div style={{ textAlign: 'left', marginBottom: '2mm' }}>
+        {/* Item List (Tighter) */}
+        <div style={{ textAlign: 'left', marginBottom: '1mm', fontSize: '9pt' }}>
           {order.items.map((item: any, idx: number) => (
-            <div key={`${item.id}-${idx}`} className="flex-row" style={{ marginBottom: '1.5mm' }}>
-              <span>{item.quantity}x {item.name} ({item.selectedSize.name})</span>
-              <span>Rs.{parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
+            <div key={`${item.id}-${idx}`} className="flex-row" style={{ marginBottom: '1mm' }}>
+              <span style={{ flex: 1 }}>{item.quantity}x {item.name} ({item.selectedSize.name})</span>
+              <span style={{ marginLeft: '2mm' }}>Rs.{parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}</span>
             </div>
           ))}
         </div>
 
         <div className="separator"></div>
-        <div className="flex-row bold" style={{ fontSize: '12pt' }}>
+        <div className="flex-row bold" style={{ fontSize: '10pt' }}>
           <span>{order.paymentMethod === 'digital' ? 'TOTAL PAID' : 'TOTAL DUE'}</span>
-          <span>Rs.{order.total}.00</span>
+          <span>Rs.{order.total}</span>
         </div>
-        <div className="flex-row" style={{ marginTop: '2mm' }}>
-          <span>Sub-total</span>
-          <span>Rs.{order.total}.00</span>
-        </div>
-        <div className="flex-row">
+        <div className="flex-row" style={{ marginTop: '1mm', fontSize: '8pt' }}>
           <span>Amount Paid</span>
-          <span>Rs.{order.paymentMethod === 'digital' ? `${order.total}.00` : '0.00'}</span>
-        </div>
-        <div className="flex-row">
-          <span>Balance Due</span>
-          <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
+          <span>Rs.{order.paymentMethod === 'digital' ? `${order.total}` : '0'}</span>
         </div>
         
-        {/* Notes in Thermal Receipt */}
+        {/* Notes in Thermal Receipt (Tighter) */}
         {(order.kitchenInstructions || order.customer.deliveryNotes) && (
           <>
             <div className="separator"></div>
-            <div style={{ textAlign: 'left', fontSize: '10pt' }}>
+            <div style={{ textAlign: 'left', fontSize: '8pt' }}>
               {order.kitchenInstructions && (
-                <div style={{ marginBottom: '2mm' }}>
-                  <div className="bold">KITCHEN NOTE:</div>
-                  <div>{order.kitchenInstructions}</div>
+                <div style={{ marginBottom: '1mm' }}>
+                  <span className="bold">KITCHEN:</span> {order.kitchenInstructions}
                 </div>
               )}
               {order.customer.deliveryNotes && (
                 <div>
-                  <div className="bold">DELIVERY NOTE:</div>
-                  <div>{order.customer.deliveryNotes}</div>
+                  <span className="bold">DELIVERY:</span> {order.customer.deliveryNotes}
                 </div>
               )}
             </div>
@@ -396,16 +386,16 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
         <div className="separator"></div>
 
-        <div style={{ textAlign: 'left' }}>
-          <div className="bold" style={{ marginBottom: '1.5mm' }}>DELIVERY TO:</div>
-          <div className="bold" style={{ fontSize: '11pt' }}>{order.customer.name}</div>
-          <div style={{ fontSize: '10pt' }}>{order.customer.address}</div>
-          <div style={{ fontSize: '10pt' }}>Contact: {order.customer.phone}</div>
+        <div style={{ textAlign: 'left', fontSize: '9pt' }}>
+          <div className="bold">DELIVER TO:</div>
+          <div className="bold">{order.customer.name}</div>
+          <div style={{ fontSize: '8pt' }}>{order.customer.address}</div>
+          <div style={{ fontSize: '8pt' }}>Contact: {order.customer.phone}</div>
         </div>
 
-        <div style={{ marginTop: '10mm' }}>
-          {/* Barcode SVG matching the reference exactly */}
-          <svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+        <div style={{ marginTop: '4mm' }}>
+          {/* Barcode SVG (Smaller height) */}
+          <svg width="100%" height="30" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
             <rect x="0" width="2" height="45" fill="black" />
             <rect x="4" width="1" height="45" fill="black" />
             <rect x="7" width="3" height="45" fill="black" />
@@ -457,8 +447,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             <rect x="191" width="4" height="45" fill="black" />
             <rect x="197" width="3" height="45" fill="black" />
           </svg>
-          <div style={{ fontSize: '8pt', marginTop: '1.5mm', fontStyle: 'italic' }}>https://saadmughal-gravity.vercel.app/</div>
-          <div style={{ fontSize: '9pt', marginTop: '1mm', fontWeight: 'bold' }}>SCAN FOR STUDIO MENU</div>
+          <div style={{ fontSize: '7pt', marginTop: '1mm', fontStyle: 'italic' }}>saadmughal-gravity.vercel.app</div>
           <div className="footer-text">© GRAVITY STUDIO</div>
         </div>
       </div>
