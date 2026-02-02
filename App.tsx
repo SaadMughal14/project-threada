@@ -23,7 +23,8 @@ interface OrderDetails {
   id: string;
   items: CartItem[];
   total: number;
-  customer: { name: string; phone: string; address: string };
+  customer: { name: string; phone: string; address: string; deliveryNotes: string };
+  kitchenInstructions: string;
   paymentMethod: 'cash' | 'digital';
   timestamp: string;
   placedAt: number;
@@ -41,6 +42,7 @@ const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Cookies');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [kitchenNotes, setKitchenNotes] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [activeOrder, setActiveOrder] = useState<OrderDetails | null>(null);
@@ -121,6 +123,7 @@ const App: React.FC = () => {
   const handleOrderComplete = (orderData: OrderDetails) => {
     setActiveOrder(orderData);
     setCart([]);
+    setKitchenNotes('');
     setIsCheckoutOpen(false);
     setShowSuccess(true);
   };
@@ -198,7 +201,7 @@ const App: React.FC = () => {
         cartItems={cart} 
         totalPrice={totalPrice} 
         onOrderSuccess={(orderData) => handleOrderComplete(orderData)} 
-        orderNotes="" 
+        orderNotes={kitchenNotes} 
       />
 
       <OrderSuccessOverlay 
@@ -222,20 +225,33 @@ const App: React.FC = () => {
                  <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
                </div>
              ) : (
-               cart.map((item, idx) => (
-                 <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group">
-                   <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
-                   <div className="flex-1">
-                      <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
-                      <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
+               <div className="space-y-6">
+                 {cart.map((item, idx) => (
+                   <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group">
+                     <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
+                     <div className="flex-1">
+                        <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
+                        <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
+                     </div>
+                     <div className="flex items-center gap-3 text-[#D97B8D] font-black">
+                       <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
+                       <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
+                       <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
+                     </div>
                    </div>
-                   <div className="flex items-center gap-3 text-[#D97B8D] font-black">
-                     <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
-                     <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
-                     <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
-                   </div>
+                 ))}
+                 
+                 {/* Kitchen Instructions in Cart */}
+                 <div className="pt-6 border-t border-white/5 space-y-3">
+                   <p className="text-[7px] font-black uppercase tracking-[0.4em] text-white/40">Kitchen Instructions</p>
+                   <textarea 
+                     value={kitchenNotes}
+                     onChange={(e) => setKitchenNotes(e.target.value)}
+                     placeholder="ANY SPECIAL REQUESTS FOR THE CHEF?"
+                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-black uppercase text-[10px] tracking-widest focus:border-[#D97B8D] transition-colors resize-none h-24"
+                   />
                  </div>
-               ))
+               </div>
              )}
           </div>
           <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">

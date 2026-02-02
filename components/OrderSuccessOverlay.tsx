@@ -246,20 +246,29 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
              </div>
           </div>
 
+          {/* Note Section (Updated to show User Notes) */}
+          <div className="bg-white/40 border border-black/5 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-6">
+             <div className="space-y-2">
+               <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Kitchen Instructions</p>
+               <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
+                 {order.kitchenInstructions || '"No special requests for the chefs."'}
+               </p>
+             </div>
+             
+             <div className="space-y-2">
+               <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Delivery Notes</p>
+               <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
+                 {order.customer.deliveryNotes || '"Gravity is pulling your cookie toward your doorstep."'}
+               </p>
+             </div>
+          </div>
+
           {/* Time Display */}
           <div className="flex flex-col items-start pt-2 px-2">
              <p className="text-[8px] font-black tracking-[0.3em] text-black/40 uppercase mb-1">Status</p>
              <h2 className="font-display text-4xl md:text-7xl font-black text-[#1C1C1C] tracking-tighter leading-none uppercase">
                 - {getETAText()}
              </h2>
-          </div>
-
-          {/* Note Section */}
-          <div className="bg-white/40 border border-black/5 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-2">
-             <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Note</p>
-             <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
-               "Gravity is pulling your cookie toward your doorstep."
-             </p>
           </div>
 
           {/* Action Buttons */}
@@ -345,6 +354,28 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           <span>Balance Due</span>
           <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
         </div>
+        
+        {/* Notes in Thermal Receipt */}
+        {(order.kitchenInstructions || order.customer.deliveryNotes) && (
+          <>
+            <div className="separator"></div>
+            <div style={{ textAlign: 'left', fontSize: '10pt' }}>
+              {order.kitchenInstructions && (
+                <div style={{ marginBottom: '2mm' }}>
+                  <div className="bold">KITCHEN NOTE:</div>
+                  <div>{order.kitchenInstructions}</div>
+                </div>
+              )}
+              {order.customer.deliveryNotes && (
+                <div>
+                  <div className="bold">DELIVERY NOTE:</div>
+                  <div>{order.customer.deliveryNotes}</div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
         <div className="separator"></div>
 
         <div style={{ textAlign: 'left' }}>

@@ -14,7 +14,7 @@ interface CheckoutOverlayProps {
   cartItems: CartItem[];
   totalPrice: number;
   onOrderSuccess: (orderData: any) => void;
-  orderNotes: string;
+  orderNotes: string; // Passed from App.tsx as kitchen instructions
 }
 
 const EasypaisaIcon = () => (
@@ -93,6 +93,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       items: cartItems,
       total: totalPrice,
       customer: formData,
+      kitchenInstructions: orderNotes,
       paymentMethod: paymentMethod,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       placedAt: Date.now()
@@ -108,6 +109,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         color: 14252941, // Brand Pink #D97B8D
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
+          { name: "📝 Instructions", value: `**Kitchen:** ${orderNotes || 'None'}\n**Delivery:** ${formData.deliveryNotes || 'None'}` },
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
           { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
         ],
@@ -157,6 +159,18 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
               <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
               <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              
+              {/* Delivery Notes in Checkout */}
+              <div className="pt-2">
+                <p className="text-[7px] font-black uppercase tracking-[0.4em] text-black/20 mb-2">Delivery Instructions</p>
+                <textarea 
+                  placeholder="GATE CODE, DROP-OFF SPOTS, ETC." 
+                  rows={2} 
+                  className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-sm md:text-base focus:border-[#D97B8D] transition-colors resize-none" 
+                  value={formData.deliveryNotes} 
+                  onChange={e => setFormData({...formData, deliveryNotes: e.target.value})} 
+                />
+              </div>
             </div>
             {step === 'info' && (
               <button 
