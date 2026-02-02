@@ -182,8 +182,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                           {/* House Icon */}
                           <span className="text-8xl md:text-9xl">🏠</span>
                           
-                          {/* Cookie Logo "Inside" the house door area */}
-                          <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-8 h-8 md:w-12 md:h-12 logo-spin-wrapper">
+                          {/* Cookie Logo "Inside" the house area */}
+                          <div className="absolute top-[58%] left-1/2 -translate-x-1/2 w-8 h-8 md:w-12 md:h-12 logo-spin-wrapper">
                             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
                               <circle cx="50" cy="50" r="45" fill="#D97B8D" />
                               <circle cx="35" cy="35" r="5" fill="#4A3728" />
@@ -290,11 +290,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       <div className="thermal-receipt">
         <h1>Receipt</h1>
         
-        {/* Black & White Logo */}
+        {/* Black & White Brand Logo */}
         <div className="logo-bw">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="black" strokeWidth="2" />
-            <circle cx="50" cy="50" r="43" fill="black" />
+            <circle cx="50" cy="50" r="45" fill="black" />
             <circle cx="35" cy="35" r="5" fill="white" />
             <circle cx="65" cy="40" r="6" fill="white" />
             <circle cx="45" cy="65" r="7" fill="white" />
@@ -303,9 +302,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </svg>
         </div>
 
-        <div className="bold" style={{ fontSize: '14pt', letterSpacing: '2px', marginBottom: '1mm' }}>GRAVITY STUDIO</div>
-        <div style={{ fontSize: '9pt' }}>Phase 6, DHA</div>
-        <div style={{ fontSize: '9pt' }}>Tel: (850) GRAVITY-STUDIO</div>
+        <div className="bold" style={{ fontSize: '16pt', letterSpacing: '2px', marginBottom: '1mm' }}>GRAVITY STUDIO</div>
+        <div style={{ fontSize: '10pt' }}>Phase 6, DHA</div>
+        <div style={{ fontSize: '10pt' }}>Tel: (850) GRAVITY-STUDIO</div>
 
         <div className="separator"></div>
         <div className="flex-row">
@@ -317,7 +316,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         {/* Item List */}
         <div style={{ textAlign: 'left', marginBottom: '2mm' }}>
           {order.items.map((item: any) => (
-            <div key={item.id} className="flex-row" style={{ marginBottom: '1mm' }}>
+            <div key={item.id} className="flex-row" style={{ marginBottom: '1.5mm' }}>
               <span>{item.quantity}x {item.name}</span>
               <span>Rs.{parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
             </div>
@@ -325,11 +324,11 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         </div>
 
         <div className="separator"></div>
-        <div className="flex-row bold" style={{ fontSize: '11pt' }}>
+        <div className="flex-row bold" style={{ fontSize: '12pt' }}>
           <span>TOTAL PAID</span>
           <span>Rs.{order.total}.00</span>
         </div>
-        <div className="flex-row" style={{ marginTop: '1mm' }}>
+        <div className="flex-row" style={{ marginTop: '2mm' }}>
           <span>Sub-total</span>
           <span>Rs.{order.total}.00</span>
         </div>
@@ -344,68 +343,69 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         <div className="separator"></div>
 
         <div style={{ textAlign: 'left' }}>
-          <div className="bold" style={{ marginBottom: '1mm' }}>DELIVERY TO:</div>
-          <div className="bold">{order.customer.name}</div>
-          <div>{order.customer.address}</div>
-          <div>Contact: {order.customer.phone}</div>
+          <div className="bold" style={{ marginBottom: '1.5mm' }}>DELIVERY TO:</div>
+          <div className="bold" style={{ fontSize: '11pt' }}>{order.customer.name}</div>
+          <div style={{ fontSize: '10pt' }}>{order.customer.address}</div>
+          <div style={{ fontSize: '10pt' }}>Contact: {order.customer.phone}</div>
         </div>
 
-        <div style={{ marginTop: '8mm' }}>
-          {/* Barcode SVG matching the reference */}
-          <svg width="100%" height="40" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" width="2" height="40" fill="black" />
-            <rect x="4" width="1" height="40" fill="black" />
-            <rect x="7" width="3" height="40" fill="black" />
-            <rect x="12" width="1" height="40" fill="black" />
-            <rect x="15" width="2" height="40" fill="black" />
-            <rect x="20" width="1" height="40" fill="black" />
-            <rect x="23" width="4" height="40" fill="black" />
-            <rect x="29" width="1" height="40" fill="black" />
-            <rect x="32" width="2" height="40" fill="black" />
-            <rect x="36" width="3" height="40" fill="black" />
-            <rect x="41" width="1" height="40" fill="black" />
-            <rect x="44" width="2" height="40" fill="black" />
-            <rect x="48" width="1" height="40" fill="black" />
-            <rect x="51" width="4" height="40" fill="black" />
-            <rect x="57" width="1" height="40" fill="black" />
-            <rect x="60" width="2" height="40" fill="black" />
-            <rect x="64" width="3" height="40" fill="black" />
-            <rect x="69" width="1" height="40" fill="black" />
-            <rect x="72" width="2" height="40" fill="black" />
-            <rect x="76" width="1" height="40" fill="black" />
-            <rect x="79" width="4" height="40" fill="black" />
-            <rect x="85" width="1" height="40" fill="black" />
-            <rect x="88" width="2" height="40" fill="black" />
-            <rect x="92" width="3" height="40" fill="black" />
-            <rect x="97" width="1" height="40" fill="black" />
-            <rect x="100" width="2" height="40" fill="black" />
-            <rect x="104" width="1" height="40" fill="black" />
-            <rect x="107" width="4" height="40" fill="black" />
-            <rect x="113" width="1" height="40" fill="black" />
-            <rect x="116" width="2" height="40" fill="black" />
-            <rect x="120" width="3" height="40" fill="black" />
-            <rect x="125" width="1" height="40" fill="black" />
-            <rect x="128" width="2" height="40" fill="black" />
-            <rect x="132" width="1" height="40" fill="black" />
-            <rect x="135" width="4" height="40" fill="black" />
-            <rect x="141" width="1" height="40" fill="black" />
-            <rect x="144" width="2" height="40" fill="black" />
-            <rect x="148" width="3" height="40" fill="black" />
-            <rect x="153" width="1" height="40" fill="black" />
-            <rect x="156" width="2" height="40" fill="black" />
-            <rect x="160" width="1" height="40" fill="black" />
-            <rect x="163" width="4" height="40" fill="black" />
-            <rect x="169" width="1" height="40" fill="black" />
-            <rect x="172" width="2" height="40" fill="black" />
-            <rect x="176" width="3" height="40" fill="black" />
-            <rect x="181" width="1" height="40" fill="black" />
-            <rect x="184" width="2" height="40" fill="black" />
-            <rect x="188" width="1" height="40" fill="black" />
-            <rect x="191" width="4" height="40" fill="black" />
-            <rect x="197" width="3" height="40" fill="black" />
+        <div style={{ marginTop: '10mm' }}>
+          {/* Barcode SVG matching the reference exactly */}
+          <svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" width="2" height="45" fill="black" />
+            <rect x="4" width="1" height="45" fill="black" />
+            <rect x="7" width="3" height="45" fill="black" />
+            <rect x="12" width="1" height="45" fill="black" />
+            <rect x="15" width="2" height="45" fill="black" />
+            <rect x="20" width="1" height="45" fill="black" />
+            <rect x="23" width="4" height="45" fill="black" />
+            <rect x="29" width="1" height="45" fill="black" />
+            <rect x="32" width="2" height="45" fill="black" />
+            <rect x="36" width="3" height="45" fill="black" />
+            <rect x="41" width="1" height="45" fill="black" />
+            <rect x="44" width="2" height="45" fill="black" />
+            <rect x="48" width="1" height="45" fill="black" />
+            <rect x="51" width="4" height="45" fill="black" />
+            <rect x="57" width="1" height="45" fill="black" />
+            <rect x="60" width="2" height="45" fill="black" />
+            <rect x="64" width="3" height="45" fill="black" />
+            <rect x="69" width="1" height="45" fill="black" />
+            <rect x="72" width="2" height="45" fill="black" />
+            <rect x="76" width="1" height="45" fill="black" />
+            <rect x="79" width="4" height="45" fill="black" />
+            <rect x="85" width="1" height="45" fill="black" />
+            <rect x="88" width="2" height="45" fill="black" />
+            <rect x="92" width="3" height="45" fill="black" />
+            <rect x="97" width="1" height="45" fill="black" />
+            <rect x="100" width="2" height="45" fill="black" />
+            <rect x="104" width="1" height="45" fill="black" />
+            <rect x="107" width="4" height="45" fill="black" />
+            <rect x="113" width="1" height="45" fill="black" />
+            <rect x="116" width="2" height="45" fill="black" />
+            <rect x="120" width="3" height="45" fill="black" />
+            <rect x="125" width="1" height="45" fill="black" />
+            <rect x="128" width="2" height="45" fill="black" />
+            <rect x="132" width="1" height="45" fill="black" />
+            <rect x="135" width="4" height="45" fill="black" />
+            <rect x="141" width="1" height="45" fill="black" />
+            <rect x="144" width="2" height="45" fill="black" />
+            <rect x="148" width="3" height="45" fill="black" />
+            <rect x="153" width="1" height="45" fill="black" />
+            <rect x="156" width="2" height="45" fill="black" />
+            <rect x="160" width="1" height="45" fill="black" />
+            <rect x="163" width="4" height="45" fill="black" />
+            <rect x="169" width="1" height="45" fill="black" />
+            <rect x="172" width="2" height="45" fill="black" />
+            <rect x="176" width="3" height="45" fill="black" />
+            <rect x="181" width="1" height="45" fill="black" />
+            <rect x="184" width="2" height="45" fill="black" />
+            <rect x="188" width="1" height="45" fill="black" />
+            <rect x="191" width="4" height="45" fill="black" />
+            <rect x="197" width="3" height="45" fill="black" />
           </svg>
-          <div style={{ fontSize: '7pt', marginTop: '1mm' }}>SCAN FOR STUDIO MENU</div>
-          <div className="footer-text">© GRAVITY PIZZERIA STUDIO</div>
+          <div style={{ fontSize: '8pt', marginTop: '1.5mm', fontStyle: 'italic' }}>https://saadmughal-gravity.vercel.app/</div>
+          <div style={{ fontSize: '9pt', marginTop: '1mm', fontWeight: 'bold' }}>SCAN FOR STUDIO MENU</div>
+          <div className="footer-text">© GRAVITY STUDIO PIZZERIA</div>
         </div>
       </div>
 
