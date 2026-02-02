@@ -19,20 +19,20 @@ const TickerMarquee: React.FC = () => {
     <div ref={container} className="relative w-full py-8 md:py-12 bg-[#1C1C1C] overflow-hidden whitespace-nowrap border-y border-white/5">
       <div className="marquee-inner flex font-display text-3xl md:text-7xl lg:text-8xl font-black uppercase text-[#FDFCFB] tracking-tighter items-center">
         <div className="flex items-center gap-12 md:gap-24 px-6 md:px-12">
-            <span>FORGED BY HEAT</span>
-            <span className="text-outline-gold opacity-20">GRAVITY</span>
+            <span>BAKED FRESH</span>
+            <span className="text-outline-gold opacity-20">GUSTO</span>
             <span>HAND-CRAFTED</span>
-            <span className="text-[#D4AF37]">DAILY</span>
-            <span>ARTIFACTS</span>
-            <span className="text-outline-gold opacity-20">STUDIO</span>
+            <span className="text-[#D4AF37]">EVERY DAY</span>
+            <span>COOKIES</span>
+            <span className="text-outline-gold opacity-20">BAKERY</span>
         </div>
         <div className="flex items-center gap-12 md:gap-24 px-6 md:px-12">
-            <span>FORGED BY HEAT</span>
-            <span className="text-outline-gold opacity-20">GRAVITY</span>
+            <span>BAKED FRESH</span>
+            <span className="text-outline-gold opacity-20">GUSTO</span>
             <span>HAND-CRAFTED</span>
-            <span className="text-[#D4AF37]">DAILY</span>
-            <span>ARTIFACTS</span>
-            <span className="text-outline-gold opacity-20">STUDIO</span>
+            <span className="text-[#D4AF37]">EVERY DAY</span>
+            <span>COOKIES</span>
+            <span className="text-outline-gold opacity-20">BAKERY</span>
         </div>
       </div>
       <style>{`

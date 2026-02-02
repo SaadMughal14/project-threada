@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from 'react';
 
 const StatusBar: React.FC<{ activeOrder: any | null }> = ({ activeOrder }) => {
-  const [status, setStatus] = useState("Forging Artifacts");
+  const [status, setStatus] = useState("Baking your order");
   const [timeLeft, setTimeLeft] = useState(5); // Minutes
   
   useEffect(() => {
     if (!activeOrder) return;
     
     // Status updates based on the 5-minute lifecycle
-    const timer1 = setTimeout(() => setStatus("Batch Cooling"), 120000); // After Phase 1 (2 mins)
-    const timer2 = setTimeout(() => setStatus("Rider En Route"), 130000); // Start of Phase 2
-    const timer3 = setTimeout(() => setStatus("Delivered"), 300000); // Total 5 mins
+    const timer1 = setTimeout(() => setStatus("Cooling down"), 120000); // After Phase 1 (2 mins)
+    const timer2 = setTimeout(() => setStatus("Out for delivery"), 130000); // Start of Phase 2
+    const timer3 = setTimeout(() => setStatus("Order Delivered"), 300000); // Total 5 mins
 
     // Simple 1-minute interval for ETA update
     const etaInterval = setInterval(() => {
@@ -44,7 +44,7 @@ const StatusBar: React.FC<{ activeOrder: any | null }> = ({ activeOrder }) => {
         </div>
         <div className="hidden sm:block h-4 w-[1px] bg-[#FDFCFB]/10"></div>
         <div className="hidden sm:block">
-           <span className="text-[#D4AF37] font-black uppercase text-[8px] tracking-[0.3em]">Studio LIVE</span>
+           <span className="text-[#D4AF37] font-black uppercase text-[8px] tracking-[0.3em]">LIVE STATUS</span>
         </div>
       </div>
       

@@ -13,6 +13,35 @@ interface CheckoutOverlayProps {
   orderNotes: string;
 }
 
+const EasypaisaIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="6" fill="#1EB055"/>
+    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const JazzCashIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="6" fill="#ED1C24"/>
+    <path d="M12 7V17M12 7L9 10M12 7L15 10M8 17H16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const NayaPayIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="6" fill="#8B2CF5"/>
+    <path d="M12 6L7 11H17L12 6Z" fill="white"/>
+    <path d="M7 13H17L12 18L7 13Z" fill="white"/>
+  </svg>
+);
+
+const BankIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="6" fill="#1C1C1C"/>
+    <path d="M4 20H20M5 10V17M19 10V17M12 10V17M3 10L12 4L21 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess, orderNotes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -25,13 +54,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   const [formData, setFormData] = useState({ name: '', phone: '', address: '', deliveryNotes: '' });
 
   const PROVIDERS = [
-    { id: 'easypaisa', name: 'Easypaisa', icon: '💎', acc: '0321-0000000', title: 'Saad Mughal' },
-    { id: 'jazzcash', name: 'JazzCash', icon: '🔥', acc: '0321-1111111', title: 'Saad Mughal' },
-    { id: 'nayapay', name: 'NayaPay', icon: '🚀', acc: '0321-2222222', title: 'Saad Mughal' },
-    { id: 'bank', name: 'Bank Transfer', icon: '🏦', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
+    { id: 'easypaisa', name: 'Easypaisa', icon: <EasypaisaIcon />, color: '#1EB055', acc: '0321-0000000', title: 'Saad Mughal' },
+    { id: 'jazzcash', name: 'JazzCash', icon: <JazzCashIcon />, color: '#ED1C24', acc: '0321-1111111', title: 'Saad Mughal' },
+    { id: 'nayapay', name: 'NayaPay', icon: <NayaPayIcon />, color: '#8B2CF5', acc: '0321-2222222', title: 'Saad Mughal' },
+    { id: 'bank', name: 'Bank Transfer', icon: <BankIcon />, color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
   ];
 
-  // Updated Webhook URL as per request
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6"; 
 
   useGSAP(() => {
@@ -67,17 +95,17 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
 
     const payload = {
-      content: `### 🚨 NEW ARTIFACT ORDER: #${orderId}`,
+      content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
       embeds: [{
-        title: "🌡️ Studio Ticket - Ready to Forge",
+        title: "🍪 New Order - Ready for Baking",
         description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
         color: 13938487, 
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
-          { name: "🍪 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
-          { name: "💰 Amount & Method", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
+          { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
+          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
         ],
-        footer: { text: "GRAVITY | Sculpted by Heat. Defined by Gravity." },
+        footer: { text: "GUSTO | Fresh from the Oven." },
         timestamp: new Date().toISOString()
       }]
     };
@@ -117,12 +145,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
           {/* STEP 01: INFO */}
           <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'info' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
             <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
-              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Info
+              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Delivery Details
             </h3>
             <div className="grid gap-4 md:gap-6">
               <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
               <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-              <textarea placeholder="ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D4AF37] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
             </div>
             {step === 'info' && (
               <button 
@@ -138,67 +166,72 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
           {/* STEP 02: METHOD */}
           <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'payment' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
             <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
-              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">02</span> Method
+              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">02</span> Payment Method
             </h3>
             
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-black/5 opacity-50'}`}>
-                <span className="text-2xl md:text-3xl">💵</span>
+                <span className="text-3xl md:text-4xl">💵</span>
                 <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Cash on Delivery</span>
               </button>
               <button onClick={() => setPaymentMethod('digital')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-black/5 opacity-50'}`}>
-                <span className="text-2xl md:text-3xl">📱</span>
-                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Digital Transfer</span>
+                <span className="text-3xl md:text-4xl">📱</span>
+                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Bank Transfer</span>
               </button>
             </div>
 
             {paymentMethod === 'digital' && (
               <div className="space-y-6 pt-2 animate-in fade-in slide-in-from-top-4 duration-500">
-                <p className="font-black uppercase text-[9px] tracking-[0.4em] text-black/30 text-center">Select Provider</p>
+                <p className="font-black uppercase text-[9px] tracking-[0.4em] text-black/30 text-center">Choose Your Provider</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                   {PROVIDERS.map(p => (
                     <button 
                       key={p.id}
                       onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
-                      className={`p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-2 transition-all ${selectedProvider === p.id ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-black/5 opacity-60'}`}
+                      className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-black/5 opacity-60'}`}
+                      style={{ borderColor: selectedProvider === p.id ? p.color : undefined }}
                     >
-                      <span className="text-lg md:text-xl">{p.icon}</span>
-                      <span className="font-black uppercase text-[7px] md:text-[8px] tracking-widest text-center leading-tight">{p.name}</span>
+                      <div className={`transition-transform duration-300 ${selectedProvider === p.id ? 'scale-110' : 'group-hover:scale-105'}`}>
+                        {p.icon}
+                      </div>
+                      <span className={`font-black uppercase text-[7px] md:text-[8px] tracking-widest text-center leading-tight transition-colors ${selectedProvider === p.id ? 'text-[#1C1C1C]' : 'text-black/40'}`}>
+                        {p.name}
+                      </span>
                     </button>
                   ))}
                 </div>
 
                 {selectedProvider && (
-                  <div className="bg-black text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D4AF37]/20">
+                  <div className="bg-[#1C1C1C] text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D4AF37]/20">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account Title</p>
+                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account Holder</p>
                         <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</p>
                       </div>
                       <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account No.</p>
-                        <div className="flex justify-between items-center">
+                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D4AF37] mb-1">Account Number</p>
+                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10">
                           <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</p>
-                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] text-[#D4AF37] border border-[#D4AF37]/30 px-2 py-1 rounded">COPY</button>
+                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] font-black text-[#D4AF37] border border-[#D4AF37]/30 px-3 py-1.5 rounded uppercase hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all">COPY</button>
                         </div>
                       </div>
                     </div>
 
                     <div className="pt-4 border-t border-white/10">
-                      <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Attach transaction screenshot below</p>
+                      <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
                       <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className={`w-full py-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-3 transition-all ${screenshot ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-white/10 hover:border-white/30'}`}
+                        className={`w-full py-5 border-2 border-dashed rounded-xl flex items-center justify-center gap-3 transition-all ${screenshot ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-white/10 hover:border-white/30'}`}
                       >
                         {screenshot ? (
                           <div className="flex items-center gap-3">
                             <span className="text-lg">✅</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-[#D4AF37]">Proof Added</span>
+                            <span className="font-black uppercase text-[9px] tracking-widest text-[#D4AF37]">Receipt Attached</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
                             <span className="text-lg">📸</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest">Attach Receipt</span>
+                            <span className="font-black uppercase text-[9px] tracking-widest text-white/60">Upload Receipt</span>
                           </div>
                         )}
                       </button>
@@ -211,13 +244,13 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
             {step === 'payment' && (
               <div className="flex flex-col sm:flex-row gap-3 pt-6">
-                <button onClick={() => setStep('info')} className="flex-1 border-2 border-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest active:bg-black/5 transition-colors">Back</button>
+                <button onClick={() => setStep('info')} className="flex-1 border-2 border-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest active:bg-black/5 transition-colors">Go Back</button>
                 <button 
                   onClick={submitOrder} 
                   disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))} 
                   className="flex-[2] bg-[#D4AF37] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
                 >
-                  {isSubmitting ? 'Forging Order...' : 'Place My Order'}
+                  {isSubmitting ? 'Processing...' : 'Finish Order'}
                 </button>
               </div>
             )}
@@ -227,12 +260,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
       <div className="p-6 md:px-12 md:py-8 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0 z-30 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
         <div>
-          <p className="font-black uppercase text-[7px] md:text-[8px] tracking-[0.6em] text-black/30 mb-1">Total Amount</p>
+          <p className="font-black uppercase text-[7px] md:text-[8px] tracking-[0.6em] text-black/30 mb-1">Total to Pay</p>
           <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D4AF37] leading-none">Rs. {totalPrice}</p>
         </div>
         <div className="text-right hidden sm:block">
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">STUDIO</p>
+          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GUSTO</p>
+          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">BAKERY</p>
         </div>
       </div>
 

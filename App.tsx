@@ -145,7 +145,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CookieLogo />
           <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase transition-colors">
-            <span className={scrolled ? "text-[#1C1C1C]" : "text-[#FDFCFB]"}>GRAV</span><span className="text-[#D4AF37]">ITY</span>
+            <span className={scrolled ? "text-[#1C1C1C]" : "text-[#FDFCFB]"}>GUS</span><span className="text-[#D4AF37]">TO</span>
           </span>
         </div>
         <button 
@@ -156,7 +156,7 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* Ultra Thinner Slider Bar */}
+      {/* Category Nav */}
       <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB] translate-y-0' : '-translate-y-full opacity-0 pointer-events-none'}`}>
         <div 
           ref={categoryNavRef}
@@ -200,7 +200,7 @@ const App: React.FC = () => {
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
         <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform transition-transform duration-700 ease-expo-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
           <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
-            <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">Cart Details</h2>
+            <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
             <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D4AF37] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
           </div>
           <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6">
@@ -225,7 +225,7 @@ const App: React.FC = () => {
           </div>
           <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">
              <div className="flex justify-between items-end text-white/40 font-black uppercase text-[10px] tracking-[0.5em]">
-               <span>Total Price</span>
+               <span>Total</span>
                <span className="text-2xl text-[#D4AF37] tracking-tighter font-display leading-none">Rs. {totalPrice}</span>
              </div>
              <button disabled={cart.length === 0} onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} className="w-full bg-[#D4AF37] text-[#1C1C1C] py-4 rounded-xl font-black uppercase text-[11px] tracking-[0.4em] shadow-xl disabled:opacity-20 active:scale-95 transition-all">Checkout</button>
@@ -240,7 +240,7 @@ const App: React.FC = () => {
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none"></div>
            <div className="px-6 md:px-12">
              <h2 className="font-display text-[7vw] md:text-[4vw] text-white uppercase font-black tracking-tighter leading-none relative z-10">
-                SCULPTED BY HEAT.<br/><span className="text-[#D4AF37]">DEFINED BY GRAVITY.</span>
+                FRESH COOKIES.<br/><span className="text-[#D4AF37]">BAKED DAILY.</span>
              </h2>
            </div>
         </section>
@@ -259,25 +259,25 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto flex flex-col gap-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-24">
               <div className="space-y-4">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Coordinates</p>
+                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Location</p>
                 <p className="font-black text-base lg:text-xl leading-tight opacity-90">Phase 6, DHA,<br/>Karachi, Pakistan</p>
               </div>
               <div className="space-y-4">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Connect</p>
+                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Socials</p>
                 <div className="flex flex-col gap-2 font-black text-base md:text-lg">
                   <a href="#" className="hover:text-[#D4AF37] transition-all underline underline-offset-4 decoration-[#D4AF37]/20">Instagram</a>
                   <a href="#" className="hover:text-[#D4AF37] transition-all underline underline-offset-4 decoration-[#D4AF37]/20">Facebook</a>
                 </div>
               </div>
               <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Studio</p>
+                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Bakery</p>
                 <p className="text-[12px] font-bold opacity-30 leading-relaxed max-w-xs italic">
-                  "Every batch is a sculpture. Every selection is an event. Perfected by time."
+                  "Every batch is handmade. Every cookie is baked fresh for you."
                 </p>
               </div>
             </div>
             <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5 text-[7px] uppercase font-black tracking-[0.6em]">
-              <p className="opacity-15">©2025 GRAVITY STUDIO</p>
+              <p className="opacity-15">©2025 GUSTO BAKERY</p>
               <a href="https://saad-mughal-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-black border border-[#D4AF37]/30 px-6 py-2.5 rounded-full text-[#D4AF37] text-[7px] font-black uppercase tracking-[0.2em] hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all">
                  Curated by Saad
               </a>
