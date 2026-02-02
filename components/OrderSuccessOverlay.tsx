@@ -405,7 +405,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </svg>
           <div style={{ fontSize: '8pt', marginTop: '1.5mm', fontStyle: 'italic' }}>https://saadmughal-gravity.vercel.app/</div>
           <div style={{ fontSize: '9pt', marginTop: '1mm', fontWeight: 'bold' }}>SCAN FOR STUDIO MENU</div>
-          <div className="footer-text">© GRAVITY STUDIO PIZZERIA</div>
+          <div className="footer-text">© GRAVITY STUDIO</div>
         </div>
       </div>
 
