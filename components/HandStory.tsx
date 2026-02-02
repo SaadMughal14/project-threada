@@ -7,7 +7,6 @@ const HandStory: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
   const handRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
-  const noticeRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     // Entrance Timeline
@@ -31,13 +30,7 @@ const HandStory: React.FC = () => {
         opacity: 0,
         y: 40,
         ease: "expo.out"
-    }, "-=0.6")
-    .from(noticeRef.current, {
-        y: 150,
-        rotation: 15,
-        opacity: 0,
-        ease: "back.out(1.2)"
-    }, "-=0.5");
+    }, "-=0.6");
 
     // Exit Animation
     gsap.to(handRef.current, {
@@ -70,7 +63,7 @@ const HandStory: React.FC = () => {
             {/* Artifact Wrapper */}
             <div ref={handRef} className="z-20 relative flex justify-center w-full mb-12 md:mb-20">
                 <div className="relative group">
-                     {/* Main Cookie Bowl Image - Updated to user provided URL */}
+                     {/* Main Cookie Bowl Image */}
                      <div className="w-56 h-72 md:w-80 md:h-[420px] bg-[#1C1C1C] rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.3)] overflow-hidden border border-white/10 -rotate-2 group-hover:rotate-0 transition-transform duration-1000">
                         <img 
                             src="https://i.imgur.com/ggie0fy.jpeg" 
@@ -79,19 +72,6 @@ const HandStory: React.FC = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                      </div>
-                </div>
-
-                {/* Cupcake Notice on a Pin Stick */}
-                <div ref={noticeRef} className="absolute -right-2 md:right-[5%] top-[10%] md:top-[15%] flex flex-col items-center z-30">
-                    <div className="w-28 h-28 md:w-48 md:h-48 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-2xl md:rounded-[2.5rem] p-1.5 md:p-2.5 border border-black/5 rotate-[8deg]">
-                        <img 
-                            src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop" 
-                            className="w-full h-full object-cover rounded-xl md:rounded-[2rem]" 
-                            alt="Speciality" 
-                        />
-                    </div>
-                    {/* The Pin Stick */}
-                    <div className="w-[1px] h-40 md:h-80 bg-black/10 -mt-1 origin-top"></div>
                 </div>
             </div>
 
