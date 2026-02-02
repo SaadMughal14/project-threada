@@ -88,21 +88,38 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   const submitOrder = async () => {
     setIsSubmitting(true);
     const orderId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const orderData = {
+    const placedAt = Date.now();
+    const orderTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Full order data for app state
+    const orderData: any = {
       id: orderId,
       items: cartItems,
       total: totalPrice,
       customer: formData,
       kitchenInstructions: orderNotes,
       paymentMethod: paymentMethod,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      placedAt: Date.now()
+      timestamp: orderTimestamp,
+      placedAt: placedAt
+    };
+
+    // Slimmed data for URL (further reduced to save space)
+    const slimOrder = {
+      id: orderId,
+      items: cartItems.map(i => ({ id: i.id, q: i.quantity, s: i.selectedSize.name })),
+      p: totalPrice,
+      c: { n: formData.name, p: formData.phone, a: formData.address, d: formData.deliveryNotes },
+      kn: orderNotes,
+      pm: paymentMethod,
+      t: orderTimestamp,
+      at: placedAt
     };
 
     const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
 
-    // Generate a link for the kitchen staff to print directly from Discord
-    const encodedOrder = encodeURIComponent(btoa(JSON.stringify(orderData)));
+    // Safe base64 encoding for URL link
+    const slimJson = JSON.stringify(slimOrder);
+    const encodedOrder = encodeURIComponent(btoa(unescape(encodeURIComponent(slimJson))));
     const kitchenPrintLink = `${window.location.origin}${window.location.pathname}?receipt=${encodedOrder}&autoPrint=1`;
 
     const payload = {
@@ -110,14 +127,14 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       embeds: [{
         title: "👨‍🍳 New Order - Kitchen Copy",
         description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
-        color: 14252941, // Brand Pink #D97B8D
+        color: 14252941,
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
           { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${orderNotes || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
           { name: "🛵 Delivery Instructions", value: `\`\`\`\n${formData.deliveryNotes || 'STANDARD DELIVERY'}\n\`\`\`` },
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
-          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true },
-          { name: "🖨️ Kitchen Tools", value: `[CLICK TO PRINT RECEIPT](${kitchenPrintLink})` }
+          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
+          { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
         ],
         footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
         timestamp: new Date().toISOString()
@@ -125,13 +142,20 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     };
 
     try {
-      await fetch(DISCORD_WEBHOOK, { 
+      const response = await fetch(DISCORD_WEBHOOK, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify(payload) 
       });
+      
+      if (!response.ok) {
+        console.error("Discord error:", await response.text());
+        throw new Error('Discord response not ok');
+      }
       onOrderSuccess(orderData);
     } catch (e) {
+      console.error("Order submission failed:", e);
+      // Still show success to user so they don't get stuck, even if Discord fails
       onOrderSuccess(orderData);
     } finally {
       setIsSubmitting(false);
@@ -166,7 +190,6 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
               <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
               
-              {/* Delivery Notes in Checkout */}
               <div className="pt-2">
                 <p className="text-[7px] font-black uppercase tracking-[0.4em] text-black/20 mb-2">Delivery Instructions</p>
                 <textarea 

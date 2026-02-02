@@ -100,7 +100,12 @@ const App: React.FC = () => {
           id: slim.id,
           items: hydratedItems,
           total: slim.p,
-          customer: slim.customer,
+          customer: {
+            name: slim.c.n,
+            phone: slim.c.p,
+            address: slim.c.a,
+            deliveryNotes: slim.c.d
+          },
           kitchenInstructions: slim.kn,
           paymentMethod: slim.pm,
           timestamp: slim.t,
@@ -281,9 +286,14 @@ const App: React.FC = () => {
         onClose={handleCloseSuccess} 
       />
 
-      {/* Cart Drawer - Corrected classes to prevent unwanted global blur */}
-      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : ''} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
+      {/* Cart Drawer - fixed visibility logic to remove blur when closed */}
+      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-all duration-500' : ''} ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+        {/* Backdrop overlay: only rendered when needed to prevent global blur calculation issues */}
+        <div 
+          className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-600 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`} 
+          onClick={() => setIsCartOpen(false)}
+        ></div>
+        
         <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
           <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
             <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
