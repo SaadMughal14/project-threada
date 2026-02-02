@@ -9,12 +9,22 @@ import TickerMarquee from './components/TickerMarquee';
 import HandStory from './components/HandStory';
 import GustoRotator from './components/GustoRotator';
 import CheckoutOverlay from './components/CheckoutOverlay';
+import OrderSuccessOverlay from './components/OrderSuccessOverlay';
+import StatusBar from './components/StatusBar';
 import { PIZZAS, PizzaProductExtended } from './constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface CartItem extends PizzaProductExtended {
   quantity: number;
+}
+
+interface OrderDetails {
+  id: string;
+  items: CartItem[];
+  total: number;
+  customer: { name: string; phone: string; address: string };
+  timestamp: string;
 }
 
 const CATEGORIES = [
@@ -31,6 +41,8 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [activeOrder, setActiveOrder] = useState<OrderDetails | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   
   const categoryNavRef = useRef<HTMLDivElement>(null);
@@ -62,7 +74,6 @@ const App: React.FC = () => {
     return () => { lenis.destroy(); };
   }, []);
 
-  // Auto-scroll mobile navbar to active category
   useEffect(() => {
     const activeBtn = categoryRefs.current[activeCategory];
     const nav = categoryNavRef.current;
@@ -70,12 +81,8 @@ const App: React.FC = () => {
       const navWidth = nav.offsetWidth;
       const btnLeft = activeBtn.offsetLeft;
       const btnWidth = activeBtn.offsetWidth;
-      
       const scrollPos = btnLeft - (navWidth / 2) + (btnWidth / 2);
-      nav.scrollTo({
-        left: scrollPos,
-        behavior: 'smooth'
-      });
+      nav.scrollTo({ left: scrollPos, behavior: 'smooth' });
     }
   }, [activeCategory]);
 
@@ -99,10 +106,17 @@ const App: React.FC = () => {
     setCart(prev => prev.map(item => item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item).filter(item => item.quantity > 0));
   };
 
+  const handleOrderComplete = (orderData: OrderDetails) => {
+    setActiveOrder(orderData);
+    setCart([]);
+    setIsCheckoutOpen(false);
+    setShowSuccess(true);
+  };
+
   const scrollToCategory = (cat: string) => {
     const el = document.getElementById(`category-${cat.toLowerCase().replace(/\s/g, '-')}`);
     if (el) {
-      const offset = window.innerWidth < 768 ? 80 : 100;
+      const offset = window.innerWidth < 768 ? 120 : 140;
       window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
     }
   };
@@ -124,8 +138,10 @@ const App: React.FC = () => {
 
   return (
     <div className="relative w-full min-h-screen">
+      <StatusBar activeOrder={activeOrder} />
+      
       {/* Header */}
-      <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 py-2 flex justify-between items-center ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5' : 'bg-transparent'}`}>
+      <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 py-2 flex justify-between items-center ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CookieLogo />
           <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase transition-colors">
@@ -141,7 +157,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Ultra Thinner Slider Bar */}
-      <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${scrolled ? 'bg-[#FDFCFB] translate-y-0' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+      <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB] translate-y-0' : '-translate-y-full opacity-0 pointer-events-none'}`}>
         <div 
           ref={categoryNavRef}
           className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
@@ -164,7 +180,20 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      <CheckoutOverlay isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} cartItems={cart} totalPrice={totalPrice} onOrderSuccess={() => {setCart([]); setIsCheckoutOpen(false);}} orderNotes="" />
+      <CheckoutOverlay 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)} 
+        cartItems={cart} 
+        totalPrice={totalPrice} 
+        onOrderSuccess={(orderData) => handleOrderComplete(orderData)} 
+        orderNotes="" 
+      />
+
+      <OrderSuccessOverlay 
+        isOpen={showSuccess} 
+        order={activeOrder} 
+        onClose={() => setShowSuccess(false)} 
+      />
 
       {/* Cart Drawer */}
       <div className={`fixed inset-0 z-[200] transition-opacity duration-600 ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>

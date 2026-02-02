@@ -9,7 +9,7 @@ interface CheckoutOverlayProps {
   onClose: () => void;
   cartItems: (PizzaProductExtended & { quantity: number })[];
   totalPrice: number;
-  onOrderSuccess: (customerData?: any) => void;
+  onOrderSuccess: (orderData: any) => void;
   orderNotes: string;
 }
 
@@ -19,12 +19,6 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'digital'>('cash');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', address: '', deliveryNotes: '' });
-
-  const WALLET_IDS = {
-    venmo: '@GravityStudio',
-    cashapp: '$GravityTally',
-    zelle: 'pay@gravitystudio.com'
-  };
 
   const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1465951576081563680/N5bnKcJ48EphqBNunpNHLMrsoWhS-XqYXxP65v5ee98N2wSf0WhS-XqYXxP65v5ee98N2wSf0WuH40rgghusrtOYO3e9"; 
 
@@ -39,6 +33,14 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   const submitOrder = async () => {
     setIsSubmitting(true);
     const orderId = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const orderData = {
+      id: orderId,
+      items: cartItems,
+      total: totalPrice,
+      customer: formData,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
     const payload = {
       content: `### 🚨 NEW ORDER: #${orderId}`,
       embeds: [{
@@ -57,9 +59,9 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
     try {
       await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      onOrderSuccess();
+      onOrderSuccess(orderData);
     } catch (e) {
-      onOrderSuccess();
+      onOrderSuccess(orderData);
     } finally {
       setIsSubmitting(false);
     }
