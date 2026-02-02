@@ -48,7 +48,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
           { name: "🍪 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name}`).join('\n') },
-          { name: "💰 Amount & Method", value: `**Total:** $${totalPrice}\n**Method:** ${paymentMethod.toUpperCase()}`, inline: true }
+          { name: "💰 Amount & Method", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod.toUpperCase()}`, inline: true }
         ],
         footer: { text: "GRAVITY | Sculpted by Heat. Defined by Gravity." },
         timestamp: new Date().toISOString()
@@ -107,7 +107,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       <div className="p-8 md:px-12 md:py-10 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0">
         <div>
           <p className="font-black uppercase text-[8px] tracking-[0.6em] text-black/30 mb-1">Total Amount</p>
-          <p className="font-display text-4xl md:text-6xl font-black tracking-tighter text-[#D4AF37] leading-none">${totalPrice}</p>
+          <p className="font-display text-4xl md:text-6xl font-black tracking-tighter text-[#D4AF37] leading-none">Rs. {totalPrice}</p>
         </div>
         <div className="text-right">
           <p className="font-black uppercase text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>

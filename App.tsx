@@ -18,11 +18,11 @@ interface CartItem extends PizzaProductExtended {
 }
 
 const CATEGORIES = [
-  { name: 'Cookies', icon: '🍪' },
-  { name: 'Brownies', icon: '🍫' },
-  { name: 'Cakes', icon: '🍰' },
-  { name: 'Coffee & Tea', icon: '☕' },
-  { name: 'Sides', icon: '🧂' }
+  { name: 'Cookies', icon: '🍪', type: 'emoji' },
+  { name: 'Brownies', icon: 'https://i.imgur.com/n39ZKfy.png', type: 'image' },
+  { name: 'Cakes', icon: '🍰', type: 'emoji' },
+  { name: 'Coffee & Tea', icon: '☕', type: 'emoji' },
+  { name: 'Sides', icon: 'https://i.imgur.com/5weD7SB.png', type: 'image' }
 ] as const;
 
 const App: React.FC = () => {
@@ -80,7 +80,10 @@ const App: React.FC = () => {
   }, [activeCategory]);
 
   useEffect(() => {
-    setTotalPrice(cart.reduce((acc, item) => acc + (parseInt(item.price.replace('$', '')) * item.quantity), 0));
+    setTotalPrice(cart.reduce((acc, item) => {
+      const numericPrice = parseInt(item.price.replace(/[^\d]/g, ''));
+      return acc + (numericPrice * item.quantity);
+    }, 0));
   }, [cart]);
 
   const addToCart = (pizza: PizzaProductExtended) => {
@@ -150,7 +153,11 @@ const App: React.FC = () => {
                onClick={() => scrollToCategory(cat.name)}
                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black uppercase text-[8px] md:text-[10px] tracking-widest transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeCategory === cat.name ? 'bg-[#1C1C1C] text-[#D4AF37] shadow-sm scale-105' : 'text-[#1C1C1C]/40 hover:text-[#1C1C1C] hover:bg-black/5'}`}
              >
-               <span className="text-sm md:text-base">{cat.icon}</span>
+               {cat.type === 'image' ? (
+                 <img src={cat.icon} alt={cat.name} className="w-4 h-4 md:w-6 md:h-6 object-contain" />
+               ) : (
+                 <span className="text-sm md:text-base">{cat.icon}</span>
+               )}
                {cat.name}
              </button>
            ))}
@@ -190,7 +197,7 @@ const App: React.FC = () => {
           <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">
              <div className="flex justify-between items-end text-white/40 font-black uppercase text-[10px] tracking-[0.5em]">
                <span>Total Price</span>
-               <span className="text-3xl text-[#D4AF37] tracking-tighter font-display leading-none">${totalPrice}</span>
+               <span className="text-2xl text-[#D4AF37] tracking-tighter font-display leading-none">Rs. {totalPrice}</span>
              </div>
              <button disabled={cart.length === 0} onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} className="w-full bg-[#D4AF37] text-[#1C1C1C] py-4 rounded-xl font-black uppercase text-[11px] tracking-[0.4em] shadow-xl disabled:opacity-20 active:scale-95 transition-all">Checkout</button>
           </div>
@@ -224,7 +231,7 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-24">
               <div className="space-y-4">
                 <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Coordinates</p>
-                <p className="font-black text-base lg:text-xl leading-tight opacity-90">102 S Bronough St,<br/>Tallahassee, FL 32301</p>
+                <p className="font-black text-base lg:text-xl leading-tight opacity-90">Phase 6, DHA,<br/>Karachi, Pakistan</p>
               </div>
               <div className="space-y-4">
                 <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D4AF37]">Connect</p>
@@ -245,7 +252,7 @@ const App: React.FC = () => {
               <a href="https://saad-mughal-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-black border border-[#D4AF37]/30 px-6 py-2.5 rounded-full text-[#D4AF37] text-[7px] font-black uppercase tracking-[0.2em] hover:bg-[#D4AF37] hover:text-[#1C1C1C] transition-all">
                  Curated by Saad
               </a>
-              <p className="opacity-15">Tallahassee, FL</p>
+              <p className="opacity-15">Karachi, PK</p>
             </div>
           </div>
         </footer>
