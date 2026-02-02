@@ -104,16 +104,17 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const payload = {
       content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
       embeds: [{
-        title: "🍪 New Order - Ready for Baking",
+        title: "👨‍🍳 New Order - Kitchen Copy",
         description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
         color: 14252941, // Brand Pink #D97B8D
         fields: [
           { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
-          { name: "📝 Instructions", value: `**Kitchen:** ${orderNotes || 'None'}\n**Delivery:** ${formData.deliveryNotes || 'None'}` },
+          { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${orderNotes || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
+          { name: "🛵 Delivery Instructions", value: `\`\`\`\n${formData.deliveryNotes || 'STANDARD DELIVERY'}\n\`\`\`` },
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
           { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
         ],
-        footer: { text: "GRAVITY | Sculpted by Heat." },
+        footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
         timestamp: new Date().toISOString()
       }]
     };
@@ -241,17 +242,23 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                       <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
                       <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className={`w-full py-5 border-2 border-dashed rounded-xl flex items-center justify-center gap-3 transition-all ${screenshot ? 'border-[#D97B8D] bg-[#F2DCE0]/20' : 'border-white/10 hover:border-white/30'}`}
+                        className={`w-full py-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-4 transition-all overflow-hidden ${screenshot ? 'border-[#D97B8D] bg-[#D97B8D]/10' : 'border-white/10 hover:border-white/30'}`}
                       >
                         {screenshot ? (
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">✅</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-[#D97B8D]">Receipt Attached</span>
+                          <div className="flex items-center gap-4 w-full px-4 animate-in fade-in zoom-in-95 duration-300">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-[#D97B8D] flex-shrink-0 bg-white">
+                              <img src={screenshot} alt="Receipt Preview" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex flex-col items-start overflow-hidden">
+                              <span className="font-black uppercase text-[10px] tracking-widest text-[#D97B8D] whitespace-nowrap">Receipt Attached!</span>
+                              <span className="text-[7px] uppercase tracking-widest text-white/40 truncate w-full">Tap to replace file</span>
+                            </div>
+                            <div className="ml-auto w-8 h-8 bg-[#D97B8D] rounded-full flex items-center justify-center text-white text-[12px] font-bold">✓</div>
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
                             <span className="text-lg">📸</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-white/60">Upload Receipt</span>
+                            <span className="font-black uppercase text-[9px] tracking-widest text-white/60">Upload Payment Proof</span>
                           </div>
                         )}
                       </button>
