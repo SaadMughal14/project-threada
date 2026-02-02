@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GRAVITY | Sculpted by Heat</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1C1C1C">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Detailed Cookie SVG Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .fan { transform-origin: center; animation: spin 20s linear infinite; }</style><g class='fan'><circle cx='50' cy='50' r='45' fill='%23D4AF37'/><circle cx='30' cy='30' r='6' fill='%234A3728'/><circle cx='70' cy='35' r='7' fill='%234A3728'/><circle cx='45' cy='70' r='8' fill='%234A3728'/><circle cx='75' cy='75' r='5' fill='%234A3728'/><circle cx='20' cy='60' r='4' fill='%234A3728'/></g></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Fraunces:ital,opsz,wght@1,9..144,900&family=Satoshi:wght@400;700;900&family=Courier+Prime&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --burnt-sienna: #D4AF37; 
+            --deep-basil: #1C1C1C;    
+            --cream-vanilla: #FDFCFB; 
+        }
+        * { 
+            box-sizing: border-box; 
+            outline: none !important; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background-color: var(--cream-vanilla);
+            color: var(--deep-basil);
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-display { font-family: 'Syne', sans-serif; }
+        
+        ::-webkit-scrollbar { display: none; }
+        
+        .grain::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Fixed Centered Logo Animation */
+        @keyframes spin-360 {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .logo-spin-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin-360 10s linear infinite;
+        }
+
+        /* Updated clamp to ensure "GRAVITY" fits mobile width perfectly */
+        .text-hero { 
+            font-size: clamp(1.8rem, 10.5vw, 12rem); 
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+            text-align: center;
+            width: 100%;
+            display: block;
+            white-space: nowrap;
+        }
+
+        /* Category Scrollbar */
+        .category-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .thermal-receipt { display: none; }
+
+        @media print {
+          @page { size: 80mm auto; margin: 0; }
+          html, body { background: white !important; width: 80mm !important; margin: 0 !important; padding: 0 !important; }
+          #root > div > *:not(#order-success-overlay) { display: none !important; }
+          header, main, footer, .no-print { display: none !important; }
+          #order-success-overlay { display: block !important; position: static !important; width: 80mm !important; visibility: visible !important; }
+          .thermal-receipt, .thermal-receipt * { display: block !important; visibility: visible !important; color: black !important; }
+          .thermal-receipt { width: 80mm !important; padding: 6mm 4mm !important; font-family: 'Courier Prime', monospace !important; text-align: center; background: white !important; }
+        }
+        
+        .ease-expo-out { transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1); }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "gsap/": "https://esm.sh/gsap@^3.14.2/",
+    "gsap": "https://esm.sh/gsap@^3.14.2",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "@gsap/react": "https://esm.sh/@gsap/react@^2.1.2",
+    "lenis": "https://esm.sh/lenis@^1.3.17"
+  }
+}
+</script>
+</head>
+<body class="grain">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
