@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
+import ReactDOM from 'react-dom';
 
 interface SuccessProps {
   isOpen: boolean;
@@ -89,7 +90,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       updateProgress();
       interval = window.setInterval(updateProgress, 500);
 
-      // AUTOMATIC PRINT TRIGGER: Only for kitchen staff clicking a Discord link
       const params = new URLSearchParams(window.location.search);
       const shouldAutoPrint = params.get('autoPrint') === '1';
       
@@ -144,13 +144,162 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const currentDate = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' });
   const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
+  // Use a portal to render the thermal receipt separately to avoid CSS nesting issues during print
+  const ThermalReceiptPortal = () => {
+    return ReactDOM.createPortal(
+      <div className="thermal-receipt">
+        <h1>Receipt</h1>
+        
+        <div className="logo-bw">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="black" />
+            <circle cx="35" cy="35" r="5" fill="white" />
+            <circle cx="65" cy="40" r="6" fill="white" />
+            <circle cx="45" cy="65" r="7" fill="white" />
+            <circle cx="70" cy="70" r="4" fill="white" />
+            <circle cx="25" cy="60" r="4" fill="white" />
+          </svg>
+        </div>
+
+        <div className="bold" style={{ fontSize: '16pt', letterSpacing: '2px', marginBottom: '1mm' }}>GRAVITY STUDIO</div>
+        <div style={{ fontSize: '10pt' }}>Phase 6, DHA, Karachi</div>
+        <div style={{ fontSize: '10pt' }}>Tel: (850) GRAVITY-STUDIO</div>
+
+        <div className="separator"></div>
+        <div className="flex-row">
+          <span>Date: {currentDate}</span>
+          <span>{currentTime}</span>
+        </div>
+        <div className="separator"></div>
+
+        <div style={{ textAlign: 'left', marginBottom: '2mm' }}>
+          {order.items.map((item: any, idx: number) => (
+            <div key={`${item.id}-${idx}`} className="flex-row" style={{ marginBottom: '1.5mm' }}>
+              <span>{item.quantity}x {item.name} ({item.selectedSize.name})</span>
+              <span>Rs.{parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}.00</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="separator"></div>
+        <div className="flex-row bold" style={{ fontSize: '12pt' }}>
+          <span>{order.paymentMethod === 'digital' ? 'TOTAL PAID' : 'TOTAL DUE'}</span>
+          <span>Rs.{order.total}.00</span>
+        </div>
+        <div className="flex-row" style={{ marginTop: '2mm' }}>
+          <span>Sub-total</span>
+          <span>Rs.{order.total}.00</span>
+        </div>
+        <div className="flex-row">
+          <span>Amount Paid</span>
+          <span>Rs.{order.paymentMethod === 'digital' ? `${order.total}.00` : '0.00'}</span>
+        </div>
+        <div className="flex-row">
+          <span>Balance Due</span>
+          <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
+        </div>
+        
+        {(order.kitchenInstructions || order.customer.deliveryNotes) && (
+          <>
+            <div className="separator"></div>
+            <div style={{ textAlign: 'left', fontSize: '10pt' }}>
+              {order.kitchenInstructions && (
+                <div style={{ marginBottom: '2mm' }}>
+                  <div className="bold">KITCHEN NOTE:</div>
+                  <div>{order.kitchenInstructions}</div>
+                </div>
+              )}
+              {order.customer.deliveryNotes && (
+                <div>
+                  <div className="bold">DELIVERY NOTE:</div>
+                  <div>{order.customer.deliveryNotes}</div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        <div className="separator"></div>
+
+        <div style={{ textAlign: 'left' }}>
+          <div className="bold" style={{ marginBottom: '1.5mm' }}>DELIVER TO:</div>
+          <div className="bold" style={{ fontSize: '11pt' }}>{order.customer.name}</div>
+          <div style={{ fontSize: '10pt' }}>{order.customer.address}</div>
+          <div style={{ fontSize: '10pt' }}>Contact: {order.customer.phone}</div>
+        </div>
+
+        <div style={{ marginTop: '10mm' }}>
+          <svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" width="2" height="45" fill="black" />
+            <rect x="4" width="1" height="45" fill="black" />
+            <rect x="7" width="3" height="45" fill="black" />
+            <rect x="12" width="1" height="45" fill="black" />
+            <rect x="15" width="2" height="45" fill="black" />
+            <rect x="20" width="1" height="45" fill="black" />
+            <rect x="23" width="4" height="45" fill="black" />
+            <rect x="29" width="1" height="45" fill="black" />
+            <rect x="32" width="2" height="45" fill="black" />
+            <rect x="36" width="3" height="45" fill="black" />
+            <rect x="41" width="1" height="45" fill="black" />
+            <rect x="44" width="2" height="45" fill="black" />
+            <rect x="48" width="1" height="45" fill="black" />
+            <rect x="51" width="4" height="45" fill="black" />
+            <rect x="57" width="1" height="45" fill="black" />
+            <rect x="60" width="2" height="45" fill="black" />
+            <rect x="64" width="3" height="45" fill="black" />
+            <rect x="69" width="1" height="45" fill="black" />
+            <rect x="72" width="2" height="45" fill="black" />
+            <rect x="76" width="1" height="45" fill="black" />
+            <rect x="79" width="4" height="45" fill="black" />
+            <rect x="85" width="1" height="45" fill="black" />
+            <rect x="88" width="2" height="45" fill="black" />
+            <rect x="92" width="3" height="45" fill="black" />
+            <rect x="97" width="1" height="45" fill="black" />
+            <rect x="100" width="2" height="45" fill="black" />
+            <rect x="104" width="1" height="45" fill="black" />
+            <rect x="107" width="4" height="45" fill="black" />
+            <rect x="113" width="1" height="45" fill="black" />
+            <rect x="116" width="2" height="45" fill="black" />
+            <rect x="120" width="3" height="45" fill="black" />
+            <rect x="125" width="1" height="45" fill="black" />
+            <rect x="128" width="2" height="45" fill="black" />
+            <rect x="132" width="1" height="45" fill="black" />
+            <rect x="135" width="4" height="45" fill="black" />
+            <rect x="141" width="1" height="45" fill="black" />
+            <rect x="144" width="2" height="45" fill="black" />
+            <rect x="148" width="3" height="45" fill="black" />
+            <rect x="153" width="1" height="45" fill="black" />
+            <rect x="156" width="2" height="45" fill="black" />
+            <rect x="160" width="1" height="45" fill="black" />
+            <rect x="163" width="4" height="45" fill="black" />
+            <rect x="169" width="1" height="45" fill="black" />
+            <rect x="172" width="2" height="45" fill="black" />
+            <rect x="176" width="3" height="45" fill="black" />
+            <rect x="181" width="1" height="45" fill="black" />
+            <rect x="184" width="2" height="45" fill="black" />
+            <rect x="188" width="1" height="45" fill="black" />
+            <rect x="191" width="4" height="45" fill="black" />
+            <rect x="197" width="3" height="45" fill="black" />
+          </svg>
+          <div style={{ fontSize: '8pt', marginTop: '1.5mm', fontStyle: 'italic' }}>https://saadmughal-gravity.vercel.app/</div>
+          <div style={{ fontSize: '9pt', marginTop: '1mm', fontWeight: 'bold' }}>SCAN FOR STUDIO MENU</div>
+          <div className="footer-text">© GRAVITY STUDIO</div>
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
   return (
     <div 
       ref={containerRef} 
       className="fixed inset-0 z-[400] bg-[#F2DCE0] transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none"
       id="order-success-overlay"
     >
-      {/* Screen Interactive UI */}
+      {/* Thermal Receipt Portal for Print-Only Rendering */}
+      <ThermalReceiptPortal />
+
+      {/* Screen Interactive UI (Hidden during print via .no-print class) */}
       <div 
         ref={scrollRef}
         className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-12 scrollbar-hide touch-pan-y no-scrollbar no-print"
@@ -318,112 +467,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         </div>
       </div>
 
-      {/* THERMAL RECEIPT (Print Only) */}
-      <div className="thermal-receipt">
-        <h1>Receipt</h1>
-        
-        {/* Black & White Brand Logo (Super Tight) */}
-        <div className="logo-bw">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="45" fill="black" />
-            <circle cx="35" cy="35" r="5" fill="white" />
-            <circle cx="65" cy="40" r="6" fill="white" />
-            <circle cx="45" cy="65" r="7" fill="white" />
-            <circle cx="70" cy="70" r="4" fill="white" />
-            <circle cx="25" cy="60" r="4" fill="white" />
-          </svg>
-        </div>
-
-        <div className="bold" style={{ fontSize: '11pt', letterSpacing: '1px' }}>GRAVITY STUDIO</div>
-        <div style={{ fontSize: '8pt' }}>Phase 6, DHA, Karachi • #{order.id}</div>
-
-        <div className="separator"></div>
-        <div className="flex-row" style={{ fontSize: '7.5pt' }}>
-          <span>{currentDate}</span>
-          <span>{currentTime}</span>
-        </div>
-        <div className="separator"></div>
-
-        {/* Item List (Very Tight) */}
-        <div style={{ textAlign: 'left', marginBottom: '0.5mm', fontSize: '8.5pt' }}>
-          {order.items.map((item: any, idx: number) => (
-            <div key={`${item.id}-${idx}`} className="flex-row" style={{ marginBottom: '0.8mm' }}>
-              <span style={{ flex: 1 }}>{item.quantity}x {item.name} ({item.selectedSize.name})</span>
-              <span style={{ marginLeft: '1.5mm' }}>Rs.{parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="separator"></div>
-        
-        {/* Full Financial Breakdown Restored */}
-        <div style={{ fontSize: '8pt' }}>
-          <div className="flex-row">
-            <span>Sub-total</span>
-            <span>Rs.{order.total}.00</span>
-          </div>
-          <div className="flex-row bold" style={{ fontSize: '9pt', marginTop: '0.5mm' }}>
-            <span>{order.paymentMethod === 'digital' ? 'TOTAL PAID' : 'TOTAL DUE'}</span>
-            <span>Rs.{order.total}.00</span>
-          </div>
-          <div className="flex-row" style={{ marginTop: '0.5mm' }}>
-            <span>Balance Due</span>
-            <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
-          </div>
-        </div>
-        
-        {/* Notes (Restored headers but tighter) */}
-        {(order.kitchenInstructions || order.customer.deliveryNotes) && (
-          <>
-            <div className="separator"></div>
-            <div style={{ textAlign: 'left', fontSize: '7.5pt' }}>
-              {order.kitchenInstructions && (
-                <div style={{ marginBottom: '0.5mm' }}>
-                  <span className="bold">KITCHEN:</span> {order.kitchenInstructions}
-                </div>
-              )}
-              {order.customer.deliveryNotes && (
-                <div>
-                  <span className="bold">DELIVERY:</span> {order.customer.deliveryNotes}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        <div className="separator"></div>
-
-        {/* Delivery Details Restored Fully */}
-        <div style={{ textAlign: 'left', fontSize: '8pt' }}>
-          <div className="bold">DELIVER TO:</div>
-          <div className="bold" style={{ fontSize: '8.5pt' }}>{order.customer.name}</div>
-          <div style={{ fontSize: '7.5pt', lineHeight: '1.1' }}>{order.customer.address}</div>
-          <div style={{ fontSize: '7.5pt' }}>Contact: {order.customer.phone}</div>
-        </div>
-
-        {/* Super Short Barcode to save space */}
-        <div style={{ marginTop: '2mm' }}>
-          <svg width="100%" height="20" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" width="2" height="45" fill="black" />
-            <rect x="4" width="1" height="45" fill="black" />
-            <rect x="7" width="3" height="45" fill="black" />
-            <rect x="23" width="4" height="45" fill="black" />
-            <rect x="29" width="1" height="45" fill="black" />
-            <rect x="41" width="1" height="45" fill="black" />
-            <rect x="57" width="1" height="45" fill="black" />
-            <rect x="69" width="1" height="45" fill="black" />
-            <rect x="85" width="1" height="45" fill="black" />
-            <rect x="100" width="2" height="45" fill="black" />
-            <rect x="120" width="3" height="45" fill="black" />
-            <rect x="141" width="1" height="45" fill="black" />
-            <rect x="160" width="1" height="45" fill="black" />
-            <rect x="181" width="1" height="45" fill="black" />
-            <rect x="197" width="3" height="45" fill="black" />
-          </svg>
-          <div className="footer-text">© GRAVITY STUDIO • PK</div>
-        </div>
-      </div>
-
       <style>{`
         @keyframes wiggle {
           0%, 100% { transform: rotate(-5deg); }
@@ -445,6 +488,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         .line-3 { animation-delay: 0.5s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @media print {
+          .no-print { display: none !important; }
+        }
       `}</style>
     </div>
   );
