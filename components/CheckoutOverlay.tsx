@@ -85,6 +85,11 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     }
   };
 
+  const truncate = (str: string, maxLen: number = 1000) => {
+    if (!str) return '';
+    return str.length > maxLen ? str.substring(0, maxLen) + '...' : str;
+  };
+
   const submitOrder = async () => {
     setIsSubmitting(true);
     const orderId = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -129,10 +134,10 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
         color: 14252941,
         fields: [
-          { name: "📍 Delivery Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
-          { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${orderNotes || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
-          { name: "🛵 Delivery Instructions", value: `\`\`\`\n${formData.deliveryNotes || 'STANDARD DELIVERY'}\n\`\`\`` },
-          { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
+          { name: "📍 Delivery Address", value: `\`\`\`\n${truncate(formData.address, 900)}\n\`\`\`` },
+          { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${truncate(orderNotes, 900) || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
+          { name: "🛵 Delivery Instructions", value: `\`\`\`\n${truncate(formData.deliveryNotes, 900) || 'STANDARD DELIVERY'}\n\`\`\`` },
+          { name: "🛒 Items Selected", value: truncate(cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n'), 1000) },
           { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
           { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
         ],
@@ -149,12 +154,13 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       });
       
       if (!response.ok) {
-        console.error("Discord error:", await response.text());
+        const errorText = await response.text();
+        console.error("Discord error status:", response.status, "body:", errorText);
         throw new Error('Discord response not ok');
       }
       onOrderSuccess(orderData);
     } catch (e) {
-      console.error("Order submission failed:", e);
+      console.error("Order submission critical error:", e);
       // Still show success to user so they don't get stuck, even if Discord fails
       onOrderSuccess(orderData);
     } finally {

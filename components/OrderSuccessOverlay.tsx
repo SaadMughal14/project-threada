@@ -121,13 +121,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   if (!isOpen || !order) return null;
 
   const getETAText = () => {
-    if (phase === 'baking') return "5 MINS";
-    if (phase === 'delivering') {
-      const totalElapsed = Date.now() - (order.placedAt || Date.now());
-      const minsLeft = Math.ceil((TOTAL_DURATION - totalElapsed) / 60000);
-      return minsLeft > 0 ? `${minsLeft} MINS` : "1 MIN";
-    }
-    return "ARRIVED";
+    const totalElapsed = Date.now() - (order.placedAt || Date.now());
+    if (totalElapsed >= TOTAL_DURATION) return "ARRIVED";
+    
+    const remainingMs = TOTAL_DURATION - totalElapsed;
+    const remainingMins = Math.ceil(remainingMs / 60000);
+    return `${remainingMins} ${remainingMins === 1 ? 'MIN' : 'MINS'}`;
   };
 
   const shareReceipt = async () => {
