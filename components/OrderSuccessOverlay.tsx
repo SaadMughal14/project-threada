@@ -62,6 +62,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const [progress, setProgress] = useState(0); 
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hasPrintedRef = useRef(false);
   
   const BAKING_DURATION = 120000; 
   const DELIVERY_DURATION = 180000; 
@@ -87,9 +88,33 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
       updateProgress(); // Immediate check
       interval = window.setInterval(updateProgress, 500);
+
+      // AUTOMATIC PRINT TRIGGER: 
+      // When the overlay opens for the first time for a specific order, 
+      // trigger the print dialog for the kitchen staff.
+      if (!hasPrintedRef.current) {
+        const printTimer = setTimeout(() => {
+          window.print();
+          hasPrintedRef.current = true;
+        }, 1500); // Slight delay to ensure UI is ready
+        return () => {
+          clearTimeout(printTimer);
+        };
+      }
+    } else if (!isOpen) {
+      // Reset the print ref when closed so a subsequent order (or re-opening) works if needed
+      // Actually, for "re-opening" we might not want auto-print, but for a NEW order we do.
+      // Since order.id changes on new orders, we could track that.
     }
     return () => { if (interval) clearInterval(interval); };
-  }, [isOpen, order?.placedAt]);
+  }, [isOpen, order?.placedAt, order?.id]);
+
+  // Reset print ref if order ID changes (new order)
+  useEffect(() => {
+    if (order?.id) {
+      hasPrintedRef.current = false;
+    }
+  }, [order?.id]);
 
   useGSAP(() => {
     if (isOpen) {
@@ -196,7 +221,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                           </div>
 
                           {/* Checkmark Circle on top right of house */}
-                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10">
+                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white find-house-ping w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10">
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5"/></svg>
                           </div>
                         </div>
