@@ -101,6 +101,10 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
     const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
 
+    // Generate a link for the kitchen staff to print directly from Discord
+    const encodedOrder = encodeURIComponent(btoa(JSON.stringify(orderData)));
+    const kitchenPrintLink = `${window.location.origin}${window.location.pathname}?receipt=${encodedOrder}&autoPrint=1`;
+
     const payload = {
       content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
       embeds: [{
@@ -112,7 +116,8 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
           { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${orderNotes || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
           { name: "🛵 Delivery Instructions", value: `\`\`\`\n${formData.deliveryNotes || 'STANDARD DELIVERY'}\n\`\`\`` },
           { name: "🛒 Items Selected", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
-          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true }
+          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name})`}`, inline: true },
+          { name: "🖨️ Kitchen Tools", value: `[CLICK TO PRINT RECEIPT](${kitchenPrintLink})` }
         ],
         footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
         timestamp: new Date().toISOString()

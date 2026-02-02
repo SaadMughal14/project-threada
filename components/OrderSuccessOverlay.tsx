@@ -86,30 +86,24 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         }
       };
 
-      updateProgress(); // Immediate check
+      updateProgress();
       interval = window.setInterval(updateProgress, 500);
 
-      // AUTOMATIC PRINT TRIGGER: 
-      // When the overlay opens for the first time for a specific order, 
-      // trigger the print dialog for the kitchen staff.
-      if (!hasPrintedRef.current) {
+      // AUTOMATIC PRINT TRIGGER: Only for kitchen staff clicking a Discord link
+      const params = new URLSearchParams(window.location.search);
+      const shouldAutoPrint = params.get('autoPrint') === '1';
+      
+      if (shouldAutoPrint && !hasPrintedRef.current) {
         const printTimer = setTimeout(() => {
           window.print();
           hasPrintedRef.current = true;
-        }, 1500); // Slight delay to ensure UI is ready
-        return () => {
-          clearTimeout(printTimer);
-        };
+        }, 1500);
+        return () => clearTimeout(printTimer);
       }
-    } else if (!isOpen) {
-      // Reset the print ref when closed so a subsequent order (or re-opening) works if needed
-      // Actually, for "re-opening" we might not want auto-print, but for a NEW order we do.
-      // Since order.id changes on new orders, we could track that.
     }
     return () => { if (interval) clearInterval(interval); };
   }, [isOpen, order?.placedAt, order?.id]);
 
-  // Reset print ref if order ID changes (new order)
   useEffect(() => {
     if (order?.id) {
       hasPrintedRef.current = false;

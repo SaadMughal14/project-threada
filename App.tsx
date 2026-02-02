@@ -53,6 +53,19 @@ const App: React.FC = () => {
   const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
+    // Check for receipt data in URL (for Kitchen Print functionality)
+    const params = new URLSearchParams(window.location.search);
+    const receiptData = params.get('receipt');
+    if (receiptData) {
+      try {
+        const decoded = JSON.parse(atob(decodeURIComponent(receiptData)));
+        setActiveOrder(decoded);
+        setShowSuccess(true);
+      } catch (e) {
+        console.error("Failed to load receipt from URL", e);
+      }
+    }
+
     const lenis = new Lenis({ 
       duration: 1.2, 
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
