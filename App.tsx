@@ -48,6 +48,7 @@ const App: React.FC = () => {
   const [activeOrder, setActiveOrder] = useState<OrderDetails | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   
   const categoryNavRef = useRef<HTMLDivElement>(null);
   const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -87,6 +88,9 @@ const App: React.FC = () => {
         }
       });
     });
+
+    // Mark as mounted to enable transitions safely without flickering on load
+    setIsMounted(true);
 
     return () => { lenis.destroy(); };
   }, []);
@@ -139,6 +143,15 @@ const App: React.FC = () => {
     setKitchenNotes('');
     setIsCheckoutOpen(false);
     setShowSuccess(true);
+  };
+
+  const handleCloseSuccess = () => {
+    setShowSuccess(false);
+    // Cleanup URL to prevent success screen showing up again on reload
+    if (window.location.search.includes('receipt')) {
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
   };
 
   const scrollToCategory = (cat: string) => {
@@ -220,13 +233,13 @@ const App: React.FC = () => {
       <OrderSuccessOverlay 
         isOpen={showSuccess} 
         order={activeOrder} 
-        onClose={() => setShowSuccess(false)} 
+        onClose={handleCloseSuccess} 
       />
 
-      {/* Cart Drawer */}
-      <div className={`fixed inset-0 z-[200] transition-opacity duration-600 ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      {/* Cart Drawer - transition classes conditionally applied after mount to fix reload flicker */}
+      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-opacity duration-600' : ''} ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
-        <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform transition-transform duration-700 ease-expo-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+        <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
           <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
             <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
             <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D97B8D] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
