@@ -3,19 +3,26 @@ import React, { useState, useEffect } from 'react';
 
 const StatusBar: React.FC<{ activeOrder: any | null }> = ({ activeOrder }) => {
   const [status, setStatus] = useState("Forging Artifacts");
+  const [timeLeft, setTimeLeft] = useState(5); // Minutes
   
   useEffect(() => {
     if (!activeOrder) return;
     
-    // Simple mock status updates based on real-time
-    const timer1 = setTimeout(() => setStatus("Cooling Batch"), 5000);
-    const timer2 = setTimeout(() => setStatus("Rider En Route"), 10000);
-    const timer3 = setTimeout(() => setStatus("Arriving Soon"), 1800000); // 30 mins
+    // Status updates based on the 5-minute lifecycle
+    const timer1 = setTimeout(() => setStatus("Batch Cooling"), 120000); // After Phase 1 (2 mins)
+    const timer2 = setTimeout(() => setStatus("Rider En Route"), 130000); // Start of Phase 2
+    const timer3 = setTimeout(() => setStatus("Delivered"), 300000); // Total 5 mins
+
+    // Simple 1-minute interval for ETA update
+    const etaInterval = setInterval(() => {
+      setTimeLeft(prev => Math.max(0, prev - 1));
+    }, 60000);
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
+      clearInterval(etaInterval);
     };
   }, [activeOrder]);
 
@@ -33,11 +40,11 @@ const StatusBar: React.FC<{ activeOrder: any | null }> = ({ activeOrder }) => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
           <span className="text-[12px] md:text-[14px] animate-bounce">🛵</span>
-          <span className="text-[#FDFCFB] font-black uppercase text-[8px] md:text-[10px] tracking-[0.2em]">ETA: 22 MIN</span>
+          <span className="text-[#FDFCFB] font-black uppercase text-[8px] md:text-[10px] tracking-[0.2em]">ETA: {timeLeft} MIN</span>
         </div>
         <div className="hidden sm:block h-4 w-[1px] bg-[#FDFCFB]/10"></div>
         <div className="hidden sm:block">
-           <span className="text-[#D4AF37] font-black uppercase text-[8px] tracking-[0.3em]">Phase 6 Studio • LIVE</span>
+           <span className="text-[#D4AF37] font-black uppercase text-[8px] tracking-[0.3em]">Studio LIVE</span>
         </div>
       </div>
       
