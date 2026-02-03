@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { PizzaProductExtended, SizeOption } from '../constants';
+import { supabase } from '../lib/supabase';
 
 interface CartItem extends PizzaProductExtended {
   quantity: number;
@@ -14,7 +16,7 @@ interface CheckoutOverlayProps {
   cartItems: CartItem[];
   totalPrice: number;
   onOrderSuccess: (orderData: any) => void;
-  orderNotes: string; // Passed from App.tsx as kitchen instructions
+  orderNotes: string;
 }
 
 const EasypaisaIcon = () => (
@@ -78,16 +80,9 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setScreenshot(reader.result as string);
-      };
+      reader.onloadend = () => setScreenshot(reader.result as string);
       reader.readAsDataURL(file);
     }
-  };
-
-  const truncate = (str: string, maxLen: number = 1000) => {
-    if (!str) return '';
-    return str.length > maxLen ? str.substring(0, maxLen) + '...' : str;
   };
 
   const submitOrder = async () => {
@@ -96,8 +91,45 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const placedAt = Date.now();
     const orderTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
-    // Full order data for app state
-    const orderData: any = {
+    // Save to Supabase 'orders' table
+    try {
+      const { error: dbError } = await supabase.from('orders').insert([{
+        order_number: orderId,
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        address: formData.address,
+        items: cartItems.map(i => ({ name: i.name, qty: i.quantity, size: i.selectedSize.name })),
+        total_price: totalPrice,
+        payment_method: paymentMethod,
+        status: 'pending'
+      }]);
+      
+      if (dbError) console.error("Database save failed:", dbError);
+    } catch (e) {
+      console.error("Supabase order error:", e);
+    }
+
+    // Send to Discord
+    const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
+    const payload = {
+      content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
+      embeds: [{
+        title: "👨‍🍳 Kitchen Copy - #" + orderId,
+        description: `**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
+        color: 14252941,
+        fields: [
+          { name: "📍 Address", value: `\`\`\`\n${formData.address}\n\`\`\`` },
+          { name: "🛒 Items", value: cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n') },
+          { name: "💰 Total", value: `**Rs. ${totalPrice}** via **${paymentMethod.toUpperCase()}**`, inline: true }
+        ],
+        footer: { text: "GRAVITY STUDIO" },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+    onOrderSuccess({
       id: orderId,
       items: cartItems,
       total: totalPrice,
@@ -106,66 +138,8 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       paymentMethod: paymentMethod,
       timestamp: orderTimestamp,
       placedAt: placedAt
-    };
-
-    // Slimmed data for URL (further reduced to save space)
-    const slimOrder = {
-      id: orderId,
-      items: cartItems.map(i => ({ id: i.id, q: i.quantity, s: i.selectedSize.name })),
-      p: totalPrice,
-      c: { n: formData.name, p: formData.phone, a: formData.address, d: formData.deliveryNotes },
-      kn: orderNotes,
-      pm: paymentMethod,
-      t: orderTimestamp,
-      at: placedAt
-    };
-
-    const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
-
-    // Safe base64 encoding for URL link
-    const slimJson = JSON.stringify(slimOrder);
-    const encodedOrder = encodeURIComponent(btoa(unescape(encodeURIComponent(slimJson))));
-    const kitchenPrintLink = `${window.location.origin}${window.location.pathname}?receipt=${encodedOrder}&autoPrint=1`;
-
-    const payload = {
-      content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
-      embeds: [{
-        title: "👨‍🍳 New Order - Kitchen Copy",
-        description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
-        color: 14252941,
-        fields: [
-          { name: "📍 Delivery Address", value: `\`\`\`\n${truncate(formData.address, 900)}\n\`\`\`` },
-          { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${truncate(orderNotes, 900) || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
-          { name: "🛵 Delivery Instructions", value: `\`\`\`\n${truncate(formData.deliveryNotes, 900) || 'STANDARD DELIVERY'}\n\`\`\`` },
-          { name: "🛒 Items Selected", value: truncate(cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n'), 1000) },
-          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
-          { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
-        ],
-        footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
-        timestamp: new Date().toISOString()
-      }]
-    };
-
-    try {
-      const response = await fetch(DISCORD_WEBHOOK, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload) 
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Discord error status:", response.status, "body:", errorText);
-        throw new Error('Discord response not ok');
-      }
-      onOrderSuccess(orderData);
-    } catch (e) {
-      console.error("Order submission critical error:", e);
-      // Still show success to user so they don't get stuck, even if Discord fails
-      onOrderSuccess(orderData);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
+    setIsSubmitting(false);
   };
 
   if (!isOpen) return null;
@@ -183,10 +157,9 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         ref={scrollAreaRef}
         data-lenis-prevent
         className="flex-1 overflow-y-auto bg-[#FDFCFB] px-6 py-10 md:px-12 relative touch-pan-y no-scrollbar"
-        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div className="max-w-2xl mx-auto space-y-10 md:space-y-12 pb-32">
-          {/* STEP 01: INFO */}
+          {/* Information Section */}
           <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'info' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
             <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Delivery Details
@@ -195,145 +168,68 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
               <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
               <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
-              
-              <div className="pt-2">
-                <p className="text-[7px] font-black uppercase tracking-[0.4em] text-black/20 mb-2">Delivery Instructions</p>
-                <textarea 
-                  placeholder="GATE CODE, DROP-OFF SPOTS, ETC." 
-                  rows={2} 
-                  className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-sm md:text-base focus:border-[#D97B8D] transition-colors resize-none" 
-                  value={formData.deliveryNotes} 
-                  onChange={e => setFormData({...formData, deliveryNotes: e.target.value})} 
-                />
-              </div>
             </div>
             {step === 'info' && (
-              <button 
-                onClick={() => { setStep('payment'); scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }} 
-                disabled={!formData.name || !formData.phone || !formData.address} 
-                className="w-full bg-black text-[#D97B8D] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] md:text-[12px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all"
-              >
-                Next Step
+              <button onClick={() => setStep('payment')} disabled={!formData.name || !formData.phone || !formData.address} className="w-full bg-black text-[#D97B8D] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all">
+                Continue
               </button>
             )}
           </div>
 
-          {/* STEP 02: METHOD */}
+          {/* Payment Section */}
           <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'payment' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
             <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">02</span> Payment Method
             </h3>
-            
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
-                <span className="text-3xl md:text-4xl">💵</span>
-                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Cash on Delivery</span>
+            <div className="grid grid-cols-2 gap-4">
+              <button onClick={() => setPaymentMethod('cash')} className={`p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
+                <span className="text-3xl">💵</span>
+                <span className="font-black uppercase text-[9px] tracking-widest">Cash</span>
               </button>
-              <button onClick={() => setPaymentMethod('digital')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
-                <span className="text-3xl md:text-4xl">📱</span>
-                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Bank Transfer</span>
+              <button onClick={() => setPaymentMethod('digital')} className={`p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
+                <span className="text-3xl">📱</span>
+                <span className="font-black uppercase text-[9px] tracking-widest">Digital</span>
               </button>
             </div>
-
             {paymentMethod === 'digital' && (
-              <div className="space-y-6 pt-2 animate-in fade-in slide-in-from-top-4 duration-500">
-                <p className="font-black uppercase text-[9px] tracking-[0.4em] text-black/30 text-center">Choose Your Provider</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {PROVIDERS.map(p => (
-                    <button 
-                      key={p.id}
-                      onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
-                      className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D97B8D] bg-[#F2DCE0]/50' : 'border-black/5 opacity-60'}`}
-                      style={{ borderColor: selectedProvider === p.id ? p.color : undefined }}
-                    >
-                      <div className={`transition-transform duration-300 ${selectedProvider === p.id ? 'scale-110' : 'group-hover:scale-105'}`}>
-                        {p.icon}
-                      </div>
-                      <span className={`font-black uppercase text-[7px] md:text-[8px] tracking-widest text-center leading-tight transition-colors ${selectedProvider === p.id ? 'text-[#1C1C1C]' : 'text-black/40'}`}>
-                        {p.name}
-                      </span>
+                    <button key={p.id} onClick={() => setSelectedProvider(p.id)} className={`p-3 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${selectedProvider === p.id ? 'border-[#D97B8D] bg-white' : 'border-black/5 opacity-50'}`}>
+                      {p.icon}
+                      <span className="text-[7px] font-black uppercase tracking-widest">{p.name}</span>
                     </button>
                   ))}
                 </div>
-
                 {selectedProvider && (
-                  <div className="bg-[#1C1C1C] text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D97B8D]/20">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Holder</p>
-                        <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</p>
-                      </div>
-                      <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Number</p>
-                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10">
-                          <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</p>
-                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] font-black text-[#D97B8D] border border-[#D97B8D]/30 px-3 py-1.5 rounded uppercase hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all">COPY</button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/10">
-                      <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
-                      <button 
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`w-full py-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-4 transition-all overflow-hidden ${screenshot ? 'border-[#D97B8D] bg-[#D97B8D]/10' : 'border-white/10 hover:border-white/30'}`}
-                      >
-                        {screenshot ? (
-                          <div className="flex items-center gap-4 w-full px-4 animate-in fade-in zoom-in-95 duration-300">
-                            <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-[#D97B8D] flex-shrink-0 bg-white">
-                              <img src={screenshot} alt="Receipt Preview" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex flex-col items-start overflow-hidden">
-                              <span className="font-black uppercase text-[10px] tracking-widest text-[#D97B8D] whitespace-nowrap">Receipt Attached!</span>
-                              <span className="text-[7px] uppercase tracking-widest text-white/40 truncate w-full">Tap to replace file</span>
-                            </div>
-                            <div className="ml-auto w-8 h-8 bg-[#D97B8D] rounded-full flex items-center justify-center text-white text-[12px] font-bold">✓</div>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">📸</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-white/60">Upload Payment Proof</span>
-                          </div>
-                        )}
-                      </button>
-                      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-                    </div>
+                  <div className="bg-[#1C1C1C] text-white p-6 rounded-3xl border border-[#D97B8D]/20">
+                    <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Holder</p>
+                    <p className="font-black text-sm uppercase mb-4">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</p>
+                    <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Number</p>
+                    <p className="font-black text-lg mb-6">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</p>
+                    <button onClick={() => fileInputRef.current?.click()} className="w-full py-4 border-2 border-dashed border-white/20 rounded-xl flex items-center justify-center gap-3 font-black text-[9px] uppercase tracking-widest">
+                       {screenshot ? 'REPLACE RECEIPT' : 'UPLOAD RECEIPT'}
+                    </button>
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                   </div>
                 )}
               </div>
             )}
-
             {step === 'payment' && (
-              <div className="flex flex-col sm:flex-row gap-3 pt-6">
-                <button onClick={() => setStep('info')} className="flex-1 border-2 border-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest active:bg-black/5 transition-colors">Go Back</button>
-                <button 
-                  onClick={submitOrder} 
-                  disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))} 
-                  className="flex-[2] bg-[#D97B8D] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
-                >
-                  {isSubmitting ? 'Processing...' : 'Finish Order'}
-                </button>
-              </div>
+              <button onClick={submitOrder} disabled={isSubmitting || (paymentMethod === 'digital' && !screenshot)} className="w-full bg-[#D97B8D] text-black py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all">
+                {isSubmitting ? 'WORKING...' : 'PLACE ORDER'}
+              </button>
             )}
           </div>
         </div>
       </div>
 
-      <div className="p-6 md:px-12 md:py-8 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0 z-30 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+      <div className="p-6 md:px-12 md:py-8 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0 z-30">
         <div>
-          <p className="font-black uppercase text-[7px] md:text-[8px] tracking-[0.6em] text-black/30 mb-1">Total to Pay</p>
-          <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D97B8D] leading-none">Rs. {totalPrice}</p>
-        </div>
-        <div className="text-right hidden sm:block">
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">STUDIO</p>
+          <p className="font-black uppercase text-[8px] tracking-[0.6em] text-black/30 mb-1">Total</p>
+          <p className="font-display text-4xl md:text-6xl font-black tracking-tighter text-[#D97B8D] leading-none">Rs. {totalPrice}</p>
         </div>
       </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </div>
   );
 };
