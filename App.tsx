@@ -38,7 +38,6 @@ const CATEGORIES = [
   { name: 'Sides', icon: 'https://i.imgur.com/5weD7SB.png', type: 'image' }
 ] as const;
 
-// Attractive animated cookie for the cart
 const CartVisualCookie = () => (
   <div className="relative w-24 h-24 mx-auto mb-4 animate-bounce-slow">
     <div className="absolute inset-0 bg-[#D97B8D]/20 blur-2xl rounded-full animate-pulse"></div>
@@ -70,7 +69,6 @@ const App: React.FC = () => {
   const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
-    // Scroll Lock Logic
     if (isCartOpen || isCheckoutOpen || showSuccess) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -126,6 +124,9 @@ const App: React.FC = () => {
     });
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
+
+    const initialScroll = window.pageYOffset || document.documentElement.scrollTop;
+    setScrolled(initialScroll > 60);
 
     lenis.on('scroll', (e: any) => {
       setScrolled(e.scroll > 60);
@@ -231,7 +232,6 @@ const App: React.FC = () => {
     <div className="relative w-full min-h-screen">
       <StatusBar activeOrder={activeOrder} onShowReceipt={() => setShowSuccess(true)} />
       
-      {/* Header */}
       <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 py-2 flex justify-between items-center ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CookieLogo />
@@ -247,8 +247,14 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* Category Nav - Guarded by isMounted to prevent hydration flicker */}
-      <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} ${isMounted && scrolled ? 'bg-[#FDFCFB] translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+      {/* FIXED: Category Nav logic optimized to prevent flicker */}
+      <nav 
+        className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
+          ${isMounted && scrolled 
+            ? 'bg-[#FDFCFB] translate-y-0 opacity-100 visible transition-all duration-500' 
+            : '-translate-y-full opacity-0 invisible pointer-events-none'
+          }`}
+      >
         <div 
           ref={categoryNavRef}
           className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
@@ -288,9 +294,7 @@ const App: React.FC = () => {
             onClose={handleCloseSuccess} 
           />
 
-          {/* Cart Drawer Overlay Container */}
           <div className={`fixed inset-0 z-[200] transition-all duration-500 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-            {/* Backdrop overlay */}
             <div 
               className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-600 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`} 
               onClick={() => setIsCartOpen(false)}
@@ -324,8 +328,6 @@ const App: React.FC = () => {
                          </div>
                        </div>
                      ))}
-                     
-                     {/* Kitchen Instructions in Cart */}
                      <div className="pt-6 border-t border-white/5 space-y-3">
                        <p className="text-[7px] font-black uppercase tracking-[0.4em] text-white/40">Kitchen Instructions</p>
                        <textarea 
@@ -352,7 +354,6 @@ const App: React.FC = () => {
 
       <main>
         <Hero />
-        
         <section className="bg-[#1C1C1C] py-8 md:py-16 text-center border-b border-white/5 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(217,123,141,0.05)_0%,transparent_70%)] pointer-events-none"></div>
            <div className="px-6 md:px-12">
@@ -361,17 +362,14 @@ const App: React.FC = () => {
              </h2>
            </div>
         </section>
-
         {CATEGORIES.map(cat => (
           <div key={cat.name} id={`category-${cat.name.toLowerCase().replace(/\s/g, '-')}`}>
             <GustoRotator onAddToCart={addToCart} category={cat.name} />
           </div>
         ))}
-
         <MenuGrid />
         <TickerMarquee />
         <HandStory />
-
         <footer className="bg-[#1C1C1C] text-[#FDFCFB] pt-16 pb-10 px-6 md:px-24 overflow-hidden border-t border-white/5">
           <div className="max-w-7xl mx-auto flex flex-col gap-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-24">
