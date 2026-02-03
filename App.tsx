@@ -107,14 +107,26 @@ const App: React.FC = () => {
         const slim = JSON.parse(decodedStr);
 
         const hydratedItems = slim.items.map((item: any) => {
-          const product = PIZZAS.find(p => p.id === item.id);
-          if (!product) return null;
+          // Try to find product for extra details (image/category), but rely on URL data for core info
+          const product = PIZZAS.find(p => p.id === item.id) || products.find(p => p.id === item.id);
+
           return {
-            ...product,
+            id: item.id,
+            name: item.n || product?.name || 'Unknown Item', // Use embedded name first
             quantity: item.q,
-            selectedSize: product.sizeOptions.find(s => s.name === item.s) || product.sizeOptions[0]
-          };
-        }).filter(Boolean) as CartItem[];
+            selectedSize: { name: item.s, price: '0' }, // Price is aggregate in slim.p, size name is preserved
+            // Optional/Fallback fields
+            tagline: product?.tagline || '',
+            description: product?.description || '',
+            price: '0', // Not used in receipt view (total is used)
+            color: product?.color || '#1C1C1C',
+            ingredients: product?.ingredients || [],
+            image: product?.image || '',
+            videoBackground: '',
+            category: product?.category || 'Custom',
+            sizeOptions: []
+          } as CartItem;
+        });
 
         const hydratedOrder: OrderDetails = {
           id: slim.id,
@@ -431,8 +443,13 @@ const App: React.FC = () => {
             </div>
             <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5 text-[7px] uppercase font-black tracking-[0.6em]">
               <p className="opacity-15">©2025 GRAVITY STUDIO</p>
-              <a href="https://saad-mughal-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-black border border-[#D97B8D]/30 px-6 py-2.5 rounded-full text-[#D97B8D] text-[7px] font-black uppercase tracking-[0.2em] hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all">
-                Curated by Saad
+              <a
+                href="https://saad-mughal-portfolio.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-2 bg-gradient-to-r from-white/5 to-white/10 border border-white/10 px-6 py-3 rounded-full text-white/60 text-[8px] font-black uppercase tracking-[0.2em] hover:border-[#D97B8D]/50 hover:text-white transition-all hover:shadow-[0_0_20px_rgba(217,123,141,0.2)]"
+              >
+                Developed with <span className="text-red-500 animate-pulse">❤️</span> by Saad
               </a>
               <p className="opacity-15">Karachi, PK</p>
             </div>
