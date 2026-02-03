@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -9,8 +10,11 @@ import HandStory from './components/HandStory';
 import GustoRotator from './components/GustoRotator';
 import CheckoutOverlay from './components/CheckoutOverlay';
 import OrderSuccessOverlay from './components/OrderSuccessOverlay';
+import AuthOverlay from './components/AuthOverlay';
+import AdminDashboard from './components/AdminDashboard';
 import StatusBar from './components/StatusBar';
 import { PIZZAS, PizzaProductExtended, SizeOption } from './constants';
+import { supabase } from './lib/supabase';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,21 +42,6 @@ const CATEGORIES = [
   { name: 'Sides', icon: 'https://i.imgur.com/5weD7SB.png', type: 'image' }
 ] as const;
 
-const CartVisualCookie = () => (
-  <div className="relative w-24 h-24 mx-auto mb-4 animate-bounce-slow">
-    <div className="absolute inset-0 bg-[#D97B8D]/20 blur-2xl rounded-full animate-pulse"></div>
-    <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl logo-spin-wrapper">
-      <circle cx="50" cy="50" r="45" fill="#D97B8D" />
-      <circle cx="30" cy="30" r="6" fill="#4A3728" />
-      <circle cx="70" cy="35" r="7" fill="#4A3728" />
-      <circle cx="45" cy="70" r="8" fill="#4A3728" />
-      <circle cx="75" cy="75" r="5" fill="#4A3728" />
-      <circle cx="20" cy="60" r="4" fill="#4A3728" />
-    </svg>
-    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-black/20 blur-md rounded-full"></div>
-  </div>
-);
-
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Cookies');
@@ -60,6 +49,10 @@ const App: React.FC = () => {
   const [kitchenNotes, setKitchenNotes] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [activeOrder, setActiveOrder] = useState<OrderDetails | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -69,12 +62,55 @@ const App: React.FC = () => {
   const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
-    if (isCartOpen || isCheckoutOpen || showSuccess) {
+    const fetchDbProducts = async () => {
+      const { data, error } = await supabase.from('products').select('*').eq('is_visible', true);
+      if (!error && data && data.length > 0) {
+        // Hydrate DB products into standard format
+        const hydrated = data.map(p => ({
+          ...p,
+          tagline: "FORGED BY GRAVITY",
+          videoBackground: "",
+          ingredients: p.ingredients || ["Handmade", "Fresh"],
+          sizeOptions: p.size_options || [
+            { name: "STANDARD", price: `Rs. ${p.price}` }
+          ],
+          image: p.image_url
+        }));
+        setDbProducts(hydrated);
+      }
+    };
+    fetchDbProducts();
+  }, [isAdminOpen]); // Refetch when admin closes in case of edits
+
+  useEffect(() => {
+    if (isCartOpen || isCheckoutOpen || showSuccess || isAuthOpen || isAdminOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [isCartOpen, isCheckoutOpen, showSuccess]);
+  }, [isCartOpen, isCheckoutOpen, showSuccess, isAuthOpen, isAdminOpen]);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        setUser({ ...session.user, profile });
+      }
+    };
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        setUser({ ...session.user, profile });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -85,7 +121,7 @@ const App: React.FC = () => {
         const slim = JSON.parse(decodedStr);
         
         const hydratedItems = slim.items.map((item: any) => {
-          const product = PIZZAS.find(p => p.id === item.id);
+          const product = [...PIZZAS, ...dbProducts].find(p => p.id === item.id);
           if (!product) return null;
           return {
             ...product,
@@ -113,133 +149,56 @@ const App: React.FC = () => {
         setActiveOrder(hydratedOrder);
         setShowSuccess(true);
       } catch (e) {
-        console.error("Failed to load/hydrate receipt from URL", e);
+        console.error("Failed receipt hydration", e);
       }
     }
 
-    // High performance smooth scroll initialization
-    const lenis = new Lenis({ 
-      duration: 1.5, 
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-      infinite: false,
-    });
-
-    // Synchronize ScrollTrigger with Lenis raf loop for maximum smoothness
+    const lenis = new Lenis({ duration: 1.5, smoothWheel: true });
     function raf(time: number) {
       lenis.raf(time);
-      ScrollTrigger.update(); // Force recalculation every frame
+      ScrollTrigger.update();
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
 
     const checkScroll = () => {
-      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-      setScrolled(currentScroll > 100); // Increased threshold slightly for better hero exit
-      
+      setScrolled(window.pageYOffset > 100);
       CATEGORIES.forEach(cat => {
         const el = document.getElementById(`category-${cat.name.toLowerCase().replace(/\s/g, '-')}`);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top < 300 && rect.bottom > 300) {
-            setActiveCategory(cat.name);
-          }
+          if (rect.top < 300 && rect.bottom > 300) setActiveCategory(cat.name);
         }
       });
     };
 
     lenis.on('scroll', checkScroll);
-    checkScroll();
-
     setIsMounted(true);
-
-    return () => { 
-      lenis.destroy(); 
-    };
-  }, []);
-
-  useEffect(() => {
-    const activeBtn = categoryRefs.current[activeCategory];
-    const nav = categoryNavRef.current;
-    if (activeBtn && nav) {
-      const navWidth = nav.offsetWidth;
-      const btnLeft = activeBtn.offsetLeft;
-      const btnWidth = activeBtn.offsetWidth;
-      const scrollPos = btnLeft - (navWidth / 2) + (btnWidth / 2);
-      nav.scrollTo({ left: scrollPos, behavior: 'smooth' });
-    }
-  }, [activeCategory]);
-
-  useEffect(() => {
-    setTotalPrice(cart.reduce((acc, item) => {
-      const numericPrice = parseInt(item.selectedSize.price.replace(/[^\d]/g, ''));
-      return acc + (numericPrice * item.quantity);
-    }, 0));
-  }, [cart]);
+    return () => lenis.destroy();
+  }, [dbProducts.length]);
 
   const addToCart = (pizza: PizzaProductExtended, size: SizeOption) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === pizza.id && item.selectedSize.name === size.name);
-      if (existing) {
-        return prev.map(item => 
-          (item.id === pizza.id && item.selectedSize.name === size.name) 
-            ? { ...item, quantity: item.quantity + 1 } 
-            : item
-        );
-      }
+      if (existing) return prev.map(item => (item.id === pizza.id && item.selectedSize.name === size.name) ? { ...item, quantity: item.quantity + 1 } : item);
       return [...prev, { ...pizza, quantity: 1, selectedSize: size }];
     });
     setIsCartOpen(true);
   };
 
   const updateQuantity = (id: string, sizeName: string, delta: number) => {
-    setCart(prev => prev.map(item => 
-      (item.id === id && item.selectedSize.name === sizeName) 
-        ? { ...item, quantity: Math.max(0, item.quantity + delta) } 
-        : item
-    ).filter(item => item.quantity > 0));
+    setCart(prev => prev.map(item => (item.id === id && item.selectedSize.name === sizeName) ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item).filter(item => item.quantity > 0));
   };
 
-  const handleOrderComplete = (orderData: OrderDetails) => {
-    setActiveOrder(orderData);
-    setCart([]);
-    setKitchenNotes('');
-    setIsCheckoutOpen(false);
-    setShowSuccess(true);
-  };
-
-  const handleCloseSuccess = () => {
-    setShowSuccess(false);
-    if (window.location.search.includes('receipt')) {
-      const newUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    }
-  };
-
-  const scrollToCategory = (cat: string) => {
-    const el = document.getElementById(`category-${cat.toLowerCase().replace(/\s/g, '-')}`);
-    if (el) {
-      const offset = window.innerWidth < 768 ? 120 : 140;
-      window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+  const handleAccountClick = () => {
+    if (user?.profile?.role === 'admin') {
+      setIsAdminOpen(true);
+    } else {
+      setIsAuthOpen(true);
     }
   };
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-  const CookieLogo = () => (
-    <div className="logo-spin-wrapper w-6 h-6 md:w-9 md:h-9">
-      <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
-        <circle cx="50" cy="50" r="45" fill="#D97B8D" />
-        <circle cx="35" cy="35" r="5" fill="#4A3728" />
-        <circle cx="65" cy="40" r="6" fill="#4A3728" />
-        <circle cx="45" cy="65" r="7" fill="#4A3728" />
-        <circle cx="70" cy="70" r="4" fill="#4A3728" />
-        <circle cx="25" cy="60" r="4" fill="#4A3728" />
-      </svg>
-    </div>
-  );
 
   return (
     <div className="relative w-full min-h-screen">
@@ -247,114 +206,66 @@ const App: React.FC = () => {
       
       <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 py-2 flex justify-between items-center ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <CookieLogo />
-          <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase transition-colors">
-            <span className={scrolled ? "text-[#1C1C1C]" : "text-[#1C1C1C]"}>GRAV</span><span className="text-[#D97B8D]">ITY</span>
+          <div className="logo-spin-wrapper w-6 h-6 md:w-9 md:h-9">
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm"><circle cx="50" cy="50" r="45" fill="#D97B8D" /><circle cx="35" cy="35" r="5" fill="#4A3728" /></svg>
+          </div>
+          <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase">
+            <span className="text-[#1C1C1C]">GRAV</span><span className="text-[#D97B8D]">ITY</span>
           </span>
         </div>
-        <button 
-          onClick={() => setIsCartOpen(true)} 
-          className={`bg-[#D97B8D] text-[#1C1C1C] px-4 md:px-6 py-1.5 rounded-full font-black uppercase text-[9px] md:text-[10px] tracking-widest shadow-lg active:scale-95 transition-all flex items-center gap-2 ${totalItems > 0 ? 'animate-wiggle' : ''}`}
-        >
-          {window.innerWidth > 768 ? 'YOUR CART' : 'CART'} {totalItems > 0 && <span className="bg-[#1C1C1C] text-white px-1.5 rounded-full text-[8px] font-black">{totalItems}</span>}
-        </button>
-      </header>
-
-      {/* Category Nav - Strict conditional rendering and positioning to prevent flicker */}
-      {isMounted && (
-        <nav 
-          style={{ display: scrolled ? 'block' : 'none' }}
-          className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
-            ${scrolled 
-              ? 'bg-[#FDFCFB] translate-y-0 opacity-100 visible transition-all duration-500' 
-              : '-translate-y-full opacity-0 invisible pointer-events-none'
-            }`}
-        >
-          <div 
-            ref={categoryNavRef}
-            className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
+        
+        <div className="flex items-center gap-2 md:gap-4">
+          <button 
+            onClick={handleAccountClick}
+            className={`font-black uppercase text-[9px] md:text-[10px] tracking-widest px-4 py-2 rounded-full border-2 border-[#1C1C1C] transition-all hover:bg-[#1C1C1C] hover:text-white ${user ? 'bg-[#1C1C1C] text-white' : 'bg-transparent text-[#1C1C1C]'}`}
           >
-             {CATEGORIES.map(cat => (
-               <button 
-                 key={cat.name} 
-                 ref={(el) => { categoryRefs.current[cat.name] = el; }}
-                 onClick={() => scrollToCategory(cat.name)}
-                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black uppercase text-[8px] md:text-[10px] tracking-widest transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeCategory === cat.name ? 'bg-[#1C1C1C] text-[#D97B8D] shadow-sm scale-105' : 'text-[#1C1C1C]/40 hover:text-[#1C1C1C] hover:bg-black/5'}`}
-               >
-                 {cat.type === 'image' ? (
-                   <img src={cat.icon} alt={cat.name} className="w-4 h-4 md:w-6 md:h-6 object-contain" />
-                 ) : (
-                   <span className="text-sm md:text-base">{cat.icon}</span>
-                 )}
-                 {cat.name}
-               </button>
-             ))}
-          </div>
-        </nav>
-      )}
+            {user?.profile?.role === 'admin' ? 'ADMIN PANEL' : user ? 'MY ACCOUNT' : 'LOGIN'}
+          </button>
+          
+          <button 
+            onClick={() => setIsCartOpen(true)} 
+            className="bg-[#D97B8D] text-[#1C1C1C] px-4 md:px-6 py-1.5 rounded-full font-black uppercase text-[9px] md:text-[10px] tracking-widest shadow-lg active:scale-95 transition-all flex items-center gap-2"
+          >
+            {window.innerWidth > 768 ? 'YOUR CART' : 'CART'} {totalItems > 0 && <span className="bg-[#1C1C1C] text-white px-1.5 rounded-full text-[8px] font-black">{totalItems}</span>}
+          </button>
+        </div>
+      </header>
 
       {isMounted && (
         <>
-          <CheckoutOverlay 
-            isOpen={isCheckoutOpen} 
-            onClose={() => setIsCheckoutOpen(false)} 
-            cartItems={cart} 
-            totalPrice={totalPrice} 
-            onOrderSuccess={(orderData) => handleOrderComplete(orderData)} 
-            orderNotes={kitchenNotes} 
-          />
-
-          <OrderSuccessOverlay 
-            isOpen={showSuccess} 
-            order={activeOrder} 
-            onClose={handleCloseSuccess} 
-          />
+          <AuthOverlay isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onLoginSuccess={() => {}} />
+          <AdminDashboard isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
+          <CheckoutOverlay isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} cartItems={cart} totalPrice={totalPrice} onOrderSuccess={(o) => { setActiveOrder(o); setCart([]); setIsCheckoutOpen(false); setShowSuccess(true); }} orderNotes={kitchenNotes} />
+          <OrderSuccessOverlay isOpen={showSuccess} order={activeOrder} onClose={() => setShowSuccess(false)} />
 
           <div className={`fixed inset-0 z-[200] transition-all duration-500 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-            <div 
-              className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-600 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`} 
-              onClick={() => setIsCartOpen(false)}
-            ></div>
-            
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
             <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform transition-transform duration-700 ease-expo-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
               <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
                 <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
                 <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D97B8D] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
               </div>
               <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col no-scrollbar">
-                 {cart.length === 0 ? (
-                   <div className="flex flex-col items-center justify-center flex-1 opacity-20 text-white space-y-4 text-center">
-                     <CartVisualCookie />
-                     <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
-                   </div>
-                 ) : (
-                   <div className="space-y-6">
-                     <CartVisualCookie />
-                     {cart.map((item, idx) => (
-                       <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group animate-in slide-in-from-right duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
-                         <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
-                         <div className="flex-1">
-                            <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
-                            <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
-                         </div>
-                         <div className="flex items-center gap-3 text-[#D97B8D] font-black">
-                           <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
-                           <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
-                           <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
-                         </div>
-                       </div>
-                     ))}
-                     <div className="pt-6 border-t border-white/5 space-y-3">
-                       <p className="text-[7px] font-black uppercase tracking-[0.4em] text-white/40">Kitchen Instructions</p>
-                       <textarea 
-                         value={kitchenNotes}
-                         onChange={(e) => setKitchenNotes(e.target.value)}
-                         placeholder="ANY SPECIAL REQUESTS FOR THE CHEF?"
-                         className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-black uppercase text-[10px] tracking-widest focus:border-[#D97B8D] transition-colors resize-none h-24"
-                       />
-                     </div>
-                   </div>
-                 )}
+                {cart.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center flex-1 opacity-20 text-white space-y-4 text-center">
+                    <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
+                  </div>
+                ) : (
+                  cart.map((item, idx) => (
+                    <div key={idx} className="flex gap-4 items-center group">
+                      <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
+                      <div className="flex-1">
+                        <div className="text-white font-black uppercase text-[10px] tracking-widest">{item.name}</div>
+                        <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1">{item.selectedSize.name}</div>
+                      </div>
+                      <div className="flex items-center gap-3 text-[#D97B8D] font-black">
+                        <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)}>-</button>
+                        <span className="text-[11px] text-white">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)}>+</button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
               <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">
                  <div className="flex justify-between items-end text-white/40 font-black uppercase text-[10px] tracking-[0.5em]">
@@ -370,63 +281,19 @@ const App: React.FC = () => {
 
       <main className="will-change-transform">
         <Hero />
-        <section className="bg-[#1C1C1C] py-8 md:py-16 text-center border-b border-white/5 relative overflow-hidden">
-           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(217,123,141,0.05)_0%,transparent_70%)] pointer-events-none"></div>
-           <div className="px-6 md:px-12">
-             <h2 className="font-display text-[7vw] md:text-[4vw] text-white uppercase font-black tracking-tighter leading-none relative z-10">
-                FRESH COOKIES.<br/><span className="text-[#D97B8D]">BAKED DAILY.</span>
-             </h2>
-           </div>
-        </section>
         {CATEGORIES.map(cat => (
           <div key={cat.name} id={`category-${cat.name.toLowerCase().replace(/\s/g, '-')}`}>
-            <GustoRotator onAddToCart={addToCart} category={cat.name} />
+            <GustoRotator 
+              onAddToCart={addToCart} 
+              category={cat.name} 
+              products={dbProducts.filter(p => p.category === cat.name).length > 0 ? dbProducts.filter(p => p.category === cat.name) : PIZZAS.filter(p => p.category === cat.name)} 
+            />
           </div>
         ))}
         <MenuGrid />
         <TickerMarquee />
         <HandStory />
-        <footer className="bg-[#1C1C1C] text-[#FDFCFB] pt-16 pb-10 px-6 md:px-24 overflow-hidden border-t border-white/5">
-          <div className="max-w-7xl mx-auto flex flex-col gap-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-24">
-              <div className="space-y-4">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D97B8D]">Location</p>
-                <p className="font-black text-base lg:text-xl leading-tight opacity-90">Phase 6, DHA,<br/>Karachi, Pakistan</p>
-              </div>
-              <div className="space-y-4">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D97B8D]">Socials</p>
-                <div className="flex flex-col gap-2 font-black text-base md:text-lg">
-                  <a href="#" className="hover:text-[#D97B8D] transition-all underline underline-offset-4 decoration-[#D97B8D]/20">Instagram</a>
-                  <a href="#" className="hover:text-[#D97B8D] transition-all underline underline-offset-4 decoration-[#D97B8D]/20">Facebook</a>
-                </div>
-              </div>
-              <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-                <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D97B8D]">Studio</p>
-                <p className="text-[12px] font-bold opacity-30 leading-relaxed max-w-xs italic">
-                  "Every batch is handmade. Every cookie is baked fresh for you."
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5 text-[7px] uppercase font-black tracking-[0.6em]">
-              <p className="opacity-15">©2025 GRAVITY STUDIO</p>
-              <a href="https://saad-mughal-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-black border border-[#D97B8D]/30 px-6 py-2.5 rounded-full text-[#D97B8D] text-[7px] font-black uppercase tracking-[0.2em] hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all">
-                 Curated by Saad
-              </a>
-              <p className="opacity-15">Karachi, PK</p>
-            </div>
-          </div>
-        </footer>
       </main>
-
-      <style>{`
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 };
