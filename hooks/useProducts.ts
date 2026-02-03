@@ -136,5 +136,24 @@ export const useAdminProducts = () => {
         deleteProduct,
         toggleVisibility,
         toggleFeatured,
+        updateDisplayOrder: async (items: { id: string; display_order: number }[]) => {
+            // Optimistic update
+            setProducts(prev => {
+                const newProducts = [...prev];
+                items.forEach(item => {
+                    const idx = newProducts.findIndex(p => p.id === item.id);
+                    if (idx !== -1) {
+                        newProducts[idx] = { ...newProducts[idx], display_order: item.display_order };
+                    }
+                });
+                return newProducts.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+            });
+
+            const { error } = await supabase.from('products').upsert(
+                items.map(item => ({ id: item.id, display_order: item.display_order }))
+            ).select();
+
+            return { error };
+        }
     };
 };

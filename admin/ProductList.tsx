@@ -5,13 +5,16 @@ import { useAdminProducts } from '../hooks/useProducts';
 const CATEGORIES = ['All', 'Cookies', 'Brownies', 'Cakes', 'Coffee & Tea', 'Sides'];
 
 const ProductList: React.FC = () => {
-    const { products, loading, deleteProduct, toggleVisibility, toggleFeatured, refetch } = useAdminProducts();
+    // Cast to include updateDisplayOrder which we added to the implementation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { products, loading, deleteProduct, toggleVisibility, toggleFeatured, refetch, updateDisplayOrder } = useAdminProducts() as any;
     const [filter, setFilter] = useState('All');
     const [deleting, setDeleting] = useState<string | null>(null);
+    const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
     const filteredProducts = filter === 'All'
         ? products
-        : products.filter(p => p.category === filter);
+        : products.filter((p: any) => p.category === filter);
 
     const handleDelete = async (id: string, name: string) => {
         if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
@@ -34,13 +37,53 @@ const ProductList: React.FC = () => {
         if (error) alert(`Failed to update: ${error.message}`);
     };
 
+    // Drag and Drop Handlers
+    const handleDragStart = (e: React.DragEvent, id: string) => {
+        setDraggedItem(id);
+        e.dataTransfer.effectAllowed = 'move';
+        // Optional: set custom drag image
+    };
+
+    const handleDragOver = (e: React.DragEvent, targetId: string) => {
+        e.preventDefault();
+        if (!draggedItem || draggedItem === targetId) return;
+        // Logic to show placeholder could go here, but for simple sorting we just allow drop
+    };
+
+    const handleDrop = async (e: React.DragEvent, targetId: string) => {
+        e.preventDefault();
+        if (!draggedItem || draggedItem === targetId) return;
+
+        const sourceIndex = filteredProducts.findIndex((p: any) => p.id === draggedItem);
+        const targetIndex = filteredProducts.findIndex((p: any) => p.id === targetId);
+
+        if (sourceIndex === -1 || targetIndex === -1) return;
+
+        // Create new array with swapped items
+        const newProducts = [...filteredProducts];
+        const [removed] = newProducts.splice(sourceIndex, 1);
+        newProducts.splice(targetIndex, 0, removed);
+
+        // Calculate new display orders (1-based index)
+        const updates = newProducts.map((p: any, idx: number) => ({
+            id: p.id,
+            display_order: idx + 1
+        }));
+
+        setDraggedItem(null);
+
+        if (updateDisplayOrder) {
+            await updateDisplayOrder(updates);
+        }
+    };
+
     return (
         <div className="p-4 lg:p-8">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
                 <div>
                     <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">Products</h1>
-                    <p className="text-white/40 text-sm font-medium mt-1">Manage your catalog</p>
+                    <p className="text-white/40 text-sm font-medium mt-1">Manage your catalog • <span className="text-[#D97B8D]">Drag to reorder</span></p>
                 </div>
                 <Link
                     to="/admin-panel0/products/new"
@@ -58,8 +101,8 @@ const ProductList: React.FC = () => {
                         key={cat}
                         onClick={() => setFilter(cat)}
                         className={`px-4 py-2.5 lg:py-2 rounded-lg font-bold text-xs uppercase tracking-wide lg:tracking-widest transition-all whitespace-nowrap flex-shrink-0 ${filter === cat
-                                ? 'bg-[#D97B8D] text-black'
-                                : 'bg-white/5 text-white/50 hover:text-white active:bg-white/10'
+                            ? 'bg-[#D97B8D] text-black'
+                            : 'bg-white/5 text-white/50 hover:text-white active:bg-white/10'
                             }`}
                     >
                         {cat}
@@ -91,11 +134,21 @@ const ProductList: React.FC = () => {
                 </div>
             ) : (
                 <>
-                    {/* Mobile: Card Layout */}
+                    {/* Mobile: Card Layout (Draggable) */}
                     <div className="lg:hidden space-y-3">
-                        {filteredProducts.map((product) => (
-                            <div key={product.id} className="bg-[#0a0a0a] border border-white/5 rounded-xl p-4">
+                        {filteredProducts.map((product: any) => (
+                            <div
+                                key={product.id}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, product.id)}
+                                onDragOver={(e) => handleDragOver(e, product.id)}
+                                onDrop={(e) => handleDrop(e, product.id)}
+                                className={`bg-[#0a0a0a] border border-white/5 rounded-xl p-4 transition-opacity ${draggedItem === product.id ? 'opacity-30 border-dashed border-[#D97B8D]' : ''}`}
+                            >
                                 <div className="flex items-start gap-3 mb-4">
+                                    <div className="mt-1 cursor-grab active:cursor-grabbing text-white/20 hover:text-white/50">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 6h8M8 12h8M8 18h8" /></svg>
+                                    </div>
                                     {product.image_url ? (
                                         <img
                                             src={product.image_url}
@@ -170,11 +223,12 @@ const ProductList: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Desktop: Table Layout */}
+                    {/* Desktop: Table Layout (Draggable) */}
                     <div className="hidden lg:block bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden">
-                        <table className="w-full">
+                        <table className="w-full border-collapse">
                             <thead>
                                 <tr className="border-b border-white/5">
+                                    <th className="w-10"></th> {/* Drag handle column */}
                                     <th className="text-left p-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Product</th>
                                     <th className="text-left p-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Category</th>
                                     <th className="text-left p-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Price</th>
@@ -184,8 +238,20 @@ const ProductList: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredProducts.map((product) => (
-                                    <tr key={product.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                {filteredProducts.map((product: any) => (
+                                    <tr
+                                        key={product.id}
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, product.id)}
+                                        onDragOver={(e) => handleDragOver(e, product.id)}
+                                        onDrop={(e) => handleDrop(e, product.id)}
+                                        className={`border-b border-white/5 hover:bg-white/5 transition-colors cursor-move ${draggedItem === product.id ? 'opacity-30 bg-white/5' : ''}`}
+                                    >
+                                        <td className="p-4 text-center">
+                                            <div className="text-white/20 hover:text-white/50">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 6h8M8 12h8M8 18h8" /></svg>
+                                            </div>
+                                        </td>
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 {product.image_url ? (
