@@ -247,8 +247,8 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* Category Nav */}
-      <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB] translate-y-0' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+      {/* Category Nav - Guarded by isMounted to prevent hydration flicker */}
+      <nav className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] transition-all duration-500 border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} ${isMounted && scrolled ? 'bg-[#FDFCFB] translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
         <div 
           ref={categoryNavRef}
           className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
@@ -271,80 +271,84 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      <CheckoutOverlay 
-        isOpen={isCheckoutOpen} 
-        onClose={() => setIsCheckoutOpen(false)} 
-        cartItems={cart} 
-        totalPrice={totalPrice} 
-        onOrderSuccess={(orderData) => handleOrderComplete(orderData)} 
-        orderNotes={kitchenNotes} 
-      />
+      {isMounted && (
+        <>
+          <CheckoutOverlay 
+            isOpen={isCheckoutOpen} 
+            onClose={() => setIsCheckoutOpen(false)} 
+            cartItems={cart} 
+            totalPrice={totalPrice} 
+            onOrderSuccess={(orderData) => handleOrderComplete(orderData)} 
+            orderNotes={kitchenNotes} 
+          />
 
-      <OrderSuccessOverlay 
-        isOpen={showSuccess} 
-        order={activeOrder} 
-        onClose={handleCloseSuccess} 
-      />
+          <OrderSuccessOverlay 
+            isOpen={showSuccess} 
+            order={activeOrder} 
+            onClose={handleCloseSuccess} 
+          />
 
-      {/* Cart Drawer - fixed visibility logic to remove blur when closed */}
-      <div className={`fixed inset-0 z-[200] ${isMounted ? 'transition-all duration-500' : ''} ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-        {/* Backdrop overlay: only rendered when needed to prevent global blur calculation issues */}
-        <div 
-          className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-600 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`} 
-          onClick={() => setIsCartOpen(false)}
-        ></div>
-        
-        <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform ${isMounted ? 'transition-transform duration-700 ease-expo-out' : ''} ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
-          <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
-            <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
-            <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D97B8D] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col no-scrollbar">
-             {cart.length === 0 ? (
-               <div className="flex flex-col items-center justify-center flex-1 opacity-20 text-white space-y-4 text-center">
-                 <CartVisualCookie />
-                 <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
-               </div>
-             ) : (
-               <div className="space-y-6">
-                 <CartVisualCookie />
-                 {cart.map((item, idx) => (
-                   <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group animate-in slide-in-from-right duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
-                     <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
-                     <div className="flex-1">
-                        <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
-                        <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
-                     </div>
-                     <div className="flex items-center gap-3 text-[#D97B8D] font-black">
-                       <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
-                       <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
-                       <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
+          {/* Cart Drawer Overlay Container */}
+          <div className={`fixed inset-0 z-[200] transition-all duration-500 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+            {/* Backdrop overlay */}
+            <div 
+              className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-600 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`} 
+              onClick={() => setIsCartOpen(false)}
+            ></div>
+            
+            <div className={`absolute top-0 right-0 h-full w-full max-w-sm bg-[#1C1C1C] transform transition-transform duration-700 ease-expo-out ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)]`}>
+              <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5">
+                <h2 className="font-display text-xl text-white font-black uppercase tracking-tighter">My Cart</h2>
+                <button onClick={() => setIsCartOpen(false)} className="text-white/20 p-2 hover:text-[#D97B8D] transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col no-scrollbar">
+                 {cart.length === 0 ? (
+                   <div className="flex flex-col items-center justify-center flex-1 opacity-20 text-white space-y-4 text-center">
+                     <CartVisualCookie />
+                     <p className="font-black uppercase tracking-[0.4em] text-[10px]">Your cart is empty.</p>
+                   </div>
+                 ) : (
+                   <div className="space-y-6">
+                     <CartVisualCookie />
+                     {cart.map((item, idx) => (
+                       <div key={`${item.id}-${item.selectedSize.name}-${idx}`} className="flex gap-4 items-center group animate-in slide-in-from-right duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
+                         <img src={item.image} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
+                         <div className="flex-1">
+                            <div className="text-white font-black uppercase text-[10px] tracking-widest leading-tight">{item.name}</div>
+                            <div className="text-[#D97B8D] font-black uppercase text-[7px] tracking-[0.2em] mt-1 opacity-70">{item.selectedSize.name}</div>
+                         </div>
+                         <div className="flex items-center gap-3 text-[#D97B8D] font-black">
+                           <button onClick={() => updateQuantity(item.id, item.selectedSize.name, -1)} className="hover:scale-125 transition-transform">-</button>
+                           <span className="text-[11px] text-white bg-white/5 px-2 py-1 rounded-lg">{item.quantity}</span>
+                           <button onClick={() => updateQuantity(item.id, item.selectedSize.name, 1)} className="hover:scale-125 transition-transform">+</button>
+                         </div>
+                       </div>
+                     ))}
+                     
+                     {/* Kitchen Instructions in Cart */}
+                     <div className="pt-6 border-t border-white/5 space-y-3">
+                       <p className="text-[7px] font-black uppercase tracking-[0.4em] text-white/40">Kitchen Instructions</p>
+                       <textarea 
+                         value={kitchenNotes}
+                         onChange={(e) => setKitchenNotes(e.target.value)}
+                         placeholder="ANY SPECIAL REQUESTS FOR THE CHEF?"
+                         className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-black uppercase text-[10px] tracking-widest focus:border-[#D97B8D] transition-colors resize-none h-24"
+                       />
                      </div>
                    </div>
-                 ))}
-                 
-                 {/* Kitchen Instructions in Cart */}
-                 <div className="pt-6 border-t border-white/5 space-y-3">
-                   <p className="text-[7px] font-black uppercase tracking-[0.4em] text-white/40">Kitchen Instructions</p>
-                   <textarea 
-                     value={kitchenNotes}
-                     onChange={(e) => setKitchenNotes(e.target.value)}
-                     placeholder="ANY SPECIAL REQUESTS FOR THE CHEF?"
-                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-black uppercase text-[10px] tracking-widest focus:border-[#D97B8D] transition-colors resize-none h-24"
-                   />
+                 )}
+              </div>
+              <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">
+                 <div className="flex justify-between items-end text-white/40 font-black uppercase text-[10px] tracking-[0.5em]">
+                   <span>Total</span>
+                   <span className="text-2xl text-[#D97B8D] tracking-tighter font-display leading-none">Rs. {totalPrice}</span>
                  </div>
-               </div>
-             )}
+                 <button disabled={cart.length === 0} onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} className="w-full bg-[#D97B8D] text-[#1C1C1C] py-4 rounded-xl font-black uppercase text-[11px] tracking-[0.4em] shadow-xl disabled:opacity-20 active:scale-95 transition-all">Checkout</button>
+              </div>
+            </div>
           </div>
-          <div className="p-6 md:p-10 border-t border-white/5 bg-black/40 space-y-6">
-             <div className="flex justify-between items-end text-white/40 font-black uppercase text-[10px] tracking-[0.5em]">
-               <span>Total</span>
-               <span className="text-2xl text-[#D97B8D] tracking-tighter font-display leading-none">Rs. {totalPrice}</span>
-             </div>
-             <button disabled={cart.length === 0} onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} className="w-full bg-[#D97B8D] text-[#1C1C1C] py-4 rounded-xl font-black uppercase text-[11px] tracking-[0.4em] shadow-xl disabled:opacity-20 active:scale-95 transition-all">Checkout</button>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       <main>
         <Hero />
