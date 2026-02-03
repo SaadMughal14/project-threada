@@ -37,7 +37,6 @@ const AdminLayout: React.FC = () => {
         { path: '/admin-panel0', label: 'Dashboard', icon: '📊', exact: true },
         { path: '/admin-panel0/products', label: 'Products', icon: '🍪' },
         { path: '/admin-panel0/products/new', label: 'Add Product', icon: '➕' },
-        { path: '/admin-panel0/settings', label: 'Settings', icon: '⚙️' },
     ];
 
     const isActive = (path: string, exact?: boolean) => {

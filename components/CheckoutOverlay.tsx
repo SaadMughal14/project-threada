@@ -46,10 +46,6 @@ const BankIcon = () => (
   </svg>
 );
 
-import { supabase } from '../supabaseClient';
-
-
-
 const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess, orderNotes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -68,29 +64,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     { id: 'bank', name: 'Bank Transfer', icon: <BankIcon />, color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
   ];
 
-  const DEFAULT_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6";
-  const [discordWebhook, setDiscordWebhook] = useState(DEFAULT_WEBHOOK);
-
-  useEffect(() => {
-    const fetchWebhook = async () => {
-      try {
-        const { data } = await supabase
-          .from('settings')
-          .select('value')
-          .eq('key', 'discord_webhook')
-          .single();
-
-        if (data?.value) {
-          setDiscordWebhook(data.value);
-        }
-      } catch (err) {
-        // Fallback to default
-      }
-    };
-
-    // Only fetch if open to save resources, or on mount
-    if (isOpen) fetchWebhook();
-  }, [isOpen]);
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6";
 
   useGSAP(() => {
     if (isOpen) {
@@ -173,7 +147,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     };
 
     try {
-      const response = await fetch(discordWebhook, {
+      const response = await fetch(DISCORD_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

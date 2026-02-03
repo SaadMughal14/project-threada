@@ -1,10 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const storedUrl = typeof localStorage !== 'undefined' ? localStorage.getItem('sb_url') : null;
-const storedKey = typeof localStorage !== 'undefined' ? localStorage.getItem('sb_key') : null;
-
-const supabaseUrl = storedUrl || 'https://ogztqrexnzmknmosgazb.supabase.co';
-const supabaseAnonKey = storedKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nenRxcmV4bnpta25tb3NnYXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwOTIxMDksImV4cCI6MjA4NTY2ODEwOX0.NdT_Ze7nT-ueujEPhBBnyJnsu4CdNj-nyH7kaBUppBI';
+const supabaseUrl = 'https://ogztqrexnzmknmosgazb.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nenRxcmV4bnpta25tb3NnYXpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwOTIxMDksImV4cCI6MjA4NTY2ODEwOX0.NdT_Ze7nT-ueujEPhBBnyJnsu4CdNj-nyH7kaBUppBI';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

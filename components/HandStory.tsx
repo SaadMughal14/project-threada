@@ -12,8 +12,8 @@ const HandStory: React.FC = () => {
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: container.current,
-                start: "top 80%",
-                end: "center center", // Finish when element is centered
+                start: "top 60%", // Triggers earlier as requested
+                end: "bottom 20%",
                 scrub: 0.8,
             }
         });
@@ -35,7 +35,7 @@ const HandStory: React.FC = () => {
         gsap.to(handRef.current, {
             scrollTrigger: {
                 trigger: container.current,
-                start: "center 40%", // Start exit when element moves above center
+                start: "bottom 50%",
                 end: "bottom top",
                 scrub: 1,
             },
