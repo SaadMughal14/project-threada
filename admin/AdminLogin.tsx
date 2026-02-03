@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const AdminLogin: React.FC = () => {
@@ -6,20 +7,47 @@ const AdminLogin: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const { signIn } = useAuth();
+    const { signIn, user, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (!authLoading && user) {
+            navigate('/admin-panel0', { replace: true });
+        }
+    }, [user, authLoading, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
-        const { error: signInError } = await signIn(email, password);
+        try {
+            const { error: signInError } = await signIn(email, password);
 
-        if (signInError) {
-            setError(signInError.message);
+            if (signInError) {
+                setError(signInError.message);
+                setLoading(false);
+            } else {
+                // Successful login - navigate to dashboard
+                navigate('/admin-panel0', { replace: true });
+            }
+        } catch (err) {
+            setError('An unexpected error occurred');
             setLoading(false);
         }
     };
+
+    // Show loading while checking auth state
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-[#1C1C1C] flex items-center justify-center">
+                <div className="text-white/40 text-sm font-bold uppercase tracking-widest animate-pulse">
+                    Loading...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#1C1C1C] flex items-center justify-center p-4">
