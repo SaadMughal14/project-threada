@@ -485,6 +485,31 @@ const ProductForm: React.FC = () => {
                         </button>
                     </div>
 
+                    {/* Emoji Quick-Add */}
+                    <div className="mb-4">
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Quick Add Emoji:</p>
+                        <div className="flex flex-wrap gap-1">
+                            {['🍫', '🍪', '☕', '🥛', '🧈', '🥚', '🍯', '🌰', '🥜', '🍓', '🫐', '🍋', '🍊', '🍌', '🥥', '🌿', '🍵', '🧂', '🍦', '🎂', '🧁', '🍰', '🍩', '🥐', '🍞'].map((emoji, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={() => {
+                                        const lastEmptyIdx = formData.ingredients.findIndex(i => !i.trim());
+                                        if (lastEmptyIdx >= 0) {
+                                            handleIngredientChange(lastEmptyIdx, emoji);
+                                        } else {
+                                            setFormData(prev => ({ ...prev, ingredients: [...prev.ingredients, emoji] }));
+                                        }
+                                    }}
+                                    className="w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-lg transition-all hover:scale-110"
+                                >
+                                    {emoji}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Ingredient List */}
                     <div className="flex flex-wrap gap-3">
                         {formData.ingredients.map((ingredient, index) => (
                             <div key={index} className="flex items-center gap-2">
@@ -492,8 +517,8 @@ const ProductForm: React.FC = () => {
                                     type="text"
                                     value={ingredient}
                                     onChange={(e) => handleIngredientChange(index, e.target.value)}
-                                    placeholder="Dark Cacao"
-                                    className="w-36 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white text-sm font-medium placeholder-white/20 focus:border-[#D97B8D] focus:outline-none transition-colors"
+                                    placeholder="🍫 Dark Cacao"
+                                    className="w-40 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white text-sm font-medium placeholder-white/20 focus:border-[#D97B8D] focus:outline-none transition-colors"
                                 />
                                 {formData.ingredients.length > 1 && (
                                     <button
@@ -510,7 +535,7 @@ const ProductForm: React.FC = () => {
                 </div>
 
                 {/* Toggle Options */}
-                <div className="bg-[#1C1C1C] border border-white/5 rounded-2xl p-6">
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4">Visibility</h2>
 
                     <div className="flex flex-wrap gap-6">

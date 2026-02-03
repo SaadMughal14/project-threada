@@ -45,7 +45,7 @@ const AdminLayout: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black">
+        <div className="min-h-screen bg-black lg:flex">
             {/* Mobile Header */}
             <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between">
                 <Link to="/admin-panel0" className="flex items-center gap-2">
@@ -85,11 +85,12 @@ const AdminLayout: React.FC = () => {
                 />
             )}
 
-            {/* Sidebar - Mobile slide-in, Desktop fixed */}
+            {/* Sidebar */}
             <aside className={`
-                fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col
+                fixed inset-y-0 left-0 z-50 w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col
                 transform transition-transform duration-300 ease-out
-                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                lg:translate-x-0 lg:relative lg:flex-shrink-0
             `}>
                 {/* Logo - Desktop only */}
                 <div className="hidden lg:block p-6 border-b border-white/5">
@@ -115,15 +116,15 @@ const AdminLayout: React.FC = () => {
                 <div className="lg:hidden h-16" />
 
                 {/* Navigation */}
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                     {navItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
                             onClick={() => setSidebarOpen(false)}
                             className={`flex items-center gap-3 px-4 py-4 lg:py-3 rounded-xl font-bold text-base lg:text-sm transition-all ${isActive(item.path, item.exact)
-                                ? 'bg-[#D97B8D] text-black'
-                                : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
+                                    ? 'bg-[#D97B8D] text-black'
+                                    : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
                                 }`}
                         >
                             <span className="text-xl lg:text-lg">{item.icon}</span>
@@ -172,7 +173,7 @@ const AdminLayout: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
+            <main className="flex-1 min-h-screen pt-16 lg:pt-0 overflow-x-hidden">
                 <Outlet />
             </main>
         </div>
