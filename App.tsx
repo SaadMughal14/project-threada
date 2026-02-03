@@ -117,19 +117,27 @@ const App: React.FC = () => {
       }
     }
 
+    // High performance smooth scroll initialization
     const lenis = new Lenis({ 
-      duration: 1.2, 
+      duration: 1.5, 
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true 
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+      infinite: false,
     });
-    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
+
+    // Synchronize ScrollTrigger with Lenis raf loop for maximum smoothness
+    function raf(time: number) {
+      lenis.raf(time);
+      ScrollTrigger.update(); // Force recalculation every frame
+      requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
 
-    const initialScroll = window.pageYOffset || document.documentElement.scrollTop;
-    setScrolled(initialScroll > 60);
-
-    lenis.on('scroll', (e: any) => {
-      setScrolled(e.scroll > 60);
+    const checkScroll = () => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      setScrolled(currentScroll > 100); // Increased threshold slightly for better hero exit
       
       CATEGORIES.forEach(cat => {
         const el = document.getElementById(`category-${cat.name.toLowerCase().replace(/\s/g, '-')}`);
@@ -140,11 +148,16 @@ const App: React.FC = () => {
           }
         }
       });
-    });
+    };
+
+    lenis.on('scroll', checkScroll);
+    checkScroll();
 
     setIsMounted(true);
 
-    return () => { lenis.destroy(); };
+    return () => { 
+      lenis.destroy(); 
+    };
   }, []);
 
   useEffect(() => {
@@ -247,35 +260,38 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* FIXED: Category Nav logic optimized to prevent flicker */}
-      <nav 
-        className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
-          ${isMounted && scrolled 
-            ? 'bg-[#FDFCFB] translate-y-0 opacity-100 visible transition-all duration-500' 
-            : '-translate-y-full opacity-0 invisible pointer-events-none'
-          }`}
-      >
-        <div 
-          ref={categoryNavRef}
-          className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
+      {/* Category Nav - Strict conditional rendering and positioning to prevent flicker */}
+      {isMounted && (
+        <nav 
+          style={{ display: scrolled ? 'block' : 'none' }}
+          className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
+            ${scrolled 
+              ? 'bg-[#FDFCFB] translate-y-0 opacity-100 visible transition-all duration-500' 
+              : '-translate-y-full opacity-0 invisible pointer-events-none'
+            }`}
         >
-           {CATEGORIES.map(cat => (
-             <button 
-               key={cat.name} 
-               ref={(el) => { categoryRefs.current[cat.name] = el; }}
-               onClick={() => scrollToCategory(cat.name)}
-               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black uppercase text-[8px] md:text-[10px] tracking-widest transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeCategory === cat.name ? 'bg-[#1C1C1C] text-[#D97B8D] shadow-sm scale-105' : 'text-[#1C1C1C]/40 hover:text-[#1C1C1C] hover:bg-black/5'}`}
-             >
-               {cat.type === 'image' ? (
-                 <img src={cat.icon} alt={cat.name} className="w-4 h-4 md:w-6 md:h-6 object-contain" />
-               ) : (
-                 <span className="text-sm md:text-base">{cat.icon}</span>
-               )}
-               {cat.name}
-             </button>
-           ))}
-        </div>
-      </nav>
+          <div 
+            ref={categoryNavRef}
+            className="max-w-7xl mx-auto px-2 py-1.5 category-scrollbar flex items-center justify-start md:justify-center gap-2 md:gap-4 overflow-x-auto"
+          >
+             {CATEGORIES.map(cat => (
+               <button 
+                 key={cat.name} 
+                 ref={(el) => { categoryRefs.current[cat.name] = el; }}
+                 onClick={() => scrollToCategory(cat.name)}
+                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black uppercase text-[8px] md:text-[10px] tracking-widest transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeCategory === cat.name ? 'bg-[#1C1C1C] text-[#D97B8D] shadow-sm scale-105' : 'text-[#1C1C1C]/40 hover:text-[#1C1C1C] hover:bg-black/5'}`}
+               >
+                 {cat.type === 'image' ? (
+                   <img src={cat.icon} alt={cat.name} className="w-4 h-4 md:w-6 md:h-6 object-contain" />
+                 ) : (
+                   <span className="text-sm md:text-base">{cat.icon}</span>
+                 )}
+                 {cat.name}
+               </button>
+             ))}
+          </div>
+        </nav>
+      )}
 
       {isMounted && (
         <>
@@ -352,7 +368,7 @@ const App: React.FC = () => {
         </>
       )}
 
-      <main>
+      <main className="will-change-transform">
         <Hero />
         <section className="bg-[#1C1C1C] py-8 md:py-16 text-center border-b border-white/5 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(217,123,141,0.05)_0%,transparent_70%)] pointer-events-none"></div>
