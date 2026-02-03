@@ -15,7 +15,7 @@ const getIngredientEmoji = (name: string) => {
     "Smoked Maple": "🍁", "Charcoal Ice": "🧊", "Cookie Ends": "🍪", "Butter Dust": "🧈",
     "Dark Sugar": "🍬"
   };
-  return map[name] || "✨";
+  return map[name] || "🍴";
 };
 
 const PizzaSection: React.FC<{
@@ -84,8 +84,8 @@ const PizzaSection: React.FC<{
                   key={option.name}
                   onClick={() => setSelectedSize(option)}
                   className={`px-3 md:px-5 py-2 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all border-2 ${selectedSize.name === option.name
-                      ? 'bg-[#D97B8D] border-[#D97B8D] text-[#1C1C1C] shadow-lg scale-105'
-                      : 'bg-white/5 border-white/10 hover:border-white/30 text-white opacity-60'
+                    ? 'bg-[#D97B8D] border-[#D97B8D] text-[#1C1C1C] shadow-lg scale-105'
+                    : 'bg-white/5 border-white/10 hover:border-white/30 text-white opacity-60'
                     }`}
                 >
                   {option.name}

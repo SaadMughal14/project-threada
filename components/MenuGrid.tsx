@@ -19,8 +19,10 @@ const MenuGrid: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Use dynamic products for images
-  const images = products.map(p => p.image);
+  // Use dynamic products for images - filter out empty images
+  // Fallback to PIZZAS if no valid product images
+  const validProductImages = products.filter(p => p.image && p.image.trim() !== '').map(p => p.image);
+  const images = validProductImages.length > 0 ? validProductImages : PIZZAS.map(p => p.image);
 
   const transformStyles = isMobile
     ? ["rotate(6deg) translate(-60px, 10px)", "rotate(-4deg) translate(-30px, -5px)", "rotate(2deg) translate(-5px, 5px)", "rotate(-3deg) translate(5px, -8px)", "rotate(6deg) translate(40px, 8px)", "rotate(-8deg) translate(60px, -4px)"]
