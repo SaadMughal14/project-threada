@@ -210,20 +210,20 @@ const ProductForm: React.FC = () => {
     }
 
     return (
-        <div className="p-8 max-w-4xl">
+        <div className="p-4 lg:p-8 max-w-4xl">
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-                    {isEditing ? 'Edit Product' : 'Add New Product'}
+            <div className="mb-6 lg:mb-8">
+                <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">
+                    {isEditing ? 'Edit Product' : 'Add Product'}
                 </h1>
                 <p className="text-white/40 text-sm font-medium mt-1">
-                    {isEditing ? 'Update product details' : 'Create a new product for your menu'}
+                    {isEditing ? 'Update details' : 'Create a new product'}
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Basic Info */}
-                <div className="bg-[#1C1C1C] border border-white/5 rounded-2xl p-6 space-y-6">
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 space-y-6">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4">Basic Information</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -282,7 +282,7 @@ const ProductForm: React.FC = () => {
                                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-medium focus:border-[#D97B8D] focus:outline-none transition-colors"
                             >
                                 {CATEGORIES.map(cat => (
-                                    <option key={cat} value={cat} className="bg-[#1C1C1C]">{cat}</option>
+                                    <option key={cat} value={cat} className="bg-[#0a0a0a]">{cat}</option>
                                 ))}
                             </select>
                         </div>
@@ -311,7 +311,7 @@ const ProductForm: React.FC = () => {
                 </div>
 
                 {/* Image Upload */}
-                <div className="bg-[#1C1C1C] border border-white/5 rounded-2xl p-6">
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4">Product Image</h2>
 
                     <div
@@ -343,7 +343,7 @@ const ProductForm: React.FC = () => {
                 </div>
 
                 {/* Size Options */}
-                <div className="bg-[#1C1C1C] border border-white/5 rounded-2xl p-6">
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Size Options *</h2>
                         <button
@@ -387,7 +387,7 @@ const ProductForm: React.FC = () => {
                 </div>
 
                 {/* Ingredients */}
-                <div className="bg-[#1C1C1C] border border-white/5 rounded-2xl p-6">
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Ingredients</h2>
                         <button
@@ -463,18 +463,18 @@ const ProductForm: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-4">
+                <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 pb-8">
                     <button
                         type="button"
                         onClick={() => navigate('/admin-panel0/products')}
-                        className="px-6 py-3 text-white/50 font-bold text-sm uppercase tracking-widest hover:text-white transition-colors"
+                        className="px-6 py-4 sm:py-3 text-white/50 font-bold text-sm uppercase tracking-widest hover:text-white active:text-white/80 transition-colors text-center"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={saving}
-                        className="px-8 py-4 bg-[#D97B8D] text-[#1C1C1C] rounded-xl font-black uppercase text-[11px] tracking-[0.3em] hover:bg-[#D97B8D]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                        className="px-8 py-4 bg-[#D97B8D] text-black rounded-xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#D97B8D]/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                     >
                         {saving ? 'Saving...' : isEditing ? 'Update Product' : 'Create Product'}
                     </button>
