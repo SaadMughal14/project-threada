@@ -12,7 +12,7 @@ const HandStory: React.FC = () => {
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: container.current,
-                start: "top 75%", // Triggers earlier as requested
+                start: "top 60%", // Triggers earlier as requested
                 end: "bottom 20%",
                 scrub: 0.8,
             }

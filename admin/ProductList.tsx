@@ -39,6 +39,7 @@ const ProductList: React.FC = () => {
 
     // Drag and Drop Handlers
     const handleDragStart = (e: React.DragEvent, id: string) => {
+        if (filter !== 'All') return;
         setDraggedItem(id);
         e.dataTransfer.effectAllowed = 'move';
         // Optional: set custom drag image
@@ -46,13 +47,13 @@ const ProductList: React.FC = () => {
 
     const handleDragOver = (e: React.DragEvent, targetId: string) => {
         e.preventDefault();
-        if (!draggedItem || draggedItem === targetId) return;
+        if (filter !== 'All' || !draggedItem || draggedItem === targetId) return;
         // Logic to show placeholder could go here, but for simple sorting we just allow drop
     };
 
     const handleDrop = async (e: React.DragEvent, targetId: string) => {
         e.preventDefault();
-        if (!draggedItem || draggedItem === targetId) return;
+        if (filter !== 'All' || !draggedItem || draggedItem === targetId) return;
 
         const sourceIndex = filteredProducts.findIndex((p: any) => p.id === draggedItem);
         const targetIndex = filteredProducts.findIndex((p: any) => p.id === targetId);
@@ -83,7 +84,14 @@ const ProductList: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
                 <div>
                     <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">Products</h1>
-                    <p className="text-white/40 text-sm font-medium mt-1">Manage your catalog • <span className="text-[#D97B8D]">Drag to reorder</span></p>
+                    <p className="text-white/40 text-sm font-medium mt-1">
+                        Manage your catalog •
+                        {filter === 'All' ? (
+                            <span className="text-[#D97B8D]"> Drag to reorder</span>
+                        ) : (
+                            <span className="text-white/20"> Switch to 'All' to reorder</span>
+                        )}
+                    </p>
                 </div>
                 <Link
                     to="/admin-panel0/products/new"

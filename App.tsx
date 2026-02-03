@@ -74,13 +74,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isCartOpen || isCheckoutOpen || showSuccess) {
+      // Robust mobile scroll lock
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+      // Also lock html
       document.documentElement.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
     } else {
+      // Retrieve scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
-      document.body.style.touchAction = '';
+
+      // Restore scroll
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     }
   }, [isCartOpen, isCheckoutOpen, showSuccess]);
 
