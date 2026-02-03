@@ -19,32 +19,36 @@ interface CheckoutOverlayProps {
 
 const EasypaisaIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#1EB055"/>
-    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect width="24" height="24" rx="6" fill="#1EB055" />
+    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const JazzCashIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#ED1C24"/>
-    <path d="M12 7V17M12 7L9 10M12 7L15 10M8 17H16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect width="24" height="24" rx="6" fill="#ED1C24" />
+    <path d="M12 7V17M12 7L9 10M12 7L15 10M8 17H16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const NayaPayIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#8B2CF5"/>
-    <path d="M12 6L7 11H17L12 6Z" fill="white"/>
-    <path d="M7 13H17L12 18L7 13Z" fill="white"/>
+    <rect width="24" height="24" rx="6" fill="#8B2CF5" />
+    <path d="M12 6L7 11H17L12 6Z" fill="white" />
+    <path d="M7 13H17L12 18L7 13Z" fill="white" />
   </svg>
 );
 
 const BankIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#1C1C1C"/>
-    <path d="M4 20H20M5 10V17M19 10V17M12 10V17M3 10L12 4L21 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect width="24" height="24" rx="6" fill="#1C1C1C" />
+    <path d="M4 20H20M5 10V17M19 10V17M12 10V17M3 10L12 4L21 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+import { supabase } from '../supabaseClient';
+
+
 
 const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess, orderNotes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +68,29 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     { id: 'bank', name: 'Bank Transfer', icon: <BankIcon />, color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
   ];
 
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6"; 
+  const DEFAULT_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6";
+  const [discordWebhook, setDiscordWebhook] = useState(DEFAULT_WEBHOOK);
+
+  useEffect(() => {
+    const fetchWebhook = async () => {
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('value')
+          .eq('key', 'discord_webhook')
+          .single();
+
+        if (data?.value) {
+          setDiscordWebhook(data.value);
+        }
+      } catch (err) {
+        // Fallback to default
+      }
+    };
+
+    // Only fetch if open to save resources, or on mount
+    if (isOpen) fetchWebhook();
+  }, [isOpen]);
 
   useGSAP(() => {
     if (isOpen) {
@@ -95,7 +121,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const orderId = Math.random().toString(36).substring(2, 8).toUpperCase();
     const placedAt = Date.now();
     const orderTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
+
     // Full order data for app state
     const orderData: any = {
       id: orderId,
@@ -147,12 +173,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     };
 
     try {
-      const response = await fetch(DISCORD_WEBHOOK, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload) 
+      const response = await fetch(discordWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Discord error status:", response.status, "body:", errorText);
@@ -175,11 +201,11 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       <div className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-black/5 flex-shrink-0 bg-[#FDFCFB] z-20">
         <h2 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tighter text-[#1C1C1C]">Check<span className="text-[#D97B8D]">out</span></h2>
         <button onClick={onClose} className="p-3 bg-black text-white rounded-full hover:bg-[#D97B8D] transition-colors shadow-xl">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12" /></svg>
         </button>
       </div>
 
-      <div 
+      <div
         ref={scrollAreaRef}
         data-lenis-prevent
         className="flex-1 overflow-y-auto bg-[#FDFCFB] px-6 py-10 md:px-12 relative touch-pan-y no-scrollbar"
@@ -192,25 +218,25 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
               <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Delivery Details
             </h3>
             <div className="grid gap-4 md:gap-6">
-              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-              <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
-              
+              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+              <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
+              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+
               <div className="pt-2">
                 <p className="text-[7px] font-black uppercase tracking-[0.4em] text-black/20 mb-2">Delivery Instructions</p>
-                <textarea 
-                  placeholder="GATE CODE, DROP-OFF SPOTS, ETC." 
-                  rows={2} 
-                  className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-sm md:text-base focus:border-[#D97B8D] transition-colors resize-none" 
-                  value={formData.deliveryNotes} 
-                  onChange={e => setFormData({...formData, deliveryNotes: e.target.value})} 
+                <textarea
+                  placeholder="GATE CODE, DROP-OFF SPOTS, ETC."
+                  rows={2}
+                  className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-sm md:text-base focus:border-[#D97B8D] transition-colors resize-none"
+                  value={formData.deliveryNotes}
+                  onChange={e => setFormData({ ...formData, deliveryNotes: e.target.value })}
                 />
               </div>
             </div>
             {step === 'info' && (
-              <button 
-                onClick={() => { setStep('payment'); scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }} 
-                disabled={!formData.name || !formData.phone || !formData.address} 
+              <button
+                onClick={() => { setStep('payment'); scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                disabled={!formData.name || !formData.phone || !formData.address}
                 className="w-full bg-black text-[#D97B8D] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] md:text-[12px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all"
               >
                 Next Step
@@ -223,7 +249,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
             <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">02</span> Payment Method
             </h3>
-            
+
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
                 <span className="text-3xl md:text-4xl">💵</span>
@@ -240,7 +266,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
                 <p className="font-black uppercase text-[9px] tracking-[0.4em] text-black/30 text-center">Choose Your Provider</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                   {PROVIDERS.map(p => (
-                    <button 
+                    <button
                       key={p.id}
                       onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
                       className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D97B8D] bg-[#F2DCE0]/50' : 'border-black/5 opacity-60'}`}
@@ -274,7 +300,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
                     <div className="pt-4 border-t border-white/10">
                       <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
-                      <button 
+                      <button
                         onClick={() => fileInputRef.current?.click()}
                         className={`w-full py-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-4 transition-all overflow-hidden ${screenshot ? 'border-[#D97B8D] bg-[#D97B8D]/10' : 'border-white/10 hover:border-white/30'}`}
                       >
@@ -306,9 +332,9 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
             {step === 'payment' && (
               <div className="flex flex-col sm:flex-row gap-3 pt-6">
                 <button onClick={() => setStep('info')} className="flex-1 border-2 border-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest active:bg-black/5 transition-colors">Go Back</button>
-                <button 
-                  onClick={submitOrder} 
-                  disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))} 
+                <button
+                  onClick={submitOrder}
+                  disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))}
                   className="flex-[2] bg-[#D97B8D] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
                 >
                   {isSubmitting ? 'Processing...' : 'Finish Order'}

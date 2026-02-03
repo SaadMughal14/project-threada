@@ -37,6 +37,7 @@ const AdminLayout: React.FC = () => {
         { path: '/admin-panel0', label: 'Dashboard', icon: '📊', exact: true },
         { path: '/admin-panel0/products', label: 'Products', icon: '🍪' },
         { path: '/admin-panel0/products/new', label: 'Add Product', icon: '➕' },
+        { path: '/admin-panel0/settings', label: 'Settings', icon: '⚙️' },
     ];
 
     const isActive = (path: string, exact?: boolean) => {
@@ -123,8 +124,8 @@ const AdminLayout: React.FC = () => {
                             to={item.path}
                             onClick={() => setSidebarOpen(false)}
                             className={`flex items-center gap-3 px-4 py-4 lg:py-3 rounded-xl font-bold text-base lg:text-sm transition-all ${isActive(item.path, item.exact)
-                                    ? 'bg-[#D97B8D] text-black'
-                                    : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
+                                ? 'bg-[#D97B8D] text-black'
+                                : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
                                 }`}
                         >
                             <span className="text-xl lg:text-lg">{item.icon}</span>
