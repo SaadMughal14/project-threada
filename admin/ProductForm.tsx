@@ -5,6 +5,38 @@ import { supabase, SupabaseProduct } from '../supabaseClient';
 
 const CATEGORIES = ['Cookies', 'Brownies', 'Cakes', 'Coffee & Tea', 'Sides'];
 
+// Aesthetic color presets
+const COLOR_PRESETS = [
+    { name: 'Charcoal', color: '#1C1C1C' },
+    { name: 'Deep Purple', color: '#2D1B4E' },
+    { name: 'Forest Green', color: '#1B3D2F' },
+    { name: 'Midnight Blue', color: '#1B2838' },
+    { name: 'Burgundy', color: '#4A1C2D' },
+    { name: 'Dark Teal', color: '#1A3A3A' },
+    { name: 'Espresso', color: '#3C2415' },
+    { name: 'Slate', color: '#2F3640' },
+    { name: 'Rose Gold', color: '#4A3035' },
+    { name: 'Ocean', color: '#1B3A4B' },
+];
+
+// Size option presets
+const SIZE_PRESETS = [
+    { name: '1 Piece', price: 'Rs. 500' },
+    { name: '2 Pieces', price: 'Rs. 900' },
+    { name: '4 Pieces', price: 'Rs. 1600' },
+    { name: '6 Pieces', price: 'Rs. 2200' },
+    { name: '12 Pieces', price: 'Rs. 4000' },
+    { name: 'Small', price: 'Rs. 400' },
+    { name: 'Medium', price: 'Rs. 600' },
+    { name: 'Large', price: 'Rs. 800' },
+    { name: 'Regular', price: 'Rs. 350' },
+    { name: 'Hot', price: 'Rs. 400' },
+    { name: 'Cold', price: 'Rs. 450' },
+    { name: 'Single Serving', price: 'Rs. 550' },
+    { name: 'Family Pack', price: 'Rs. 1800' },
+    { name: 'Party Box', price: 'Rs. 3500' },
+];
+
 interface SizeOption {
     name: string;
     price: string;
@@ -141,15 +173,31 @@ const ProductForm: React.FC = () => {
     const handleSizeChange = (index: number, field: 'name' | 'price', value: string) => {
         setFormData(prev => {
             const newOptions = [...prev.size_options];
-            newOptions[index] = { ...newOptions[index], [field]: value };
+            // Auto-prepend 'Rs. ' if user types a number in price field
+            let processedValue = value;
+            if (field === 'price' && value && !value.startsWith('Rs.')) {
+                // Remove any existing Rs. or Rs prefix and numbers only
+                const numericValue = value.replace(/[^0-9]/g, '');
+                if (numericValue) {
+                    processedValue = `Rs. ${numericValue}`;
+                }
+            }
+            newOptions[index] = { ...newOptions[index], [field]: processedValue };
             return { ...prev, size_options: newOptions };
         });
+    };
+
+    const applySizePreset = (preset: { name: string; price: string }) => {
+        setFormData(prev => ({
+            ...prev,
+            size_options: [...prev.size_options.filter(s => s.name || s.price), preset],
+        }));
     };
 
     const addSizeOption = () => {
         setFormData(prev => ({
             ...prev,
-            size_options: [...prev.size_options, { name: '', price: '' }],
+            size_options: [...prev.size_options, { name: '', price: 'Rs. ' }],
         }));
     };
 
@@ -290,13 +338,33 @@ const ProductForm: React.FC = () => {
                             <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">
                                 Background Color
                             </label>
+                            {/* Color Presets */}
+                            <div className="mb-3">
+                                <select
+                                    value={formData.color}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-medium focus:border-[#D97B8D] focus:outline-none transition-colors"
+                                >
+                                    {COLOR_PRESETS.map(preset => (
+                                        <option key={preset.color} value={preset.color} className="bg-[#0a0a0a]">
+                                            {preset.name}
+                                        </option>
+                                    ))}
+                                    <option value="custom" className="bg-[#0a0a0a]">Custom Color...</option>
+                                </select>
+                            </div>
+                            {/* Color Preview + Custom Picker */}
                             <div className="flex items-center gap-3">
+                                <div
+                                    className="w-12 h-12 rounded-xl border border-white/10"
+                                    style={{ backgroundColor: formData.color }}
+                                />
                                 <input
                                     type="color"
                                     name="color"
                                     value={formData.color}
                                     onChange={handleChange}
-                                    className="w-12 h-12 rounded-xl border border-white/10 cursor-pointer bg-transparent"
+                                    className="w-10 h-10 rounded-lg border border-white/10 cursor-pointer bg-transparent"
                                 />
                                 <input
                                     type="text"
@@ -351,10 +419,28 @@ const ProductForm: React.FC = () => {
                             onClick={addSizeOption}
                             className="text-[#D97B8D] text-xs font-bold uppercase tracking-widest hover:text-[#D97B8D]/80 transition-colors"
                         >
-                            + Add Size
+                            + Add Custom
                         </button>
                     </div>
 
+                    {/* Quick Presets */}
+                    <div className="mb-4">
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Quick Add:</p>
+                        <div className="flex flex-wrap gap-2">
+                            {SIZE_PRESETS.map((preset, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={() => applySizePreset(preset)}
+                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white/60 hover:text-white font-medium transition-all"
+                                >
+                                    {preset.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Current Size Options */}
                     <div className="space-y-3">
                         {formData.size_options.map((option, index) => (
                             <div key={index} className="flex items-center gap-3">
@@ -362,14 +448,14 @@ const ProductForm: React.FC = () => {
                                     type="text"
                                     value={option.name}
                                     onChange={(e) => handleSizeChange(index, 'name', e.target.value)}
-                                    placeholder="Size name (e.g., 1 PIECE)"
+                                    placeholder="Size name"
                                     className="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-medium placeholder-white/20 focus:border-[#D97B8D] focus:outline-none transition-colors"
                                 />
                                 <input
                                     type="text"
                                     value={option.price}
                                     onChange={(e) => handleSizeChange(index, 'price', e.target.value)}
-                                    placeholder="Rs. 1200"
+                                    placeholder="Rs. 0"
                                     className="w-32 bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-medium placeholder-white/20 focus:border-[#D97B8D] focus:outline-none transition-colors"
                                 />
                                 {formData.size_options.length > 1 && (
