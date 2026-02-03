@@ -75,8 +75,12 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isCartOpen || isCheckoutOpen || showSuccess) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.touchAction = '';
     }
   }, [isCartOpen, isCheckoutOpen, showSuccess]);
 
@@ -407,7 +411,7 @@ const App: React.FC = () => {
               <div className="space-y-4 sm:col-span-2 lg:col-span-1">
                 <p className="font-bold text-[8px] uppercase tracking-[0.6em] text-[#D97B8D]">Studio</p>
                 <p className="text-[12px] font-bold opacity-30 leading-relaxed max-w-xs italic">
-                  "Every batch is handmade. Every cookie is baked fresh for you."
+                  "Every batch is handmade. Fresh products baked daily."
                 </p>
               </div>
             </div>
