@@ -8,40 +8,21 @@ const HandStory: React.FC = () => {
     const textRef = useRef<HTMLHeadingElement>(null);
 
     useGSAP(() => {
-        // Entrance Timeline
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: container.current,
-                start: "top 60%", // Triggers earlier as requested
-                end: "bottom 20%",
-                scrub: 0.8,
-            }
+        // Initial State
+        gsap.set([handRef.current, textRef.current], {
+            opacity: 1,
+            y: 0,
+            rotation: 0
         });
 
-        tl.from(handRef.current, {
-            y: 120,
-            rotation: -5,
-            opacity: 0,
-            ease: "power2.out"
-        })
-            .from(textRef.current, {
-                scale: 0.95,
-                opacity: 0,
-                y: 40,
-                ease: "expo.out"
-            }, "-=0.6");
-
-        // Exit Animation
+        // Subtle Floating Animation
         gsap.to(handRef.current, {
-            scrollTrigger: {
-                trigger: container.current,
-                start: "bottom 50%",
-                end: "bottom top",
-                scrub: 1,
-            },
-            y: -80,
-            opacity: 0.4,
-            ease: "none"
+            y: -15,
+            rotation: 2,
+            duration: 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1
         });
 
     }, { scope: container });

@@ -149,9 +149,22 @@ export const useAdminProducts = () => {
                 return newProducts.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
             });
 
-            const { error } = await supabase.from('products').upsert(
-                items.map(item => ({ id: item.id, display_order: item.display_order }))
-            ).select();
+            console.log('Sending reorder update to Supabase:', items);
+
+            // Using sequential updates to ensure RLS/Constraint reliability
+            // (Upsert can be tricky with partial data if not all required fields are present)
+            let error = null;
+            for (const item of items) {
+                const { error: reqError } = await supabase
+                    .from('products')
+                    .update({ display_order: item.display_order }) // Explicitly update only this field
+                    .eq('id', item.id);
+
+                if (reqError) {
+                    console.error('Failed to update order for item:', item.id, reqError);
+                    error = reqError; // Capture last error
+                }
+            }
 
             return { error };
         }
