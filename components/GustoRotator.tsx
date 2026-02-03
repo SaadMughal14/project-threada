@@ -15,7 +15,7 @@ const getIngredientEmoji = (name: string) => {
     "Smoked Maple": "🍁", "Charcoal Ice": "🧊", "Cookie Ends": "🍪", "Butter Dust": "🧈",
     "Dark Sugar": "🍬"
   };
-  return map[name] || "🍴";
+  return map[name] || "";
 };
 
 const PizzaSection: React.FC<{
@@ -95,7 +95,7 @@ const PizzaSection: React.FC<{
           </div>
 
           <div className={`flex items-center gap-4 pt-4 justify-center ${isEven ? 'md:justify-start' : 'md:justify-end'}`}>
-            <span className="text-4xl md:text-6xl font-display font-black text-[#D97B8D] tracking-tighter leading-none">{selectedSize.price}</span>
+            <span className="text-3xl md:text-4xl font-display font-black text-[#D97B8D] tracking-tighter leading-none">{selectedSize.price}</span>
             <button onClick={() => onAddToCart(pizza, selectedSize)} className="bg-[#D97B8D] text-[#1C1C1C] px-6 md:px-10 py-2.5 md:py-4 rounded-full font-black uppercase text-[9px] md:text-[11px] tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-md">Add to Cart</button>
           </div>
         </div>

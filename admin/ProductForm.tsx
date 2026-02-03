@@ -485,25 +485,53 @@ const ProductForm: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Emoji Quick-Add */}
+                    {/* Ingredient Quick-Add */}
                     <div className="mb-4">
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Quick Add Emoji:</p>
-                        <div className="flex flex-wrap gap-1">
-                            {['🍫', '🍪', '☕', '🥛', '🧈', '🥚', '🍯', '🌰', '🥜', '🍓', '🫐', '🍋', '🍊', '🍌', '🥥', '🌿', '🍵', '🧂', '🍦', '🎂', '🧁', '🍰', '🍩', '🥐', '🍞', '🍮', '🍡', '🍧', '🧇', '🥞', '🍨', '🌸', '🍁', '🧊', '💧', '🌱', '🫚', '🍬', '🍭', '🍿', '🥧', '🍒', '🍑', '🍇', '🥝', '🍍', '🥭', '🫒', '🌶️', '🍎', '🍐', '🥕', '🥄', '🍴'].map((emoji, idx) => (
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Quick Add Ingredient:</p>
+                        <div className="flex flex-wrap gap-2">
+                            {[
+                                { emoji: '🍫', name: 'Dark Chocolate' },
+                                { emoji: '🧈', name: 'Butter' },
+                                { emoji: '🥚', name: 'Eggs' },
+                                { emoji: '🧂', name: 'Sea Salt' },
+                                { emoji: '🍯', name: 'Honey' },
+                                { emoji: '🌰', name: 'Hazelnut' },
+                                { emoji: '🥜', name: 'Pistachio' },
+                                { emoji: '☕', name: 'Espresso' },
+                                { emoji: '🥛', name: 'Milk' },
+                                { emoji: '🍪', name: 'Cookie Crumbs' },
+                                { emoji: '🍬', name: 'Sugar' },
+                                { emoji: '🌸', name: 'Vanilla' },
+                                { emoji: '🍮', name: 'Caramel' },
+                                { emoji: '🍋', name: 'Lemon Zest' },
+                                { emoji: '🍊', name: 'Orange Zest' },
+                                { emoji: '🥥', name: 'Coconut' },
+                                { emoji: '🍓', name: 'Strawberry' },
+                                { emoji: '🫐', name: 'Blueberry' },
+                                { emoji: '🍁', name: 'Maple Syrup' },
+                                { emoji: '🧊', name: 'Ice' },
+                                { emoji: '💧', name: 'Ganache' },
+                                { emoji: '🌱', name: 'Mint' },
+                                { emoji: '🫚', name: 'Ginger' },
+                                { emoji: '🍰', name: 'Cream Cheese' },
+                                { emoji: '🥞', name: 'Flour' },
+                                { emoji: '🍡', name: 'Marshmallow' },
+                            ].map((preset, idx) => (
                                 <button
                                     key={idx}
                                     type="button"
                                     onClick={() => {
+                                        const value = `${preset.emoji} ${preset.name}`;
                                         const lastEmptyIdx = formData.ingredients.findIndex(i => !i.trim());
                                         if (lastEmptyIdx >= 0) {
-                                            handleIngredientChange(lastEmptyIdx, emoji);
+                                            handleIngredientChange(lastEmptyIdx, value);
                                         } else {
-                                            setFormData(prev => ({ ...prev, ingredients: [...prev.ingredients, emoji] }));
+                                            setFormData(prev => ({ ...prev, ingredients: [...prev.ingredients, value] }));
                                         }
                                     }}
-                                    className="w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-lg transition-all hover:scale-110"
+                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white/70 hover:text-white font-medium transition-all"
                                 >
-                                    {emoji}
+                                    {preset.emoji} {preset.name}
                                 </button>
                             ))}
                         </div>
