@@ -6,7 +6,6 @@ interface OrderItem {
     n: string;
     q: number;
     s: string;
-    p?: number;
     options?: { group: string; choice: string }[];
 }
 
@@ -386,7 +385,7 @@ const KitchenDashboard: React.FC = () => {
                         @page { size: 80mm auto; margin: 0; }
                         body { 
                             width: 76mm;
-                            margin: 0; 
+                            margin: 0 auto; 
                             padding: 0; 
                             font-family: 'Courier Prime', monospace; 
                             text-align: center; 
@@ -436,7 +435,7 @@ const KitchenDashboard: React.FC = () => {
                         ${order.items.map(item => `
                             <div class="flex-row item-row">
                                 <span>${item.q}x ${item.n} ${item.options ? `(${item.options.map((o: any) => o.choice).join(', ')})` : ''}</span>
-                                <span>Rs.${(item.p ? item.p * item.q : parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}.00</span>
+                                <span>Rs.${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}.00</span>
                             </div>
                         `).join('')}
                     </div>
