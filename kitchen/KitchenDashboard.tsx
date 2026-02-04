@@ -78,6 +78,7 @@ const KitchenDashboard: React.FC = () => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const prevOrderIdsRef = useRef<Set<string>>(new Set());
     const newOrderIdsRef = useRef<Set<string>>(new Set());
+    const isFirstLoadRef = useRef(true);
 
     const [showHistory, setShowHistory] = useState(false);
     const [historyOrders, setHistoryOrders] = useState<Order[]>([]);
@@ -104,7 +105,7 @@ const KitchenDashboard: React.FC = () => {
                 // Find actually new orders (not seen before)
                 const newIds = data.filter(o => !prevIds.has(o.id) && o.status === 'pending').map(o => o.id);
 
-                if (newIds.length > 0 && prevIds.size > 0) {
+                if (newIds.length > 0 && !isFirstLoadRef.current) {
                     // Add to blinking set
                     newIds.forEach(id => newOrderIdsRef.current.add(id));
                     playAlertSound();
@@ -112,10 +113,11 @@ const KitchenDashboard: React.FC = () => {
                     // Remove from blinking after 30 seconds
                     setTimeout(() => {
                         newIds.forEach(id => newOrderIdsRef.current.delete(id));
-                        setOrders([...orders]); // Force re-render
+                        setOrders(prev => [...prev]); // Force re-render
                     }, 30000);
                 }
 
+                isFirstLoadRef.current = false;
                 prevOrderIdsRef.current = currentIds;
                 setOrders(data);
             }
@@ -380,11 +382,11 @@ const KitchenDashboard: React.FC = () => {
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
                     <style>
-                        @page { size: auto; margin: 0; }
+                        @page { size: 80mm auto; margin: 0; }
                         body { 
-                            width: 100%;
-                            margin: 0; 
-                            padding: 0.5mm; 
+                            width: 76mm;
+                            margin: 0 auto; 
+                            padding: 0; 
                             font-family: 'Courier Prime', monospace; 
                             text-align: center; 
                             color: black;
