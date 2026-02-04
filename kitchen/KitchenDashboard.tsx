@@ -382,10 +382,11 @@ const KitchenDashboard: React.FC = () => {
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
                     <style>
+                        @page { size: auto; margin: 0; }
                         body { 
-                            width: 80mm; 
+                            width: 100%;
                             margin: 0; 
-                            padding: 5mm; 
+                            padding: 0.5mm; 
                             font-family: 'Courier Prime', monospace; 
                             text-align: center; 
                             color: black;
@@ -998,6 +999,9 @@ const KitchenDashboard: React.FC = () => {
                     animation: blink-message 0.6s ease-in-out infinite;
                 }
             `}</style>
+
+            {/* Audio for new order alerts */}
+            <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
         </div>
     );
 };
