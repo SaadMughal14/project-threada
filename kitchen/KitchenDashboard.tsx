@@ -576,7 +576,7 @@ const KitchenDashboard: React.FC = () => {
     return (
         <div className="h-screen overflow-y-auto bg-black text-white">
             {/* Audio */}
-            <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="metadata" />
+            <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
 
             {/* Header - Responsive */}
             <header className="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-white/5 px-4 py-3 md:px-8 md:py-4 shadow-xl">
