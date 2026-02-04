@@ -364,211 +364,78 @@ const KitchenDashboard: React.FC = () => {
         openMessages(order);
     };
 
-    // Print thermal receipt - Matches OrderSuccessOverlay & Gravity Studio Brand
+    // Print thermal receipt (Improved Styling)
     const printOrder = (order: Order) => {
-        const printWindow = window.open('', '_blank', 'width=380,height=600');
-        if (!printWindow) return;
-
-        const currentDate = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' });
-        const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-
-        // Barcode SVG generation helper
-        const barcodeSvg = `<svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" width="2" height="45" fill="black" />
-            <rect x="4" width="1" height="45" fill="black" />
-            <rect x="7" width="3" height="45" fill="black" />
-            <rect x="12" width="1" height="45" fill="black" />
-            <rect x="15" width="2" height="45" fill="black" />
-            <rect x="20" width="1" height="45" fill="black" />
-            <rect x="23" width="4" height="45" fill="black" />
-            <rect x="29" width="1" height="45" fill="black" />
-            <rect x="32" width="2" height="45" fill="black" />
-            <rect x="36" width="3" height="45" fill="black" />
-            <rect x="41" width="1" height="45" fill="black" />
-            <rect x="44" width="2" height="45" fill="black" />
-            <rect x="48" width="1" height="45" fill="black" />
-            <rect x="51" width="4" height="45" fill="black" />
-            <rect x="57" width="1" height="45" fill="black" />
-            <rect x="60" width="2" height="45" fill="black" />
-            <rect x="64" width="3" height="45" fill="black" />
-            <rect x="69" width="1" height="45" fill="black" />
-            <rect x="72" width="2" height="45" fill="black" />
-            <rect x="76" width="1" height="45" fill="black" />
-            <rect x="79" width="4" height="45" fill="black" />
-            <rect x="85" width="1" height="45" fill="black" />
-            <rect x="88" width="2" height="45" fill="black" />
-            <rect x="92" width="3" height="45" fill="black" />
-            <rect x="97" width="1" height="45" fill="black" />
-            <rect x="100" width="2" height="45" fill="black" />
-            <rect x="104" width="1" height="45" fill="black" />
-            <rect x="107" width="4" height="45" fill="black" />
-            <rect x="113" width="1" height="45" fill="black" />
-            <rect x="116" width="2" height="45" fill="black" />
-            <rect x="120" width="3" height="45" fill="black" />
-            <rect x="125" width="1" height="45" fill="black" />
-            <rect x="128" width="2" height="45" fill="black" />
-            <rect x="132" width="1" height="45" fill="black" />
-            <rect x="135" width="4" height="45" fill="black" />
-            <rect x="141" width="1" height="45" fill="black" />
-            <rect x="144" width="2" height="45" fill="black" />
-            <rect x="148" width="3" height="45" fill="black" />
-            <rect x="153" width="1" height="45" fill="black" />
-            <rect x="156" width="2" height="45" fill="black" />
-            <rect x="160" width="1" height="45" fill="black" />
-            <rect x="163" width="4" height="45" fill="black" />
-            <rect x="169" width="1" height="45" fill="black" />
-            <rect x="172" width="2" height="45" fill="black" />
-            <rect x="176" width="3" height="45" fill="black" />
-            <rect x="181" width="1" height="45" fill="black" />
-            <rect x="184" width="2" height="45" fill="black" />
-            <rect x="188" width="1" height="45" fill="black" />
-            <rect x="191" width="4" height="45" fill="black" />
-            <rect x="197" width="3" height="45" fill="black" />
-        </svg>`;
-
-        // Logo SVG
-        const logoSvg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: 60px;">
-            <circle cx="50" cy="50" r="45" fill="black" />
-            <circle cx="35" cy="35" r="5" fill="white" />
-            <circle cx="65" cy="40" r="6" fill="white" />
-            <circle cx="45" cy="65" r="7" fill="white" />
-            <circle cx="70" cy="70" r="4" fill="white" />
-            <circle cx="25" cy="60" r="4" fill="white" />
-        </svg>`;
-
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Receipt #${order.order_number}</title>
-                <style>
-                    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Great+Vibes&display=swap');
-                    
-                    body { 
-                        font-family: 'Courier Prime', 'Courier New', monospace; 
-                        padding: 10px; 
-                        width: 280px; 
-                        margin: 0 auto;
-                        color: black;
-                        font-size: 10pt;
-                    }
-                    .thermal-receipt { 
-                        width: 100%; 
-                        display: flex; 
-                        flex-direction: column; 
-                        align-items: center; 
-                    }
-                    h1 { 
-                        font-family: 'Great Vibes', cursive; 
-                        font-size: 24pt; 
-                        margin: 0 0 5px 0; 
-                        font-weight: normal; 
-                        text-align: center;
-                    }
-                    .logo-bw { margin-bottom: 5px; }
-                    .bold { fontWeight: bold; font-weight: 700; }
-                    .separator { 
-                        width: 100%; 
-                        border-top: 1px dashed black; 
-                        margin: 2mm 0; 
-                    }
-                    .flex-row { 
-                        width: 100%; 
-                        display: flex; 
-                        justify-content: space-between; 
-                    }
-                    .left-align { text-align: left; width: 100%; }
-                    .center { text-align: center; width: 100%; }
-                    
-                    /* Print specific adjustments */
-                    @media print {
-                        @page { margin: 0; size: auto; }
-                        body { margin: 0.5cm; }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="thermal-receipt">
-                    <h1>Receipt</h1>
-                    
-                    <div class="logo-bw">${logoSvg}</div>
-
-                    <div class="bold" style="font-size: 14pt; letter-spacing: 2px; margin-bottom: 1mm;">GRAVITY STUDIO</div>
-                    <div style="font-size: 9pt;">Phase 6, DHA, Karachi</div>
-                    <div style="font-size: 9pt;">Tel: (850) GRAVITY-STUDIO</div>
-
-                    <div class="separator"></div>
-
-                    <div class="flex-row">
-                        <span>Date: ${currentDate}</span>
-                        <span>${currentTime}</span>
-                    </div>
-
-                    <div class="separator"></div>
-
-                    <div class="left-align" style="margin-bottom: 2mm;">
-                        ${order.items.map(item => `
-                            <div class="flex-row" style="margin-bottom: 1.5mm;">
-                                <span>${item.q}x ${item.n} (${item.s})</span>
-                                <span>Rs.${(parseInt(item.s.replace(/[^\d]/g, '')) * item.q) || 0}.00</span>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <div class="separator"></div>
-
-                    <div class="flex-row bold" style="font-size: 12pt;">
-                        <span>TOTAL DUE</span>
-                        <span>Rs.${order.total}.00</span>
-                    </div>
-
-                    <div class="flex-row" style="margin-top: 2mm;">
-                        <span>Sub-total</span>
-                        <span>Rs.${order.total}.00</span>
+        const printWindow = window.open('', '_blank', 'width=300,height=600');
+        if (printWindow) {
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Order #${order.order_number}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 15px; width: 280px; margin: 0 auto; color: #000; }
+                        .header { text-align: center; margin-bottom: 15px; }
+                        h1 { font-size: 20px; font-weight: 900; margin: 0; letter-spacing: 2px; }
+                        h2 { font-size: 14px; margin: 5px 0 0; text-transform: uppercase; }
+                        .divider { border-top: 2px dashed #000; margin: 10px 0; }
+                        .divider-thin { border-top: 1px solid #ccc; margin: 8px 0; }
+                        .info { margin-bottom: 10px; font-size: 11px; }
+                        .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+                        .option { font-size: 10px; color: #444; margin-left: 15px; display: block; }
+                        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin-top: 10px; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>GUSTO</h1>
+                        <h2>PIZZERIA</h2>
+                        <p style="margin:5px 0 0; font-size:10px;">${new Date(order.placed_at).toLocaleString()}</p>
                     </div>
                     
-                    <div class="flex-row">
-                        <span>Amount Paid</span>
-                        <span>Rs.${order.payment_method === 'digital' ? `${order.total}.00` : '0.00'}</span>
+                    <div class="divider"></div>
+                    
+                    <div class="info">
+                        <p style="font-size:14px; font-weight:bold;">ORDER #${order.order_number}</p>
+                        <p><strong>${order.customer_name}</strong></p>
+                        <p>${order.customer_phone}</p>
+                        <p style="font-size:10px;">${order.customer_address}</p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    ${order.items.map(item => `
+                        <div class="item">
+                            <span>${item.q}x ${item.n}</span>
+                            <span>${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}</span>
+                        </div>
+                    `).join('')}
+
+                    <div class="divider"></div>
+
+                    <div class="total-row">
+                        <span>TOTAL</span>
+                        <span>Rs. ${order.total}</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="info">
+                        <p><strong>Kitchen Note:</strong><br/>${order.kitchen_instructions || '-'}</p>
+                        <p><strong>Delivery Note:</strong><br/>${order.delivery_notes || '-'}</p>
+                    </div>
+
+                    <div class="footer">
+                        <p>THANK YOU FOR ORDERING!</p>
+                        <p>www.gustopizzeria.com</p>
                     </div>
                     
-                    <div class="flex-row">
-                        <span>Balance Due</span>
-                        <span>Rs.${order.payment_method === 'digital' ? '0.00' : `${order.total}.00`}</span>
-                    </div>
-
-                    <div class="separator"></div>
-
-                    <div class="left-align">
-                        <div class="bold" style="margin-bottom: 1.5mm;">DELIVER TO:</div>
-                        <div class="bold" style="font-size: 11pt;">${order.customer_name}</div>
-                        <div style="font-size: 9pt;">${order.customer_address}</div>
-                        <div style="font-size: 9pt;">Contact: ${order.customer_phone}</div>
-                    </div>
-                    
-                    <div class="separator"></div>
-
-                    <div class="left-align" style="font-size: 9pt;">
-                        ${order.kitchen_instructions ? `<div style="margin-bottom: 2mm;"><span class="bold">KITCHEN:</span> ${order.kitchen_instructions}</div>` : ''}
-                        ${order.delivery_notes ? `<div><span class="bold">DELIVERY:</span> ${order.delivery_notes}</div>` : ''}
-                    </div>
-
-                    <div style="margin-top: 8mm; width: 100%;">
-                        ${barcodeSvg}
-                        <div style="font-size: 8pt; margin-top: 1.5mm; font-style: italic; text-align: center;">https://saadmughal-gravity.vercel.app/</div>
-                        <div style="font-size: 9pt; margin-top: 1mm; font-weight: bold; text-align: center;">SCAN FOR STUDIO MENU</div>
-                        <div style="font-size: 8pt; margin-top: 3mm; text-align: center;">© GRAVITY STUDIO</div>
-                    </div>
-                </div>
-                <script>
-                    window.onload = function() { window.print(); window.close(); }
-                </script>
-            </body>
-            </html>
-        `;
-
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
+                    <script>window.print(); window.close();</script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
     };
 
     // Memoized filtered lists
@@ -605,7 +472,7 @@ const KitchenDashboard: React.FC = () => {
                     <div className="flex items-center gap-3">
                         {/* Stats Pills - Hidden on very small screens if needed, but vital for kitchen */}
                         <div className="hidden lg:flex gap-3 mr-4">
-                            <div className={`px - 3 py - 1.5 rounded - full text - center ${pendingOrders.length > 0 ? 'bg-yellow-500/20 border border-yellow-500/50 animate-pulse' : 'bg-white/5 border border-white/10'} `}>
+                            <div className={`px-3 py-1.5 rounded-full text-center ${pendingOrders.length > 0 ? 'bg-yellow-500/20 border border-yellow-500/50 animate-pulse' : 'bg-white/5 border border-white/10'}`}>
                                 <span className="text-xl font-black text-yellow-400">{pendingOrders.length}</span>
                                 <span className="text-[10px] uppercase tracking-wider text-yellow-400/60 ml-2">NEW</span>
                             </div>
@@ -674,19 +541,19 @@ const KitchenDashboard: React.FC = () => {
             <div className="md:hidden sticky top-[60px] z-30 bg-black border-b border-white/5 flex">
                 <button
                     onClick={() => setActiveTab('pending')}
-                    className={`flex - 1 py - 3 text - center text - xs font - bold uppercase tracking - wider transition - all ${activeTab === 'pending' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-white/40'} `}
+                    className={`flex-1 py-3 text-center text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'pending' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-white/40'}`}
                 >
                     🔔 New ({pendingOrders.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('active')}
-                    className={`flex - 1 py - 3 text - center text - xs font - bold uppercase tracking - wider transition - all ${activeTab === 'active' ? 'text-orange-400 border-b-2 border-orange-400' : 'text-white/40'} `}
+                    className={`flex-1 py-3 text-center text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'active' ? 'text-orange-400 border-b-2 border-orange-400' : 'text-white/40'}`}
                 >
                     🍳 Active ({activeOrders.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('done')}
-                    className={`flex - 1 py - 3 text - center text - xs font - bold uppercase tracking - wider transition - all ${activeTab === 'done' ? 'text-green-400 border-b-2 border-green-400' : 'text-white/40'} `}
+                    className={`flex-1 py-3 text-center text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'done' ? 'text-green-400 border-b-2 border-green-400' : 'text-white/40'}`}
                 >
                     ✅ Done
                 </button>
@@ -794,7 +661,7 @@ const KitchenDashboard: React.FC = () => {
                                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/30">Order</p>
                                 <h2 className="text-xl md:text-2xl font-black">#{selectedOrder.order_number}</h2>
                             </div>
-                            <div className={`px - 3 py - 1.5 rounded - full text - [10px] font - bold uppercase border ${STATUS_COLORS[selectedOrder.status]} `}>
+                            <div className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border ${STATUS_COLORS[selectedOrder.status]}`}>
                                 {STATUS_LABELS[selectedOrder.status]}
                             </div>
                         </div>
@@ -904,10 +771,10 @@ const KitchenDashboard: React.FC = () => {
                             {messages.map(msg => (
                                 <div
                                     key={msg.id}
-                                    className={`p - 3 rounded - xl text - sm max - w - [85 %] relative ${msg.sender === 'store'
-                                            ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-auto'
-                                            : 'bg-blue-500/20 text-blue-400 mr-auto'
-                                        } `}
+                                    className={`p-3 rounded-xl text-sm max-w-[85%] relative ${msg.sender === 'store'
+                                        ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-auto'
+                                        : 'bg-blue-500/20 text-blue-400 mr-auto'
+                                        }`}
                                 >
                                     <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">
                                         {msg.sender === 'store' ? '🏪 You' : '👤 Customer'}
@@ -956,7 +823,7 @@ const KitchenDashboard: React.FC = () => {
                         <div className="flex items-start gap-3">
                             <div
                                 className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
-                                style={{ backgroundColor: `${messagePopup.color} 30` }}
+                                style={{ backgroundColor: `${messagePopup.color}30` }}
                             >
                                 💬
                             </div>
@@ -985,38 +852,34 @@ const KitchenDashboard: React.FC = () => {
 
             {/* CSS for animations */}
             <style>{`
-        @keyframes urgent - pulse {
-            0 %, 100 % { box- shadow: 0 0 0 0 rgba(234, 179, 8, 0.7);
-        }
-        50 % { box- shadow: 0 0 0 10px rgba(234, 179, 8, 0);
-    }
-}
-                .urgent - pulse {
-    animation: urgent - pulse 1s infinite;
-}
-@keyframes new- order - glow {
-    0 %, 100 % { border- color: rgba(234, 179, 8, 0.3); background - color: rgba(234, 179, 8, 0.05);
-}
-50 % { border- color: rgba(234, 179, 8, 0.8); background - color: rgba(234, 179, 8, 0.15); }
+                @keyframes urgent-pulse {
+                    0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); }
+                    50% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); }
                 }
-                .new- order - glow {
-    animation: new- order - glow 0.8s infinite;
-}
-                .scrollbar - thin:: -webkit - scrollbar { width: 4px; }
-                .scrollbar - thin:: -webkit - scrollbar - thumb { background: rgba(255, 255, 255, 0.1); border - radius: 4px; }
-@keyframes slide - up {
-                    from { transform: translateY(100 %); opacity: 0; }
+                .urgent-pulse {
+                    animation: urgent-pulse 1s infinite;
+                }
+                @keyframes new-order-glow {
+                    0%, 100% { border-color: rgba(234, 179, 8, 0.3); background-color: rgba(234, 179, 8, 0.05); }
+                    50% { border-color: rgba(234, 179, 8, 0.8); background-color: rgba(234, 179, 8, 0.15); }
+                }
+                .new-order-glow {
+                    animation: new-order-glow 0.8s infinite;
+                }
+                .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+                .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+                @keyframes slide-up {
+                    from { transform: translateY(100%); opacity: 0; }
                     to { transform: translateY(0); opacity: 1; }
-}
-@keyframes blink - message {
-    0 %, 100 % { background- color: rgba(217, 123, 141, 0.2);
-}
-50 % { background- color: rgba(217, 123, 141, 0.8); transform: scale(1.1); }
                 }
-                .blink - message {
-    animation: blink - message 0.6s ease -in -out infinite;
-}
-`}</style>
+                @keyframes blink-message {
+                    0%, 100% { background-color: rgba(217, 123, 141, 0.2); }
+                    50% { background-color: rgba(217, 123, 141, 0.8); transform: scale(1.1); }
+                }
+                .blink-message {
+                    animation: blink-message 0.6s ease-in-out infinite;
+                }
+            `}</style>
         </div>
     );
 };
@@ -1047,12 +910,11 @@ const OrderCard: React.FC<{
     return (
         <div
             className={`
-rounded - 2xl p - 4 cursor - pointer transition - all border
+                rounded-2xl p-4 cursor-pointer transition-all border
                 ${isNew ? 'new-order-glow urgent-pulse border-yellow-500 bg-yellow-500/10' :
                     isComplete ? 'border-white/5 bg-white/[0.02] opacity-60' :
-                        'border-white/10 bg-white/[0.03] hover:bg-white/[0.06]'
-                }
-`}
+                        'border-white/10 bg-white/[0.03] hover:bg-white/[0.06]'}
+            `}
             onClick={onSelect}
         >
             <div className="flex justify-between items-start mb-2">
@@ -1064,7 +926,7 @@ rounded - 2xl p - 4 cursor - pointer transition - all border
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                    <div className={`px - 2 py - 0.5 rounded - full text - [8px] font - bold uppercase border ${STATUS_COLORS[order.status]} `}>
+                    <div className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase border ${STATUS_COLORS[order.status]}`}>
                         {order.status}
                     </div>
                     <span className="text-[10px] text-white/30">{timeSince(order.placed_at)}</span>
@@ -1090,7 +952,7 @@ rounded - 2xl p - 4 cursor - pointer transition - all border
                     </button>
                     <button
                         onClick={(e) => { e.stopPropagation(); onMessage(); }}
-                        className={`px - 3 py - 1.5 rounded - lg text - [10px] font - bold transition - all ${hasUnreadMessages ? 'blink-message text-white' : 'bg-white/10 hover:bg-white/20'} `}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${hasUnreadMessages ? 'blink-message text-white' : 'bg-white/10 hover:bg-white/20'}`}
                         title="Messages"
                     >
                         💬 {hasUnreadMessages && <span className="ml-1">!</span>}
@@ -1098,10 +960,10 @@ rounded - 2xl p - 4 cursor - pointer transition - all border
                     {nextStatus && !isComplete && (
                         <button
                             onClick={(e) => { e.stopPropagation(); onStatusChange(nextStatus); }}
-                            className={`px - 3 py - 1.5 rounded - lg text - [10px] font - bold uppercase transition - all ${isNew
-                                    ? 'bg-green-500 text-black hover:bg-green-400'
-                                    : 'bg-white/10 hover:bg-white/20 text-white'
-                                } `}
+                            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${isNew
+                                ? 'bg-green-500 text-black hover:bg-green-400'
+                                : 'bg-white/10 hover:bg-white/20 text-white'
+                                }`}
                         >
                             → {nextStatus}
                         </button>
