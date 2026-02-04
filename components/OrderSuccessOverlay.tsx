@@ -10,7 +10,7 @@ interface SuccessProps {
   onClose: () => void;
 }
 
-type OrderPhase = 'baking' | 'delivering' | 'completed';
+type OrderPhase = 'confirmed' | 'baking' | 'ready' | 'dispatched' | 'delivered';
 
 const DeliveryRider = () => (
   <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center overflow-hidden">
@@ -59,6 +59,63 @@ const DeliveryRider = () => (
   </div>
 );
 
+// Confirmed Tick Animation
+const ConfirmedTick = () => (
+  <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+    <div className="animate-bounce">
+      <div className="relative">
+        <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-green-500 flex items-center justify-center shadow-2xl animate-pulse">
+          <svg className="w-16 h-16 md:w-24 md:h-24 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6L9 17l-5-5" className="animate-[draw_0.5s_ease-out_forwards]" />
+          </svg>
+        </div>
+        <div className="absolute -top-2 -right-2 text-4xl animate-bounce">🎉</div>
+        <div className="absolute -bottom-2 -left-2 text-3xl animate-bounce" style={{ animationDelay: '0.2s' }}>✨</div>
+      </div>
+    </div>
+  </div>
+);
+
+// Waiting for Rider Animation - Man checking watch
+const WaitingForRider = () => (
+  <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+    <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+      {/* Person Standing */}
+      <circle cx="100" cy="50" r="20" fill="#E8B9A7" /> {/* Head */}
+      <path d="M90 50 A10 10 0 0 1 110 50 Z" fill="#1C1C1C" /> {/* Hair/Cap */}
+
+      {/* Body */}
+      <rect x="85" y="70" width="30" height="50" rx="5" fill="#D97B8D" />
+
+      {/* Arms */}
+      <path d="M85 80 L60 95 L55 110" stroke="#E8B9A7" strokeWidth="8" strokeLinecap="round" fill="none" />
+      <path d="M115 80 L130 90 L135 80" stroke="#E8B9A7" strokeWidth="8" strokeLinecap="round" fill="none" />
+
+      {/* Watch on arm */}
+      <rect x="52" y="105" width="12" height="10" rx="2" fill="#1C1C1C" className="animate-pulse" />
+      <circle cx="58" cy="110" r="3" fill="#7BD98D" className="animate-ping" style={{ animationDuration: '1.5s' }} />
+
+      {/* Legs */}
+      <rect x="88" y="118" width="10" height="35" fill="#1C1C1C" />
+      <rect x="102" y="118" width="10" height="35" fill="#1C1C1C" />
+
+      {/* Package in other hand */}
+      <rect x="128" y="70" width="25" height="25" rx="3" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="2" />
+      <circle cx="140" cy="82" r="6" fill="#D97B8D" />
+
+      {/* Shoes */}
+      <ellipse cx="93" cy="155" rx="8" ry="5" fill="#1C1C1C" />
+      <ellipse cx="107" cy="155" rx="8" ry="5" fill="#1C1C1C" />
+
+      {/* Clock icon floating */}
+      <g className="animate-bounce" style={{ animationDuration: '2s' }}>
+        <circle cx="45" cy="70" r="15" fill="white" stroke="#1C1C1C" strokeWidth="2" />
+        <path d="M45 60 L45 70 L52 75" stroke="#1C1C1C" strokeWidth="2" strokeLinecap="round" />
+      </g>
+    </svg>
+  </div>
+);
+
 const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose }) => {
   const [phase, setPhase] = useState<OrderPhase>('baking');
   const [progress, setProgress] = useState(0);
@@ -71,16 +128,22 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string }[]>([]);
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
 
   const BAKING_DURATION = 120000;
   const DELIVERY_DURATION = 180000;
   const TOTAL_DURATION = BAKING_DURATION + DELIVERY_DURATION;
 
-  // Map Kitchen status to display phase
+  // Map Kitchen status to display phase - 1:1 mapping
   const mapStatusToPhase = useCallback((status: string): OrderPhase => {
-    if (status === 'dispatched') return 'completed';
-    if (status === 'ready' || status === 'cooking' || status === 'confirmed') return 'delivering';
-    return 'baking';
+    switch (status) {
+      case 'confirmed': return 'confirmed';
+      case 'cooking': return 'baking';
+      case 'ready': return 'ready';
+      case 'dispatched': return 'dispatched';
+      case 'delivered': return 'delivered';
+      default: return 'baking'; // pending
+    }
   }, []);
 
   // Fetch live status and messages from Supabase
@@ -188,6 +251,35 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
     // Poll every 5 seconds for updates (backup for real-time)
     const pollInterval = setInterval(fetchLiveData, 5000);
+
+    // Get order UUID for real-time subscription
+    const setupRealtimeSub = async () => {
+      const { data: dbOrder } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('order_number', order.id)
+        .single();
+
+      if (dbOrder?.id) {
+        const messageChannel = supabase
+          .channel(`customer-messages-${dbOrder.id}`)
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages', filter: `order_id=eq.${dbOrder.id}` }, (payload: any) => {
+            // Only show popup for store messages
+            if (payload.new?.sender === 'store') {
+              setMessagePopup({ message: payload.new.message });
+              // Auto-dismiss after 8 seconds
+              setTimeout(() => setMessagePopup(null), 8000);
+            }
+            // Refetch all messages
+            fetchLiveData();
+          })
+          .subscribe();
+
+        return () => { messageChannel.unsubscribe(); };
+      }
+    };
+
+    setupRealtimeSub();
 
     return () => clearInterval(pollInterval);
   }, [isOpen, order?.id, fetchLiveData]);
@@ -412,23 +504,30 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                 liveStatus === 'confirmed' ? 'bg-green-100 border-green-400 text-green-600' :
                   liveStatus === 'cooking' ? 'bg-orange-100 border-orange-400 text-orange-600' :
                     liveStatus === 'ready' ? 'bg-blue-100 border-blue-400 text-blue-600' :
-                      'bg-purple-100 border-purple-400 text-purple-600'
+                      liveStatus === 'dispatched' ? 'bg-purple-100 border-purple-400 text-purple-600' :
+                        'bg-pink-100 border-pink-400 text-pink-600'
                 }`}>
                 {liveStatus === 'pending' ? '⏳ Awaiting Confirmation' :
                   liveStatus === 'confirmed' ? '✅ Confirmed' :
                     liveStatus === 'cooking' ? '🍳 Cooking Now' :
-                      liveStatus === 'ready' ? '📦 Ready for Pickup' : '🚀 Out for Delivery'}
+                      liveStatus === 'ready' ? '📦 Waiting for Rider' :
+                        liveStatus === 'dispatched' ? '🚀 On The Way' : '🏠 Delivered'}
               </span>
               <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Live</span>
             </div>
 
             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center w-full">
               <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
-                {phase === 'baking' ? 'PREPARING YOUR ORDER' : phase === 'delivering' ? 'ON THE WAY' : 'ORDER DELIVERED'}
+                {phase === 'confirmed' ? 'ORDER CONFIRMED!' :
+                  phase === 'baking' ? 'BAKING YOUR ORDER' :
+                    phase === 'ready' ? 'WAITING FOR RIDER' :
+                      phase === 'dispatched' ? 'ON THE WAY' : 'ORDER DELIVERED'}
               </h3>
 
               <div className="relative w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
-                {phase === 'baking' ? (
+                {phase === 'confirmed' ? (
+                  <ConfirmedTick />
+                ) : phase === 'baking' ? (
                   <div className="w-full h-full relative group">
                     <img
                       src="https://i.imgur.com/PxuIhOT.gif"
@@ -437,7 +536,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                     />
                     <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
                   </div>
-                ) : phase === 'delivering' ? (
+                ) : phase === 'ready' ? (
+                  <WaitingForRider />
+                ) : phase === 'dispatched' ? (
                   <DeliveryRider />
                 ) : (
                   <div className="relative flex flex-col items-center justify-center">
@@ -613,11 +714,46 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         .line-3 { animation-delay: 0.5s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes slide-up {
+          from { transform: translateY(100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
         
         @media print {
           .no-print { display: none !important; }
         }
       `}</style>
+
+      {/* Store Message Popup Notification */}
+      {messagePopup && (
+        <div className="fixed bottom-4 right-4 left-4 md:left-auto md:right-4 md:w-80 z-[500] animate-[slide-up_0.3s_ease-out]">
+          <div
+            className="bg-[#1C1C1C] border-2 border-[#D97B8D] rounded-2xl p-4 shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform"
+            onClick={() => setMessagePopup(null)}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#D97B8D]/30 flex items-center justify-center text-lg shrink-0">
+                🏪
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#D97B8D]">
+                    Store Message
+                  </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setMessagePopup(null); }}
+                    className="text-white/30 hover:text-white text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="text-white text-sm font-medium">{messagePopup.message}</p>
+                <p className="text-white/40 text-[10px] mt-1">Tap to dismiss</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

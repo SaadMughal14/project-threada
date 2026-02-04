@@ -48,8 +48,21 @@ const STATUS_COLORS: Record<string, string> = {
     confirmed: 'bg-green-500/20 border-green-500/50 text-green-400',
     cooking: 'bg-orange-500/20 border-orange-500/50 text-orange-400',
     ready: 'bg-blue-500/20 border-blue-500/50 text-blue-400',
-    dispatched: 'bg-purple-500/20 border-purple-500/50 text-purple-400'
+    dispatched: 'bg-purple-500/20 border-purple-500/50 text-purple-400',
+    delivered: 'bg-pink-500/20 border-pink-500/50 text-pink-400'
 };
+
+// Color palette for order cards - rotates through
+const ORDER_COLORS = [
+    '#D97B8D', // Pink (brand)
+    '#7BD98D', // Green
+    '#7BB5D9', // Blue
+    '#D9B77B', // Gold
+    '#B77BD9', // Purple
+    '#7BD9D9', // Cyan
+    '#D97B7B', // Red
+    '#9DA7FF', // Lavender
+];
 
 const KitchenDashboard: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -64,6 +77,9 @@ const KitchenDashboard: React.FC = () => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const prevOrderIdsRef = useRef<Set<string>>(new Set());
     const newOrderIdsRef = useRef<Set<string>>(new Set());
+
+    // Popup message notification
+    const [messagePopup, setMessagePopup] = useState<{ orderId: string; orderNumber: string; message: string; sender: string; color: string } | null>(null);
 
     // Optimized fetch - batch requests, debounced
     const fetchOrders = useCallback(async () => {
@@ -156,6 +172,12 @@ const KitchenDashboard: React.FC = () => {
 
     const updateOrderStatus = async (orderId: string, newStatus: string) => {
         await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+
+        // Auto-clear messages when marking as delivered
+        if (newStatus === 'delivered') {
+            await supabase.from('order_messages').delete().eq('order_id', orderId);
+        }
+
         // Optimistic update
         setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
         if (selectedOrder?.id === orderId) {
@@ -182,9 +204,45 @@ const KitchenDashboard: React.FC = () => {
         setShowMessages(true);
     };
 
+    // Listen for any new customer messages to show popup notification
+    useEffect(() => {
+        const messageChannel = supabase
+            .channel('all-customer-messages')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages' }, async (payload: any) => {
+                // Only show popup for customer messages
+                if (payload.new?.sender === 'customer') {
+                    const orderId = payload.new.order_id;
+                    // Find order to get order_number
+                    const order = orders.find(o => o.id === orderId);
+                    if (order) {
+                        playAlertSound();
+                        setMessagePopup({
+                            orderId,
+                            orderNumber: order.order_number,
+                            message: payload.new.message,
+                            sender: 'customer',
+                            color: getOrderColor(orderId)
+                        });
+                        // Auto-dismiss after 8 seconds
+                        setTimeout(() => setMessagePopup(null), 8000);
+                    }
+                }
+            })
+            .subscribe();
+
+        return () => { messageChannel.unsubscribe(); };
+    }, [orders]);
+
     const getNextStatus = (current: string) => {
         const idx = STATUS_FLOW.indexOf(current);
         return idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
+    };
+
+    // Get color for order based on its index (for differentiation)
+    const getOrderColor = (orderId: string): string => {
+        const allOrderIds = orders.map(o => o.id);
+        const idx = allOrderIds.indexOf(orderId);
+        return ORDER_COLORS[idx % ORDER_COLORS.length];
     };
 
     // Memoized filtered lists
@@ -493,6 +551,48 @@ const KitchenDashboard: React.FC = () => {
                 </div>
             )}
 
+            {/* Message Popup Notification */}
+            {messagePopup && (
+                <div className="fixed bottom-4 right-4 left-4 md:left-auto md:w-96 z-[60] animate-[slide-up_0.3s_ease-out]">
+                    <div
+                        className="bg-[#1C1C1C] border-2 rounded-2xl p-4 shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform"
+                        style={{ borderColor: messagePopup.color }}
+                        onClick={() => {
+                            const order = orders.find(o => o.id === messagePopup.orderId);
+                            if (order) openMessages(order);
+                            setMessagePopup(null);
+                        }}
+                    >
+                        <div className="flex items-start gap-3">
+                            <div
+                                className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
+                                style={{ backgroundColor: `${messagePopup.color}30` }}
+                            >
+                                💬
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                    <span
+                                        className="text-xs font-bold uppercase tracking-widest"
+                                        style={{ color: messagePopup.color }}
+                                    >
+                                        Order #{messagePopup.orderNumber.slice(-4)}
+                                    </span>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setMessagePopup(null); }}
+                                        className="text-white/30 hover:text-white text-xs"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                <p className="text-white text-sm font-medium truncate">{messagePopup.message}</p>
+                                <p className="text-white/40 text-[10px] mt-1">Tap to reply</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* CSS for animations */}
             <style>{`
                 @keyframes urgent-pulse {
@@ -511,6 +611,10 @@ const KitchenDashboard: React.FC = () => {
                 }
                 .scrollbar-thin::-webkit-scrollbar { width: 4px; }
                 .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+                @keyframes slide-up {
+                    from { transform: translateY(100%); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
             `}</style>
         </div>
     );
