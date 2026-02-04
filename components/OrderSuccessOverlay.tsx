@@ -175,7 +175,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
   // Floating messenger
   const [showMessenger, setShowMessenger] = useState(false);
-  const [messengerPos, setMessengerPos] = useState({ x: 20, y: 100 });
+  const [messengerPos, setMessengerPos] = useState({ x: 20, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
 
@@ -744,12 +744,16 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           to { transform: translateY(0); opacity: 1; }
         }
         @keyframes bell-ring {
-          0%, 100% { transform: rotate(0); }
-          15% { transform: rotate(15deg); }
-          30% { transform: rotate(-15deg); }
-          45% { transform: rotate(15deg); }
-          60% { transform: rotate(-15deg); }
-          75% { transform: rotate(0); }
+          0%, 100% { transform: rotate(0) scale(1); }
+          10% { transform: rotate(20deg) scale(1.1); }
+          20% { transform: rotate(-20deg) scale(1.1); }
+          30% { transform: rotate(25deg) scale(1.15); }
+          40% { transform: rotate(-25deg) scale(1.15); }
+          50% { transform: rotate(20deg) scale(1.1); }
+          60% { transform: rotate(-20deg) scale(1.1); }
+          70% { transform: rotate(15deg) scale(1.05); }
+          80% { transform: rotate(-15deg) scale(1.05); }
+          90% { transform: rotate(5deg) scale(1); }
         }
         
         @media print {
@@ -762,7 +766,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         className="fixed z-[450] cursor-pointer"
         style={{
           right: `${messengerPos.x}px`,
-          top: `${messengerPos.y}px`,
+          bottom: `${100 - messengerPos.y}px`,
           touchAction: 'none'
         }}
         onClick={() => {
@@ -805,7 +809,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       {showMessenger && (
         <div
           className="fixed z-[460] bg-[#1C1C1C] rounded-2xl shadow-2xl border border-white/10 w-80 md:w-96 max-h-[60vh] flex flex-col"
-          style={{ right: `${messengerPos.x}px`, top: `${messengerPos.y + 70}px` }}
+          style={{ right: `${messengerPos.x}px`, bottom: `${100 - messengerPos.y + 70}px` }}
         >
           <div className="p-4 border-b border-white/10 flex justify-between items-center">
             <span className="text-sm font-bold text-white uppercase tracking-widest">Store Chat</span>

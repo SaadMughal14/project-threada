@@ -110,7 +110,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     // Slimmed data for URL (further reduced to save space)
     const slimOrder = {
       id: orderId,
-      items: cartItems.map(i => ({ id: i.id, n: i.name, q: i.quantity, s: i.selectedSize.name })),
+      items: cartItems.map(i => ({ id: i.id, n: i.name, q: i.quantity, s: i.selectedSize.name, pr: parseInt(i.selectedSize.price.replace(/[^\d]/g, '')) })),
       p: totalPrice,
       c: { n: formData.name, p: formData.phone, a: formData.address, d: formData.deliveryNotes },
       kn: orderNotes,

@@ -6,6 +6,7 @@ interface OrderItem {
     n: string;
     q: number;
     s: string;
+    pr?: number; // Price per item (extracted from selectedSize.price)
     options?: { group: string; choice: string }[];
 }
 
@@ -435,7 +436,7 @@ const KitchenDashboard: React.FC = () => {
                         ${order.items.map(item => `
                             <div class="flex-row item-row">
                                 <span>${item.q}x ${item.n} ${item.options ? `(${item.options.map((o: any) => o.choice).join(', ')})` : ''}</span>
-                                <span>Rs.${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}.00</span>
+                                <span>Rs.${item.pr ? (item.pr * item.q) : 0}.00</span>
                             </div>
                         `).join('')}
                     </div>
