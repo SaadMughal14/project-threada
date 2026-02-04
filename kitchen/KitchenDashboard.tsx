@@ -142,6 +142,11 @@ const KitchenDashboard: React.FC = () => {
         }
     };
 
+    const ordersRef = useRef(orders);
+    useEffect(() => {
+        ordersRef.current = orders;
+    }, [orders]);
+
     useEffect(() => {
         fetchOrders();
 
@@ -293,6 +298,7 @@ const KitchenDashboard: React.FC = () => {
 
     const openMessages = (order: Order) => {
         setMessageOrderId(order.id);
+        fetchMessages(order.id); // Direct fetch to ensure history loads
         setShowMessages(true);
     };
 
@@ -304,8 +310,8 @@ const KitchenDashboard: React.FC = () => {
                 // Only show popup for customer messages
                 if (payload.new?.sender === 'customer') {
                     const orderId = payload.new.order_id;
-                    // Find order to get order_number
-                    const order = orders.find(o => o.id === orderId);
+                    // Find order to get order_number using Ref to avoid finding on stale state or re-subscribing
+                    const order = ordersRef.current.find(o => o.id === orderId);
                     if (order) {
                         playAlertSound();
                         setMessagePopup({
@@ -323,7 +329,7 @@ const KitchenDashboard: React.FC = () => {
             .subscribe();
 
         return () => { messageChannel.unsubscribe(); };
-    }, [orders]);
+    }, []); // Stable subscription
 
     const getNextStatus = (current: string) => {
         const idx = STATUS_FLOW.indexOf(current);
@@ -479,16 +485,58 @@ const KitchenDashboard: React.FC = () => {
                         <div style="font-size: 10pt;">Contact: ${order.customer_phone}</div>
                     </div>
 
-                    <div style="margin-top: 10mm;">
+                    <div style="margin-top: 5mm;">
                          <svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0" width="2" height="45" fill="black" />
                             <rect x="4" width="1" height="45" fill="black" />
                             <rect x="7" width="3" height="45" fill="black" />
                             <rect x="12" width="1" height="45" fill="black" />
                             <rect x="15" width="2" height="45" fill="black" />
-                            <rect x="110" width="4" height="45" fill="black" />
-                            <rect x="150" width="2" height="45" fill="black" />
-                            <rect x="190" width="3" height="45" fill="black" />
+                            <rect x="20" width="1" height="45" fill="black" />
+                            <rect x="23" width="4" height="45" fill="black" />
+                            <rect x="29" width="1" height="45" fill="black" />
+                            <rect x="32" width="2" height="45" fill="black" />
+                            <rect x="36" width="3" height="45" fill="black" />
+                            <rect x="41" width="1" height="45" fill="black" />
+                            <rect x="44" width="2" height="45" fill="black" />
+                            <rect x="48" width="1" height="45" fill="black" />
+                            <rect x="51" width="4" height="45" fill="black" />
+                            <rect x="57" width="1" height="45" fill="black" />
+                            <rect x="60" width="2" height="45" fill="black" />
+                            <rect x="64" width="3" height="45" fill="black" />
+                            <rect x="69" width="1" height="45" fill="black" />
+                            <rect x="72" width="2" height="45" fill="black" />
+                            <rect x="76" width="1" height="45" fill="black" />
+                            <rect x="79" width="4" height="45" fill="black" />
+                            <rect x="85" width="1" height="45" fill="black" />
+                            <rect x="88" width="2" height="45" fill="black" />
+                            <rect x="92" width="3" height="45" fill="black" />
+                            <rect x="97" width="1" height="45" fill="black" />
+                            <rect x="100" width="2" height="45" fill="black" />
+                            <rect x="104" width="1" height="45" fill="black" />
+                            <rect x="107" width="4" height="45" fill="black" />
+                            <rect x="113" width="1" height="45" fill="black" />
+                            <rect x="116" width="2" height="45" fill="black" />
+                            <rect x="120" width="3" height="45" fill="black" />
+                            <rect x="125" width="1" height="45" fill="black" />
+                            <rect x="128" width="2" height="45" fill="black" />
+                            <rect x="132" width="1" height="45" fill="black" />
+                            <rect x="135" width="4" height="45" fill="black" />
+                            <rect x="141" width="1" height="45" fill="black" />
+                            <rect x="144" width="2" height="45" fill="black" />
+                            <rect x="148" width="3" height="45" fill="black" />
+                            <rect x="153" width="1" height="45" fill="black" />
+                            <rect x="156" width="2" height="45" fill="black" />
+                            <rect x="160" width="1" height="45" fill="black" />
+                            <rect x="163" width="4" height="45" fill="black" />
+                            <rect x="169" width="1" height="45" fill="black" />
+                            <rect x="172" width="2" height="45" fill="black" />
+                            <rect x="176" width="3" height="45" fill="black" />
+                            <rect x="181" width="1" height="45" fill="black" />
+                            <rect x="184" width="2" height="45" fill="black" />
+                            <rect x="188" width="1" height="45" fill="black" />
+                            <rect x="191" width="4" height="45" fill="black" />
+                            <rect x="197" width="3" height="45" fill="black" />
                          </svg>
                          <div style="font-size: 8pt; margin-top: 1.5mm; font-style: italic;">https://saadmughal-gravity.vercel.app/</div>
                          <div style="font-size: 9pt; margin-top: 1mm; font-weight: bold;">SCAN FOR STUDIO MENU</div>
