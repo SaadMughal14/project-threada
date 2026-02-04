@@ -296,10 +296,16 @@ const KitchenDashboard: React.FC = () => {
         link.click();
     };
 
-    const openMessages = (order: Order) => {
+    const openMessagesAndClear = (order: Order) => {
         setMessageOrderId(order.id);
-        fetchMessages(order.id); // Direct fetch to ensure history loads
+        fetchMessages(order.id); // Check history
         setShowMessages(true);
+        // Clear from unread set
+        setUnreadMessages(prev => {
+            const next = new Set(prev);
+            next.delete(order.id);
+            return next;
+        });
     };
 
     // Listen for any new customer messages to show popup notification
@@ -360,15 +366,7 @@ const KitchenDashboard: React.FC = () => {
         return () => { unreadChannel.unsubscribe(); };
     }, []);
 
-    // Mark as read when opening messages
-    const openMessagesAndClear = (order: Order) => {
-        setUnreadMessages(prev => {
-            const next = new Set(prev);
-            next.delete(order.id);
-            return next;
-        });
-        openMessages(order);
-    };
+
 
     // Print thermal receipt (Matches Customer Overlay Style)
     const printOrder = (order: Order) => {
@@ -574,7 +572,7 @@ const KitchenDashboard: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white">
+        <div className="h-screen overflow-y-auto bg-black text-white">
             {/* Audio */}
             <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
 
@@ -835,7 +833,7 @@ const KitchenDashboard: React.FC = () => {
                             {/* Action Buttons */}
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => { openMessages(selectedOrder); setSelectedOrder(null); }}
+                                    onClick={() => { openMessagesAndClear(selectedOrder); setSelectedOrder(null); }}
                                     className="flex-1 bg-white/10 hover:bg-white/20 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
                                 >
                                     💬 Message
@@ -935,7 +933,7 @@ const KitchenDashboard: React.FC = () => {
                         style={{ borderColor: messagePopup.color }}
                         onClick={() => {
                             const order = orders.find(o => o.id === messagePopup.orderId);
-                            if (order) openMessages(order);
+                            if (order) openMessagesAndClear(order);
                             setMessagePopup(null);
                         }}
                     >
