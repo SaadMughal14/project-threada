@@ -155,8 +155,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasPrintedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const prevMsgCountRef = useRef(0);
-  const isFirstLoadRef = useRef(true);
 
   // Live status from Kitchen Dashboard
   const [liveStatus, setLiveStatus] = useState<string>('pending');
@@ -330,10 +328,16 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             // Only show popup for store messages
             if (payload.new?.sender === 'store') {
               setMessagePopup({ message: payload.new.message });
+              setUnreadCount(prev => {
+                const newCount = prev + 1;
+                localStorage.setItem(`unread_${order.id}`, newCount.toString());
+                return newCount;
+              });
+              audioRef.current?.play().catch(e => console.log('Audio play failed', e));
               // Auto-dismiss after 8 seconds
               setTimeout(() => setMessagePopup(null), 8000);
             }
-            // Refetch all messages (will trigger useEffect)
+            // Refetch all messages
             fetchLiveData();
           })
           .subscribe();
@@ -347,36 +351,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       if (channel) supabase.removeChannel(channel);
     };
   }, [isOpen, order?.id, fetchLiveData]);
-
-  // Track messages for unread count (Unified logic for Realtime + Polling)
-  useEffect(() => {
-    if (storeMessages.length > 0) {
-      // Initial load - don't notify
-      if (isFirstLoadRef.current) {
-        isFirstLoadRef.current = false;
-        prevMsgCountRef.current = storeMessages.length;
-        return;
-      }
-
-      // New message received
-      if (storeMessages.length > prevMsgCountRef.current) {
-        const lastMsg = storeMessages[storeMessages.length - 1];
-        // Only notify if from store and chat is not open
-        if (lastMsg.sender === 'store' && !showMessenger) {
-          setUnreadCount(prev => {
-            const newCount = prev + 1;
-            localStorage.setItem(`unread_${order?.id}`, newCount.toString());
-            return newCount;
-          });
-          audioRef.current?.play().catch(e => console.log('Audio error:', e));
-        }
-      }
-      prevMsgCountRef.current = storeMessages.length;
-    } else {
-      // If empty, reset
-      prevMsgCountRef.current = 0;
-    }
-  }, [storeMessages, showMessenger, order?.id]);
 
   useGSAP(() => {
     if (isOpen) {
@@ -777,9 +751,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           60% { transform: rotate(-15deg); }
           75% { transform: rotate(0); }
         }
-        .animate-bell-ring {
-          animation: bell-ring 0.5s ease-in-out infinite;
-        }
         
         @media print {
           .no-print { display: none !important; }
@@ -820,7 +791,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         }}
         onMouseUp={() => { dragRef.current = null; setTimeout(() => setIsDragging(false), 100); }}
       >
-        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-bell-ring' : ''}`}>
+        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
           <span className="text-2xl md:text-3xl">💬</span>
         </div>
         {unreadCount > 0 && (
