@@ -159,7 +159,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   // Live status from Kitchen Dashboard
   const [liveStatus, setLiveStatus] = useState<string>('pending');
   const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string; id?: string }[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(() => {
+    if (typeof window !== 'undefined' && order?.id) {
+      return parseInt(localStorage.getItem(`gravity_unread_${order.id}`) || '0');
+    }
+    return 0;
+  });
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
@@ -291,6 +296,13 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       hasPrintedRef.current = false;
     }
   }, [order?.id]);
+
+  // Persist unread count
+  useEffect(() => {
+    if (order?.id) {
+      localStorage.setItem(`gravity_unread_${order.id}`, unreadCount.toString());
+    }
+  }, [unreadCount, order?.id]);
 
   // Real-time subscription for order status and messages
   useEffect(() => {
