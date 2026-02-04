@@ -861,10 +861,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
         )
       }
-    </div >
-      {/* Audio for notifications */ }
-  <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
-    </div >
+      {/* Audio for notifications */}
+      <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
+    </div>
   );
 };
 
