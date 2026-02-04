@@ -34,13 +34,14 @@ interface Message {
     created_at: string;
 }
 
-const STATUS_FLOW = ['pending', 'confirmed', 'cooking', 'ready', 'dispatched'];
+const STATUS_FLOW = ['pending', 'confirmed', 'cooking', 'ready', 'dispatched', 'delivered'];
 const STATUS_LABELS: Record<string, string> = {
     pending: '⏳ Pending',
     confirmed: '✅ Confirmed',
     cooking: '🍳 Cooking',
     ready: '📦 Ready',
-    dispatched: '🚀 Dispatched'
+    dispatched: '🚀 Dispatched',
+    delivered: '🏠 Delivered'
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -187,15 +188,37 @@ const KitchenDashboard: React.FC = () => {
 
     const sendMessage = async () => {
         if (!newMessage.trim() || !messageOrderId) return;
-        setSendingMessage(true);
 
-        await supabase.from('order_messages').insert({
-            order_id: messageOrderId,
+        const tempId = 'temp-' + Date.now();
+        const msgContent = newMessage.trim();
+        const currentOrderId = messageOrderId; // Capture for closure
+
+        // Optimistic update
+        setMessages(prev => [...prev, {
+            id: tempId,
+            order_id: currentOrderId,
             sender: 'store',
-            message: newMessage.trim()
-        });
+            message: msgContent,
+            created_at: new Date().toISOString()
+        }]);
 
         setNewMessage('');
+        setSendingMessage(true);
+
+        const { error } = await supabase.from('order_messages').insert({
+            order_id: currentOrderId,
+            sender: 'store',
+            message: msgContent
+        });
+
+        if (error) {
+            // Revert on error (could add error toast here)
+            setMessages(prev => prev.filter(m => m.id !== tempId));
+        } else {
+            // Refetch to get real ID and confirm
+            fetchMessages(currentOrderId);
+        }
+
         setSendingMessage(false);
     };
 
@@ -594,15 +617,18 @@ const KitchenDashboard: React.FC = () => {
                             {messages.map(msg => (
                                 <div
                                     key={msg.id}
-                                    className={`p-3 rounded-xl text-sm max-w-[85%] ${msg.sender === 'store'
+                                    className={`p-3 rounded-xl text-sm max-w-[85%] relative ${msg.sender === 'store'
                                         ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-auto'
                                         : 'bg-blue-500/20 text-blue-400 mr-auto'
                                         }`}
                                 >
-                                    <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1">
+                                    <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">
                                         {msg.sender === 'store' ? '🏪 You' : '👤 Customer'}
                                     </p>
-                                    {msg.message}
+                                    <p className="font-medium">{msg.message}</p>
+                                    {msg.id.startsWith('temp-') && (
+                                        <span className="absolute -bottom-2 right-1 text-[8px] opacity-70">⏳ Sending...</span>
+                                    )}
                                 </div>
                             ))}
                         </div>

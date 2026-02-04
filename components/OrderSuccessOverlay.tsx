@@ -157,7 +157,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
   // Live status from Kitchen Dashboard
   const [liveStatus, setLiveStatus] = useState<string>('pending');
-  const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string }[]>([]);
+  const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string; id?: string }[]>([]);
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
@@ -222,6 +222,19 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   // Send customer reply
   const sendReply = async () => {
     if (!customerReply.trim() || !order?.id) return;
+
+    // Optimistic update
+    const tempId = 'temp-' + Date.now();
+    const msgContent = customerReply.trim();
+
+    setStoreMessages(prev => [...prev, {
+      sender: 'customer',
+      message: msgContent,
+      created_at: new Date().toISOString(),
+      id: tempId // Temporary ID
+    }]);
+
+    setCustomerReply('');
     setSendingReply(true);
 
     // Get the actual order UUID first
@@ -232,13 +245,17 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       .single();
 
     if (dbOrder?.id) {
-      await supabase.from('order_messages').insert({
+      const { error } = await supabase.from('order_messages').insert({
         order_id: dbOrder.id,
         sender: 'customer',
-        message: customerReply.trim()
+        message: msgContent
       });
-      setCustomerReply('');
-      fetchLiveData();
+
+      if (error) {
+        setStoreMessages(prev => prev.filter(m => m.id !== tempId));
+      } else {
+        fetchLiveData(); // Refresh to get real ID
+      }
     }
     setSendingReply(false);
   };
@@ -536,21 +553,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
 
           {/* Card 1: Status */}
-          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[300px] md:min-h-[450px]">
-            <div className="w-full flex justify-between items-center mb-2">
-              <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${liveStatus === 'pending' ? 'bg-yellow-100 border-yellow-400 text-yellow-600' :
-                liveStatus === 'confirmed' ? 'bg-green-100 border-green-400 text-green-600' :
-                  liveStatus === 'cooking' ? 'bg-orange-100 border-orange-400 text-orange-600' :
-                    liveStatus === 'ready' ? 'bg-blue-100 border-blue-400 text-blue-600' :
-                      liveStatus === 'dispatched' ? 'bg-purple-100 border-purple-400 text-purple-600' :
-                        'bg-pink-100 border-pink-400 text-pink-600'
-                }`}>
-                {liveStatus === 'pending' ? '⏳ Awaiting Confirmation' :
-                  liveStatus === 'confirmed' ? '✅ Confirmed' :
-                    liveStatus === 'cooking' ? '🍳 Cooking Now' :
-                      liveStatus === 'ready' ? '📦 Waiting for Rider' :
-                        liveStatus === 'dispatched' ? '🚀 On The Way' : '🏠 Delivered'}
-              </span>
+          <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-4 md:p-6 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[280px] md:min-h-[400px]">
+            <div className="w-full flex justify-between items-center mb-1">
+              {/* Removed redundant status badge as requested */}
+              <div></div>
               <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Live</span>
             </div>
 
@@ -790,9 +796,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               <p className="text-white/30 text-sm text-center py-8">No messages yet</p>
             ) : (
               storeMessages.map((msg, idx) => (
-                <div key={idx} className={`p-3 rounded-xl text-sm max-w-[85%] ${msg.sender === 'store' ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-0' : 'bg-blue-500/20 text-blue-400 ml-auto'}`}>
+                <div key={idx} className={`p-3 rounded-xl text-sm max-w-[85%] relative ${msg.sender === 'store' ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-0' : 'bg-blue-500/20 text-blue-400 ml-auto'}`}>
                   <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">{msg.sender === 'store' ? '🏪 Store' : '👤 You'}</p>
                   <p className="font-medium">{msg.message}</p>
+                  {(msg as any).id?.startsWith('temp-') && (
+                    <span className="absolute -bottom-2 right-1 text-[8px] opacity-70">⏳ Sending...</span>
+                  )}
                 </div>
               ))
             )}
