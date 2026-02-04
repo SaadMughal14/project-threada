@@ -65,8 +65,6 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     { id: 'bank', name: 'Bank Transfer', icon: <BankIcon />, color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
   ];
 
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1467847765630521424/eK6KWuC9z9KY2ZfTSwCrrvL8L6SKQk8Ck1-agIKw8mZOQoW1W4l8x75ythTWpGLpiTi6";
-
   useGSAP(() => {
     if (isOpen) {
       gsap.to(containerRef.current, { y: 0, duration: 0.8, ease: "expo.out" });
@@ -148,7 +146,9 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
             .from('payment-screenshots')
             .upload(fileName, blob);
 
-          if (!uploadError && uploadData) {
+          if (uploadError) {
+            console.error('Screenshot upload error:', uploadError);
+          } else if (uploadData) {
             const { data: { publicUrl } } = supabase.storage
               .from('payment-screenshots')
               .getPublicUrl(fileName);
@@ -159,8 +159,10 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         }
       }
 
-      // 2. Save order to Supabase database
-      const { error: dbError } = await supabase.from('orders').insert({
+      // 2. Save order to Supabase database (PRIMARY - Kitchen Dashboard)
+      console.log('Attempting to save order to Supabase:', orderId);
+
+      const { data: insertedOrder, error: dbError } = await supabase.from('orders').insert({
         order_number: orderId,
         customer_name: formData.name,
         customer_phone: formData.phone,
@@ -172,37 +174,15 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         payment_method: paymentMethod,
         payment_screenshot: screenshotUrl,
         status: 'pending'
-      });
+      }).select();
 
       if (dbError) {
         console.error('Order DB insert failed:', dbError);
+        // Alert so user knows there was an issue (but still proceed)
+        alert(`Order placed! Note: Kitchen notification may be delayed. Error: ${dbError.message}`);
+      } else {
+        console.log('Order saved successfully:', insertedOrder);
       }
-
-      // 3. Send Discord notification (backup/legacy)
-      const payload = {
-        content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
-        embeds: [{
-          title: "👨‍🍳 New Order - Kitchen Copy",
-          description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
-          color: 14252941,
-          fields: [
-            { name: "📍 Delivery Address", value: `\`\`\`\n${truncate(formData.address, 900)}\n\`\`\`` },
-            { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${truncate(orderNotes, 900) || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
-            { name: "🛵 Delivery Instructions", value: `\`\`\`\n${truncate(formData.deliveryNotes, 900) || 'STANDARD DELIVERY'}\n\`\`\`` },
-            { name: "🛒 Items Selected", value: truncate(cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n'), 1000) },
-            { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
-            { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
-          ],
-          footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
-          timestamp: new Date().toISOString()
-        }]
-      };
-
-      await fetch(DISCORD_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(() => { });
 
       onOrderSuccess(orderData);
     } catch (e) {

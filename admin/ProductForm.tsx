@@ -42,6 +42,19 @@ interface SizeOption {
     price: string;
 }
 
+interface ProductOptionChoice {
+    name: string;
+    extra_price: number;
+}
+
+interface ProductOption {
+    id?: string;
+    group_name: string;
+    options: ProductOptionChoice[];
+    is_required: boolean;
+    display_order: number;
+}
+
 const ProductForm: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -65,6 +78,9 @@ const ProductForm: React.FC = () => {
         is_visible: true,
         display_order: 0,
     });
+
+    // Product Options (customizations like Hot/Cold, Toppings, etc)
+    const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
 
     // Fetch existing product if editing
     useEffect(() => {
@@ -99,6 +115,23 @@ const ProductForm: React.FC = () => {
                     display_order: data.display_order || 0,
                 });
                 setImagePreview(data.image_url || null);
+
+                // Fetch product options
+                const { data: optionsData } = await supabase
+                    .from('product_options')
+                    .select('*')
+                    .eq('product_id', id)
+                    .order('display_order', { ascending: true });
+
+                if (optionsData) {
+                    setProductOptions(optionsData.map(opt => ({
+                        id: opt.id,
+                        group_name: opt.group_name,
+                        options: opt.options || [],
+                        is_required: opt.is_required || false,
+                        display_order: opt.display_order || 0
+                    })));
+                }
             }
             setLoading(false);
         };
@@ -208,6 +241,55 @@ const ProductForm: React.FC = () => {
         }));
     };
 
+    // Product Options handlers
+    const addOptionGroup = () => {
+        setProductOptions(prev => [...prev, {
+            group_name: '',
+            options: [{ name: '', extra_price: 0 }],
+            is_required: false,
+            display_order: prev.length
+        }]);
+    };
+
+    const removeOptionGroup = (index: number) => {
+        setProductOptions(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const updateOptionGroup = (index: number, field: keyof ProductOption, value: any) => {
+        setProductOptions(prev => {
+            const updated = [...prev];
+            updated[index] = { ...updated[index], [field]: value };
+            return updated;
+        });
+    };
+
+    const addOptionChoice = (groupIndex: number) => {
+        setProductOptions(prev => {
+            const updated = [...prev];
+            updated[groupIndex].options.push({ name: '', extra_price: 0 });
+            return updated;
+        });
+    };
+
+    const removeOptionChoice = (groupIndex: number, choiceIndex: number) => {
+        setProductOptions(prev => {
+            const updated = [...prev];
+            updated[groupIndex].options = updated[groupIndex].options.filter((_, i) => i !== choiceIndex);
+            return updated;
+        });
+    };
+
+    const updateOptionChoice = (groupIndex: number, choiceIndex: number, field: keyof ProductOptionChoice, value: any) => {
+        setProductOptions(prev => {
+            const updated = [...prev];
+            updated[groupIndex].options[choiceIndex] = {
+                ...updated[groupIndex].options[choiceIndex],
+                [field]: field === 'extra_price' ? Number(value) || 0 : value
+            };
+            return updated;
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -226,6 +308,8 @@ const ProductForm: React.FC = () => {
         }
 
         try {
+            let productId = id;
+
             if (isEditing) {
                 const { error } = await supabase
                     .from('products')
@@ -233,10 +317,32 @@ const ProductForm: React.FC = () => {
                     .eq('id', id);
                 if (error) throw error;
             } else {
-                const { error } = await supabase
+                const { data: newProduct, error } = await supabase
                     .from('products')
-                    .insert([cleanedData]);
+                    .insert([cleanedData])
+                    .select()
+                    .single();
                 if (error) throw error;
+                productId = newProduct?.id;
+            }
+
+            // Save product options
+            if (productId) {
+                // Delete existing options first
+                await supabase.from('product_options').delete().eq('product_id', productId);
+
+                // Insert new options
+                const validOptions = productOptions.filter(opt => opt.group_name.trim() && opt.options.some(c => c.name.trim()));
+                if (validOptions.length > 0) {
+                    const optionsToInsert = validOptions.map((opt, idx) => ({
+                        product_id: productId,
+                        group_name: opt.group_name,
+                        options: opt.options.filter(c => c.name.trim()),
+                        is_required: opt.is_required,
+                        display_order: idx
+                    }));
+                    await supabase.from('product_options').insert(optionsToInsert);
+                }
             }
 
             navigate('/admin-panel0/products');
@@ -470,6 +576,103 @@ const ProductForm: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                {/* Product Options (Customizations) */}
+                <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Product Options</h2>
+                            <p className="text-[8px] text-white/20 mt-1">Add customization groups like Hot/Cold, Sugar Level, etc.</p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={addOptionGroup}
+                            className="text-[#D97B8D] text-xs font-bold uppercase tracking-widest hover:text-[#D97B8D]/80 transition-colors"
+                        >
+                            + Add Option Group
+                        </button>
+                    </div>
+
+                    {productOptions.length === 0 ? (
+                        <div className="text-center py-8 text-white/20">
+                            <p className="text-sm">No customization options added yet</p>
+                            <p className="text-xs mt-1">Click "Add Option Group" to add choices like Hot/Cold, Sugar Level, etc.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {productOptions.map((optGroup, gIdx) => (
+                                <div key={gIdx} className="bg-black/30 border border-white/10 rounded-xl p-4 space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="text"
+                                            value={optGroup.group_name}
+                                            onChange={(e) => updateOptionGroup(gIdx, 'group_name', e.target.value)}
+                                            placeholder="Group name (e.g. Temperature, Sugar Level)"
+                                            className="flex-1 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm font-medium placeholder-white/20 focus:border-[#D97B8D] focus:outline-none"
+                                        />
+                                        <label className="flex items-center gap-2 text-xs text-white/40">
+                                            <input
+                                                type="checkbox"
+                                                checked={optGroup.is_required}
+                                                onChange={(e) => updateOptionGroup(gIdx, 'is_required', e.target.checked)}
+                                                className="accent-[#D97B8D]"
+                                            />
+                                            Required
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeOptionGroup(gIdx)}
+                                            className="text-red-400 hover:text-red-300 p-1 transition-colors"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+
+                                    {/* Choices */}
+                                    <div className="space-y-2 pl-4 border-l-2 border-white/5">
+                                        {optGroup.options.map((choice, cIdx) => (
+                                            <div key={cIdx} className="flex items-center gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={choice.name}
+                                                    onChange={(e) => updateOptionChoice(gIdx, cIdx, 'name', e.target.value)}
+                                                    placeholder="Choice (e.g. Hot, Cold)"
+                                                    className="flex-1 bg-black/30 border border-white/5 rounded-lg px-3 py-2 text-white text-sm placeholder-white/20 focus:border-[#D97B8D] focus:outline-none"
+                                                />
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-white/30 text-xs">+Rs.</span>
+                                                    <input
+                                                        type="number"
+                                                        value={choice.extra_price || ''}
+                                                        onChange={(e) => updateOptionChoice(gIdx, cIdx, 'extra_price', e.target.value)}
+                                                        placeholder="0"
+                                                        className="w-16 bg-black/30 border border-white/5 rounded-lg px-2 py-2 text-white text-sm placeholder-white/20 focus:border-[#D97B8D] focus:outline-none"
+                                                    />
+                                                </div>
+                                                {optGroup.options.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeOptionChoice(gIdx, cIdx)}
+                                                        className="text-red-400/60 hover:text-red-400 text-xs p-1"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => addOptionChoice(gIdx)}
+                                            className="text-[#D97B8D]/60 hover:text-[#D97B8D] text-xs font-medium mt-1"
+                                        >
+                                            + Add Choice
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Ingredients */}
