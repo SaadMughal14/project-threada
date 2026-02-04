@@ -1,144 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GRAVITY | Sculpted by Heat</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#1C1C1C">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GRAVITY | Sculpted by Heat</title>
 
-    <!-- Detailed Cookie SVG Favicon (Updated to Pink) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .fan { transform-origin: center; animation: spin 20s linear infinite; }</style><g class='fan'><circle cx='50' cy='50' r='45' fill='%23D97B8D'/><circle cx='30' cy='30' r='6' fill='%234A3728'/><circle cx='70' cy='35' r='7' fill='%234A3728'/><circle cx='45' cy='70' r='8' fill='%234A3728'/><circle cx='75' cy='75' r='5' fill='%234A3728'/><circle cx='20' cy='60' r='4' fill='%234A3728'/></g></svg>">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#1C1C1C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Fraunces:ital,opsz,wght@1,9..144,900&family=Satoshi:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --brand-primary: #D97B8D; 
-            --brand-light: #F2DCE0;
-            --deep-basil: #1C1C1C;    
-            --cream-vanilla: #FDFCFB; 
-        }
-        * { 
-            box-sizing: border-box; 
-            outline: none !important; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            font-family: 'Satoshi', sans-serif;
-            background-color: var(--cream-vanilla);
-            color: var(--deep-basil);
-            overflow-x: hidden;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-        }
-        .font-display { font-family: 'Syne', sans-serif; }
-        
-        ::-webkit-scrollbar { display: none; }
-        
-        .grain::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-            opacity: 0.04;
-            pointer-events: none;
-            z-index: 999;
-        }
+  <!-- Detailed Cookie SVG Favicon (Updated to Pink) -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .fan { transform-origin: center; animation: spin 20s linear infinite; }</style><g class='fan'><circle cx='50' cy='50' r='45' fill='%23D97B8D'/><circle cx='30' cy='30' r='6' fill='%234A3728'/><circle cx='70' cy='35' r='7' fill='%234A3728'/><circle cx='45' cy='70' r='8' fill='%234A3728'/><circle cx='75' cy='75' r='5' fill='%234A3728'/><circle cx='20' cy='60' r='4' fill='%234A3728'/></g></svg>">
 
-        /* Fixed Centered Logo Animation */
-        @keyframes spin-360 {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .logo-spin-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: spin-360 10s linear infinite;
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Fraunces:ital,opsz,wght@1,9..144,900&family=Satoshi:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --brand-primary: #D97B8D;
+      --brand-light: #F2DCE0;
+      --deep-basil: #1C1C1C;
+      --cream-vanilla: #FDFCFB;
+    }
 
-        /* Responsive Title Sizing */
-        .text-hero { 
-            font-size: clamp(2.8rem, 11.5vw, 15rem); 
-            line-height: 0.8;
-            letter-spacing: -0.06em;
-            text-align: center;
-            width: 100%;
-            display: block;
-            white-space: nowrap;
-        }
+    * {
+      box-sizing: border-box;
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* Category Scrollbar */
-        .category-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
+    body {
+      font-family: 'Satoshi', sans-serif;
+      background-color: var(--cream-vanilla);
+      color: var(--deep-basil);
+      overflow-x: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        /* Thermal Receipt Print Styles */
-        .thermal-receipt { display: none; }
+    .font-display {
+      font-family: 'Syne', sans-serif;
+    }
 
-        @media print {
-          @page { 
-            size: 80mm auto; 
-            margin: 0 !important; 
-          }
-          html, body { 
-            background: white !important; 
-            width: 80mm !important; 
-            margin: 0 !important; 
-            padding: 0 !important; 
-            -webkit-print-color-adjust: exact; 
-            overflow: visible !important;
-            height: auto !important;
-          }
-          #root { display: none !important; }
-          
-          /* Show only the thermal receipt container which we will force to stay in the overlay's portal or at the top level */
-          .thermal-receipt { 
-            display: block !important; 
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            visibility: visible !important; 
-            width: 80mm !important; 
-            padding: 3mm 2mm !important; 
-            font-family: 'Courier Prime', monospace !important; 
-            text-align: left; 
-            background: white !important;
-            color: black !important;
-            line-height: 1.3;
-            break-inside: avoid;
-            page-break-after: avoid;
-            height: auto !important;
-          }
-          
-          /* Extra safety for hiding everything else */
-          body > *:not(.thermal-receipt) { display: none !important; }
-          
-          .thermal-receipt h1 { font-family: 'Dancing Script', cursive !important; font-size: 24pt !important; margin: 0 0 2mm 0 !important; font-weight: 700; }
-          .thermal-receipt .logo-bw { width: 22mm; height: 22mm; margin: 0 auto 3mm; }
-          .thermal-receipt .separator { border-top: 1px dashed black; margin: 3mm 0; }
-          .thermal-receipt .flex-row { display: flex; justify-content: space-between; text-align: left; }
-          .thermal-receipt .bold { font-weight: 700; }
-          .thermal-receipt .footer-text { font-size: 8pt; margin-top: 3mm; opacity: 0.8; font-weight: 700; }
-        }
-        
-        .ease-expo-out { transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1); }
-    </style>
-<script type="importmap">
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .grain::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Fixed Centered Logo Animation */
+    @keyframes spin-360 {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .logo-spin-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: spin-360 10s linear infinite;
+    }
+
+    /* Responsive Title Sizing */
+    .text-hero {
+      font-size: clamp(2.8rem, 11.5vw, 15rem);
+      line-height: 0.8;
+      letter-spacing: -0.06em;
+      text-align: center;
+      width: 100%;
+      display: block;
+      white-space: nowrap;
+    }
+
+    /* Category Scrollbar */
+    .category-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Thermal Receipt Print Styles */
+    .thermal-receipt {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: 80mm auto;
+        margin: 0 !important;
+      }
+
+      html,
+      body {
+        background: white !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow: visible !important;
+        height: auto !important;
+      }
+
+      #root {
+        display: none !important;
+      }
+
+      /* Show only the thermal receipt container which we will force to stay in the overlay's portal or at the top level */
+      .thermal-receipt {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        visibility: visible !important;
+        width: 80mm !important;
+        padding: 3mm 2mm !important;
+        font-family: 'Courier Prime', monospace !important;
+        text-align: left !important;
+        background: white !important;
+        color: black !important;
+        line-height: 1.3;
+        break-inside: avoid;
+        page-break-after: avoid;
+        height: auto !important;
+      }
+
+      /* Extra safety for hiding everything else */
+      body>*:not(.thermal-receipt) {
+        display: none !important;
+      }
+
+      .thermal-receipt h1 {
+        font-family: 'Dancing Script', cursive !important;
+        font-size: 24pt !important;
+        margin: 0 0 2mm 0 !important;
+        font-weight: 700;
+        text-align: left !important;
+      }
+
+      .thermal-receipt .logo-bw {
+        width: 22mm;
+        height: 22mm;
+        margin: 0 0 3mm 0 !important;
+      }
+
+      .thermal-receipt .separator {
+        border-top: 1px dashed black;
+        margin: 3mm 0;
+      }
+
+      .thermal-receipt .flex-row {
+        display: flex;
+        justify-content: space-between;
+        text-align: left;
+      }
+
+      .thermal-receipt .bold {
+        font-weight: 700;
+      }
+
+      .thermal-receipt .footer-text {
+        font-size: 8pt;
+        margin-top: 3mm;
+        opacity: 0.8;
+        font-weight: 700;
+      }
+    }
+
+    .ease-expo-out {
+      transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+  </style>
+  <script type="importmap">
 {
   "imports": {
     "react/": "https://esm.sh/react@^19.2.4/",
@@ -154,10 +214,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
+
 <body class="grain">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

@@ -755,6 +755,16 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           80% { transform: rotate(-15deg) scale(1.05); }
           90% { transform: rotate(5deg) scale(1); }
         }
+        .animate-bell-ring {
+          animation: bell-ring 0.5s ease-in-out infinite;
+        }
+        .animate-subtle-pulse {
+          animation: subtle-pulse 2s ease-in-out infinite;
+        }
+        @keyframes subtle-pulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 123, 141, 0.4); }
+          50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(217, 123, 141, 0); }
+        }
         
         @media print {
           .no-print { display: none !important; }
@@ -795,7 +805,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         }}
         onMouseUp={() => { dragRef.current = null; setTimeout(() => setIsDragging(false), 100); }}
       >
-        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
+        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-bell-ring' : 'animate-subtle-pulse'}`}>
           <span className="text-2xl md:text-3xl">💬</span>
         </div>
         {unreadCount > 0 && (
