@@ -76,41 +76,73 @@ const ConfirmedTick = () => (
   </div>
 );
 
-// Waiting for Rider Animation - Man checking watch
+// Waiting for Rider Animation - Man checking watch (Premium)
 const WaitingForRider = () => (
   <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
     <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+      {/* Ground shadow */}
+      <ellipse cx="100" cy="175" rx="40" ry="8" fill="rgba(0,0,0,0.1)" />
+
       {/* Person Standing */}
-      <circle cx="100" cy="50" r="20" fill="#E8B9A7" /> {/* Head */}
-      <path d="M90 50 A10 10 0 0 1 110 50 Z" fill="#1C1C1C" /> {/* Hair/Cap */}
+      <circle cx="100" cy="45" r="22" fill="#E8B9A7" /> {/* Head */}
+      <ellipse cx="100" cy="40" rx="18" ry="12" fill="#1C1C1C" /> {/* Hair */}
 
-      {/* Body */}
-      <rect x="85" y="70" width="30" height="50" rx="5" fill="#D97B8D" />
+      {/* Eyes */}
+      <circle cx="94" cy="48" r="2" fill="#1C1C1C" />
+      <circle cx="106" cy="48" r="2" fill="#1C1C1C" />
 
-      {/* Arms */}
-      <path d="M85 80 L60 95 L55 110" stroke="#E8B9A7" strokeWidth="8" strokeLinecap="round" fill="none" />
-      <path d="M115 80 L130 90 L135 80" stroke="#E8B9A7" strokeWidth="8" strokeLinecap="round" fill="none" />
+      {/* Body - Polo Shirt */}
+      <path d="M80 68 L85 95 L85 125 L115 125 L115 95 L120 68 Q100 60 80 68" fill="#D97B8D" />
+      <path d="M85 68 L90 68 L90 78 L85 78" fill="#C46B7D" /> {/* Collar detail */}
+      <path d="M110 68 L115 68 L115 78 L110 78" fill="#C46B7D" />
 
-      {/* Watch on arm */}
-      <rect x="52" y="105" width="12" height="10" rx="2" fill="#1C1C1C" className="animate-pulse" />
-      <circle cx="58" cy="110" r="3" fill="#7BD98D" className="animate-ping" style={{ animationDuration: '1.5s' }} />
+      {/* Left Arm - Raised checking watch */}
+      <path d="M80 75 Q65 85 60 110 Q55 125 58 130" stroke="#E8B9A7" strokeWidth="10" strokeLinecap="round" fill="none" />
+
+      {/* Watch ON the wrist - properly attached */}
+      <g transform="rotate(-20, 58, 125)">
+        <rect x="50" y="120" width="16" height="12" rx="3" fill="#2D2D2D" stroke="#1C1C1C" strokeWidth="1" />
+        <rect x="52" y="122" width="12" height="8" rx="2" fill="#1C1C1C" />
+        <circle cx="58" cy="126" r="4" fill="#0a0a0a" stroke="#333" strokeWidth="0.5" />
+        {/* Watch face with time */}
+        <circle cx="58" cy="126" r="3" fill="#111" />
+        <line x1="58" y1="126" x2="58" y2="124" stroke="#7BD98D" strokeWidth="0.8" className="animate-pulse" />
+        <line x1="58" y1="126" x2="60" y2="127" stroke="#D97B8D" strokeWidth="0.5" />
+        {/* Watch glow */}
+        <circle cx="58" cy="126" r="5" fill="none" stroke="#7BD98D" strokeWidth="1" className="animate-ping" style={{ animationDuration: '2s', opacity: 0.5 }} />
+      </g>
+
+      {/* Right Arm - Holding package */}
+      <path d="M120 75 Q135 85 140 95 Q145 105 142 110" stroke="#E8B9A7" strokeWidth="10" strokeLinecap="round" fill="none" />
+
+      {/* Package in right hand */}
+      <g transform="rotate(10, 150, 105)">
+        <rect x="138" y="95" width="28" height="28" rx="4" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="2" />
+        {/* Cookie logo on box */}
+        <circle cx="152" cy="109" r="8" fill="#D97B8D" />
+        <circle cx="148" cy="105" r="2" fill="#4A3728" />
+        <circle cx="156" cy="107" r="2.5" fill="#4A3728" />
+        <circle cx="150" cy="113" r="2" fill="#4A3728" />
+      </g>
 
       {/* Legs */}
-      <rect x="88" y="118" width="10" height="35" fill="#1C1C1C" />
-      <rect x="102" y="118" width="10" height="35" fill="#1C1C1C" />
-
-      {/* Package in other hand */}
-      <rect x="128" y="70" width="25" height="25" rx="3" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="2" />
-      <circle cx="140" cy="82" r="6" fill="#D97B8D" />
+      <rect x="88" y="123" width="11" height="38" rx="3" fill="#2D2D2D" />
+      <rect x="101" y="123" width="11" height="38" rx="3" fill="#2D2D2D" />
 
       {/* Shoes */}
-      <ellipse cx="93" cy="155" rx="8" ry="5" fill="#1C1C1C" />
-      <ellipse cx="107" cy="155" rx="8" ry="5" fill="#1C1C1C" />
+      <ellipse cx="93" cy="163" rx="10" ry="6" fill="#1C1C1C" />
+      <ellipse cx="107" cy="163" rx="10" ry="6" fill="#1C1C1C" />
 
-      {/* Clock icon floating */}
-      <g className="animate-bounce" style={{ animationDuration: '2s' }}>
-        <circle cx="45" cy="70" r="15" fill="white" stroke="#1C1C1C" strokeWidth="2" />
-        <path d="M45 60 L45 70 L52 75" stroke="#1C1C1C" strokeWidth="2" strokeLinecap="round" />
+      {/* Thought bubble with clock */}
+      <g className="animate-bounce" style={{ animationDuration: '3s' }}>
+        <circle cx="45" cy="55" r="18" fill="white" stroke="#E0E0E0" strokeWidth="1" />
+        <circle cx="58" cy="72" r="5" fill="white" />
+        <circle cx="65" cy="80" r="3" fill="white" />
+        {/* Clock inside bubble */}
+        <circle cx="45" cy="55" r="12" fill="#F5F5F5" stroke="#1C1C1C" strokeWidth="1.5" />
+        <line x1="45" y1="55" x2="45" y2="48" stroke="#1C1C1C" strokeWidth="2" strokeLinecap="round" />
+        <line x1="45" y1="55" x2="51" y2="58" stroke="#D97B8D" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="45" cy="55" r="1.5" fill="#1C1C1C" />
       </g>
     </svg>
   </div>
@@ -129,6 +161,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
+
+  // Floating messenger
+  const [showMessenger, setShowMessenger] = useState(false);
+  const [messengerPos, setMessengerPos] = useState({ x: 20, y: 100 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
 
   const BAKING_DURATION = 120000;
   const DELIVERY_DURATION = 180000;
@@ -624,38 +662,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             </div>
           </div>
 
-          {/* Store Messages */}
-          {storeMessages.length > 0 && (
-            <div className="bg-white border border-[#D97B8D]/20 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-4">
-              <p className="text-[7px] font-black tracking-[0.4em] text-[#D97B8D] uppercase">🔔 Messages from Store</p>
-              <div className="space-y-3 max-h-40 overflow-y-auto">
-                {storeMessages.map((msg, idx) => (
-                  <div key={idx} className={`p-3 rounded-xl text-sm ${msg.sender === 'store' ? 'bg-[#D97B8D]/10 text-[#D97B8D] border border-[#D97B8D]/20' : 'bg-blue-500/10 text-blue-600 border border-blue-500/20'}`}>
-                    <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">{msg.sender === 'store' ? '🏪 Store' : '👤 You'}</p>
-                    <p className="font-medium">{msg.message}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={customerReply}
-                  onChange={(e) => setCustomerReply(e.target.value)}
-                  placeholder="Reply to store..."
-                  className="flex-1 bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-[#1C1C1C] text-sm font-medium focus:outline-none focus:border-[#D97B8D]"
-                  onKeyDown={(e) => e.key === 'Enter' && sendReply()}
-                />
-                <button
-                  onClick={sendReply}
-                  disabled={sendingReply}
-                  className="bg-[#D97B8D] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase hover:bg-[#D97B8D]/90 disabled:opacity-50"
-                >
-                  Send
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Time Display */}
           <div className="flex flex-col items-start pt-2 px-2">
             <p className="text-[8px] font-black tracking-[0.3em] text-black/40 uppercase mb-1">Status</p>
@@ -718,43 +724,133 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           from { transform: translateY(100%); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes bell-ring {
+          0%, 100% { transform: rotate(0); }
+          15% { transform: rotate(15deg); }
+          30% { transform: rotate(-15deg); }
+          45% { transform: rotate(15deg); }
+          60% { transform: rotate(-15deg); }
+          75% { transform: rotate(0); }
+        }
         
         @media print {
           .no-print { display: none !important; }
         }
       `}</style>
 
-      {/* Store Message Popup Notification */}
-      {messagePopup && (
-        <div className="fixed bottom-4 right-4 left-4 md:left-auto md:right-4 md:w-80 z-[500] animate-[slide-up_0.3s_ease-out]">
-          <div
-            className="bg-[#1C1C1C] border-2 border-[#D97B8D] rounded-2xl p-4 shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform"
-            onClick={() => setMessagePopup(null)}
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#D97B8D]/30 flex items-center justify-center text-lg shrink-0">
-                🏪
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#D97B8D]">
-                    Store Message
-                  </span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setMessagePopup(null); }}
-                    className="text-white/30 hover:text-white text-xs"
-                  >
-                    ✕
-                  </button>
+      {/* Floating Messenger Icon */}
+      <div
+        className="fixed z-[450] cursor-pointer"
+        style={{
+          right: `${messengerPos.x}px`,
+          top: `${messengerPos.y}px`,
+          touchAction: 'none'
+        }}
+        onClick={() => !isDragging && setShowMessenger(!showMessenger)}
+        onMouseDown={(e) => {
+          dragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: messengerPos.x, startPosY: messengerPos.y };
+          setIsDragging(false);
+        }}
+        onMouseMove={(e) => {
+          if (e.buttons === 1 && dragRef.current) {
+            const dx = dragRef.current.startX - e.clientX;
+            const dy = e.clientY - dragRef.current.startY;
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) setIsDragging(true);
+            setMessengerPos({
+              x: Math.max(10, dragRef.current.startPosX + dx),
+              y: Math.max(50, Math.min(window.innerHeight - 100, dragRef.current.startPosY + dy))
+            });
+          }
+        }}
+        onMouseUp={() => { dragRef.current = null; setTimeout(() => setIsDragging(false), 100); }}
+      >
+        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${storeMessages.length > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
+          <span className="text-2xl md:text-3xl">💬</span>
+        </div>
+        {storeMessages.length > 0 && (
+          <div className="absolute -top-1 -right-1 w-6 h-6 bg-white text-[#D97B8D] rounded-full flex items-center justify-center text-xs font-black border-2 border-[#D97B8D] animate-bounce">
+            {storeMessages.filter(m => m.sender === 'store').length}
+          </div>
+        )}
+      </div>
+
+      {/* Floating Messenger Chat Modal */}
+      {showMessenger && (
+        <div
+          className="fixed z-[460] bg-[#1C1C1C] rounded-2xl shadow-2xl border border-white/10 w-80 md:w-96 max-h-[60vh] flex flex-col"
+          style={{ right: `${messengerPos.x}px`, top: `${messengerPos.y + 70}px` }}
+        >
+          <div className="p-4 border-b border-white/10 flex justify-between items-center">
+            <span className="text-sm font-bold text-white uppercase tracking-widest">Store Chat</span>
+            <button onClick={() => setShowMessenger(false)} className="text-white/40 hover:text-white">✕</button>
+          </div>
+
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-60">
+            {storeMessages.length === 0 ? (
+              <p className="text-white/30 text-sm text-center py-8">No messages yet</p>
+            ) : (
+              storeMessages.map((msg, idx) => (
+                <div key={idx} className={`p-3 rounded-xl text-sm max-w-[85%] ${msg.sender === 'store' ? 'bg-[#D97B8D]/20 text-[#D97B8D] ml-0' : 'bg-blue-500/20 text-blue-400 ml-auto'}`}>
+                  <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">{msg.sender === 'store' ? '🏪 Store' : '👤 You'}</p>
+                  <p className="font-medium">{msg.message}</p>
                 </div>
-                <p className="text-white text-sm font-medium">{messagePopup.message}</p>
-                <p className="text-white/40 text-[10px] mt-1">Tap to dismiss</p>
-              </div>
-            </div>
+              ))
+            )}
+          </div>
+
+          <div className="p-4 border-t border-white/10 flex gap-2">
+            <input
+              type="text"
+              value={customerReply}
+              onChange={(e) => setCustomerReply(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#D97B8D]"
+              onKeyDown={(e) => e.key === 'Enter' && sendReply()}
+            />
+            <button
+              onClick={sendReply}
+              disabled={sendingReply}
+              className="bg-[#D97B8D] text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase hover:bg-[#D97B8D]/90 disabled:opacity-50"
+            >
+              Send
+            </button>
           </div>
         </div>
       )}
-    </div>
+
+      {/* Store Message Popup Notification */}
+      {
+        messagePopup && (
+          <div className="fixed bottom-4 right-4 left-4 md:left-auto md:right-4 md:w-80 z-[500] animate-[slide-up_0.3s_ease-out]">
+            <div
+              className="bg-[#1C1C1C] border-2 border-[#D97B8D] rounded-2xl p-4 shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform"
+              onClick={() => setMessagePopup(null)}
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#D97B8D]/30 flex items-center justify-center text-lg shrink-0">
+                  🏪
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#D97B8D]">
+                      Store Message
+                    </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setMessagePopup(null); }}
+                      className="text-white/30 hover:text-white text-xs"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <p className="text-white text-sm font-medium">{messagePopup.message}</p>
+                  <p className="text-white/40 text-[10px] mt-1">Tap to dismiss</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div >
   );
 };
 

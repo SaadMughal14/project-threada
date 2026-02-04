@@ -245,6 +245,75 @@ const KitchenDashboard: React.FC = () => {
         return ORDER_COLORS[idx % ORDER_COLORS.length];
     };
 
+    // Track unread messages per order
+    const [unreadMessages, setUnreadMessages] = useState<Set<string>>(new Set());
+
+    // Update unread messages when new customer message comes in
+    useEffect(() => {
+        const unreadChannel = supabase
+            .channel('unread-tracker')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages' }, (payload: any) => {
+                if (payload.new?.sender === 'customer') {
+                    setUnreadMessages(prev => new Set([...prev, payload.new.order_id]));
+                }
+            })
+            .subscribe();
+
+        return () => { unreadChannel.unsubscribe(); };
+    }, []);
+
+    // Mark as read when opening messages
+    const openMessagesAndClear = (order: Order) => {
+        setUnreadMessages(prev => {
+            const next = new Set(prev);
+            next.delete(order.id);
+            return next;
+        });
+        openMessages(order);
+    };
+
+    // Print thermal receipt
+    const printOrder = (order: Order) => {
+        const printWindow = window.open('', '_blank', 'width=300,height=600');
+        if (printWindow) {
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Order #${order.order_number}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 10px; width: 270px; }
+                        h1 { font-size: 16px; text-align: center; margin: 0 0 10px 0; }
+                        .divider { border-top: 1px dashed #000; margin: 8px 0; }
+                        .item { display: flex; justify-content: space-between; }
+                        .total { font-weight: bold; font-size: 14px; }
+                        .center { text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <h1>GUSTO PIZZERIA</h1>
+                    <div class="center">Order #${order.order_number}</div>
+                    <div class="divider"></div>
+                    <p><strong>${order.customer_name}</strong></p>
+                    <p>${order.customer_phone}</p>
+                    <p>${order.customer_address}</p>
+                    <div class="divider"></div>
+                    ${order.items.map(item => `<div class="item"><span>${item.q}x ${item.n}</span><span>${item.s}</span></div>`).join('')}
+                    <div class="divider"></div>
+                    <div class="item total"><span>TOTAL</span><span>Rs. ${order.total}</span></div>
+                    <div class="divider"></div>
+                    <p><strong>Kitchen:</strong> ${order.kitchen_instructions || 'None'}</p>
+                    <p><strong>Delivery:</strong> ${order.delivery_notes || 'None'}</p>
+                    <div class="divider"></div>
+                    <div class="center">${new Date().toLocaleString()}</div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+    };
+
     // Memoized filtered lists
     const pendingOrders = useMemo(() => orders.filter(o => o.status === 'pending'), [orders]);
     const activeOrders = useMemo(() => orders.filter(o => ['confirmed', 'cooking', 'ready'].includes(o.status)), [orders]);
@@ -330,8 +399,10 @@ const KitchenDashboard: React.FC = () => {
                                     order={order}
                                     onSelect={() => setSelectedOrder(order)}
                                     onStatusChange={(status) => updateOrderStatus(order.id, status)}
-                                    onMessage={() => openMessages(order)}
+                                    onMessage={() => openMessagesAndClear(order)}
+                                    onPrint={() => printOrder(order)}
                                     isNew={newOrderIdsRef.current.has(order.id)}
+                                    hasUnreadMessages={unreadMessages.has(order.id)}
                                 />
                             ))}
                             {pendingOrders.length === 0 && <EmptyState text="No pending orders" />}
@@ -348,7 +419,9 @@ const KitchenDashboard: React.FC = () => {
                                     order={order}
                                     onSelect={() => setSelectedOrder(order)}
                                     onStatusChange={(status) => updateOrderStatus(order.id, status)}
-                                    onMessage={() => openMessages(order)}
+                                    onMessage={() => openMessagesAndClear(order)}
+                                    onPrint={() => printOrder(order)}
+                                    hasUnreadMessages={unreadMessages.has(order.id)}
                                 />
                             ))}
                             {activeOrders.length === 0 && <EmptyState text="No active orders" />}
@@ -365,8 +438,10 @@ const KitchenDashboard: React.FC = () => {
                                     order={order}
                                     onSelect={() => setSelectedOrder(order)}
                                     onStatusChange={(status) => updateOrderStatus(order.id, status)}
-                                    onMessage={() => openMessages(order)}
+                                    onMessage={() => openMessagesAndClear(order)}
+                                    onPrint={() => printOrder(order)}
                                     isComplete
+                                    hasUnreadMessages={unreadMessages.has(order.id)}
                                 />
                             ))}
                             {completedOrders.length === 0 && <EmptyState text="No completed orders" />}
@@ -385,9 +460,11 @@ const KitchenDashboard: React.FC = () => {
                                 order={order}
                                 onSelect={() => setSelectedOrder(order)}
                                 onStatusChange={(status) => updateOrderStatus(order.id, status)}
-                                onMessage={() => openMessages(order)}
+                                onMessage={() => openMessagesAndClear(order)}
+                                onPrint={() => printOrder(order)}
                                 isNew={activeTab === 'pending' && newOrderIdsRef.current.has(order.id)}
                                 isComplete={activeTab === 'done'}
+                                hasUnreadMessages={unreadMessages.has(order.id)}
                             />
                         ))
                     )}
@@ -615,6 +692,13 @@ const KitchenDashboard: React.FC = () => {
                     from { transform: translateY(100%); opacity: 0; }
                     to { transform: translateY(0); opacity: 1; }
                 }
+                @keyframes blink-message {
+                    0%, 100% { background-color: rgba(217, 123, 141, 0.2); }
+                    50% { background-color: rgba(217, 123, 141, 0.8); transform: scale(1.1); }
+                }
+                .blink-message {
+                    animation: blink-message 0.6s ease-in-out infinite;
+                }
             `}</style>
         </div>
     );
@@ -626,9 +710,11 @@ const OrderCard: React.FC<{
     onSelect: () => void;
     onStatusChange: (status: string) => void;
     onMessage: () => void;
+    onPrint: () => void;
     isNew?: boolean;
     isComplete?: boolean;
-}> = ({ order, onSelect, onStatusChange, onMessage, isNew, isComplete }) => {
+    hasUnreadMessages?: boolean;
+}> = ({ order, onSelect, onStatusChange, onMessage, onPrint, isNew, isComplete, hasUnreadMessages }) => {
     const nextStatus = (() => {
         const idx = STATUS_FLOW.indexOf(order.status);
         return idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
@@ -678,10 +764,18 @@ const OrderCard: React.FC<{
 
                 <div className="flex gap-2">
                     <button
-                        onClick={(e) => { e.stopPropagation(); onMessage(); }}
+                        onClick={(e) => { e.stopPropagation(); onPrint(); }}
                         className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                        title="Print Receipt"
                     >
-                        💬
+                        🖨️
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onMessage(); }}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${hasUnreadMessages ? 'blink-message text-white' : 'bg-white/10 hover:bg-white/20'}`}
+                        title="Messages"
+                    >
+                        💬 {hasUnreadMessages && <span className="ml-1">!</span>}
                     </button>
                     {nextStatus && !isComplete && (
                         <button
