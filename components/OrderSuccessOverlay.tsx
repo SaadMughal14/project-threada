@@ -777,6 +777,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           60% { transform: rotate(-15deg); }
           75% { transform: rotate(0); }
         }
+        .animate-bell-ring {
+          animation: bell-ring 0.5s ease-in-out infinite;
+        }
         
         @media print {
           .no-print { display: none !important; }
@@ -817,7 +820,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         }}
         onMouseUp={() => { dragRef.current = null; setTimeout(() => setIsDragging(false), 100); }}
       >
-        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
+        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-bell-ring' : ''}`}>
           <span className="text-2xl md:text-3xl">💬</span>
         </div>
         {unreadCount > 0 && (
