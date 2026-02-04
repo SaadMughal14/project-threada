@@ -159,7 +159,16 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   // Live status from Kitchen Dashboard
   const [liveStatus, setLiveStatus] = useState<string>('pending');
   const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string; id?: string }[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Initialize unread count from localStorage if available
+  const [unreadCount, setUnreadCount] = useState(() => {
+    if (typeof window !== 'undefined' && order?.id) {
+      const saved = localStorage.getItem(`unread_${order.id}`);
+      return saved ? parseInt(saved) : 0;
+    }
+    return 0;
+  });
+
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
@@ -317,7 +326,11 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             // Only show popup for store messages
             if (payload.new?.sender === 'store') {
               setMessagePopup({ message: payload.new.message });
-              setUnreadCount(prev => prev + 1);
+              setUnreadCount(prev => {
+                const newCount = prev + 1;
+                localStorage.setItem(`unread_${order.id}`, newCount.toString());
+                return newCount;
+              });
               audioRef.current?.play().catch(e => console.log('Audio play failed', e));
               // Auto-dismiss after 8 seconds
               setTimeout(() => setMessagePopup(null), 8000);
@@ -752,7 +765,10 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         onClick={() => {
           if (!isDragging) {
             setShowMessenger(!showMessenger);
-            if (!showMessenger) setUnreadCount(0); // Clear on open
+            if (!showMessenger) {
+              setUnreadCount(0); // Clear on open
+              if (order?.id) localStorage.setItem(`unread_${order.id}`, '0');
+            }
           }
         }}
         onMouseDown={(e) => {

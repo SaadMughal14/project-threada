@@ -364,73 +364,143 @@ const KitchenDashboard: React.FC = () => {
         openMessages(order);
     };
 
-    // Print thermal receipt (Improved Styling)
+    // Print thermal receipt (Matches Customer Overlay Style)
     const printOrder = (order: Order) => {
         const printWindow = window.open('', '_blank', 'width=300,height=600');
         if (printWindow) {
             printWindow.document.write(`
                 <html>
                 <head>
-                    <title>Order #${order.order_number}</title>
+                    <title>Receipt #${order.order_number}</title>
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
                     <style>
-                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 15px; width: 280px; margin: 0 auto; color: #000; }
-                        .header { text-align: center; margin-bottom: 15px; }
-                        h1 { font-size: 20px; font-weight: 900; margin: 0; letter-spacing: 2px; }
-                        h2 { font-size: 14px; margin: 5px 0 0; text-transform: uppercase; }
-                        .divider { border-top: 2px dashed #000; margin: 10px 0; }
-                        .divider-thin { border-top: 1px solid #ccc; margin: 8px 0; }
-                        .info { margin-bottom: 10px; font-size: 11px; }
-                        .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
-                        .option { font-size: 10px; color: #444; margin-left: 15px; display: block; }
-                        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin-top: 10px; }
-                        .footer { text-align: center; margin-top: 20px; font-size: 10px; }
+                        body { 
+                            width: 80mm; 
+                            margin: 0; 
+                            padding: 5mm; 
+                            font-family: 'Courier Prime', monospace; 
+                            text-align: center; 
+                            color: black;
+                            background: white;
+                        }
+                        h1.receipt-title { 
+                            font-family: 'Dancing Script', cursive; 
+                            font-size: 24pt; 
+                            margin: 0 0 2mm 0; 
+                            font-weight: 700; 
+                        }
+                        .logo-bw { width: 22mm; height: 22mm; margin: 0 auto 3mm; }
+                        .separator { border-top: 1px dashed black; margin: 3mm 0; }
+                        .flex-row { display: flex; justify-content: space-between; text-align: left; font-size: 10pt; }
+                        .bold { font-weight: 700; }
+                        .footer-text { font-size: 8pt; margin-top: 3mm; opacity: 0.8; font-weight: 700; }
+                        .item-row { margin-bottom: 1.5mm; }
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <h1>GUSTO</h1>
-                        <h2>PIZZERIA</h2>
-                        <p style="margin:5px 0 0; font-size:10px;">${new Date(order.placed_at).toLocaleString()}</p>
-                    </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="info">
-                        <p style="font-size:14px; font-weight:bold;">ORDER #${order.order_number}</p>
-                        <p><strong>${order.customer_name}</strong></p>
-                        <p>${order.customer_phone}</p>
-                        <p style="font-size:10px;">${order.customer_address}</p>
+                    <h1 class="receipt-title">Receipt</h1>
+
+                    <div class="logo-bw">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" fill="black" />
+                            <circle cx="35" cy="35" r="5" fill="white" />
+                            <circle cx="65" cy="40" r="6" fill="white" />
+                            <circle cx="45" cy="65" r="7" fill="white" />
+                            <circle cx="70" cy="70" r="4" fill="white" />
+                            <circle cx="25" cy="60" r="4" fill="white" />
+                        </svg>
                     </div>
 
-                    <div class="divider"></div>
+                    <div class="bold" style="font-size: 16pt; letter-spacing: 2px; margin-bottom: 1mm;">GRAVITY STUDIO</div>
+                    <div style="font-size: 10pt;">Phase 6, DHA, Karachi</div>
+                    <div style="font-size: 10pt;">Tel: (850) GRAVITY-STUDIO</div>
 
-                    ${order.items.map(item => `
-                        <div class="item">
-                            <span>${item.q}x ${item.n}</span>
-                            <span>${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}</span>
+                    <div class="separator"></div>
+                    <div class="flex-row">
+                        <span>Date: ${new Date(order.placed_at).toLocaleDateString()}</span>
+                        <span>${new Date(order.placed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="separator"></div>
+
+                    <div style="text-align: left; margin-bottom: 2mm;">
+                        ${order.items.map(item => `
+                            <div class="flex-row item-row">
+                                <span>${item.q}x ${item.n} ${item.options ? `(${item.options.map((o: any) => o.choice).join(', ')})` : ''}</span>
+                                <span>Rs.${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}.00</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="separator"></div>
+
+                    <div class="flex-row bold" style="font-size: 12pt;">
+                        <span>TOTAL DUE</span>
+                        <span>Rs.${order.total}.00</span>
+                    </div>
+                    <div class="flex-row" style="margin-top: 2mm;">
+                        <span>Sub-total</span>
+                        <span>Rs.${order.total}.00</span>
+                    </div>
+                    <div class="flex-row">
+                        <span>Amount Paid</span>
+                        <span>Rs.${order.payment_method === 'digital' ? `${order.total}.00` : '0.00'}</span>
+                    </div>
+                    <div class="flex-row">
+                        <span>Balance Due</span>
+                        <span>Rs.${order.payment_method === 'digital' ? '0.00' : `${order.total}.00`}</span>
+                    </div>
+
+                    ${(order.kitchen_instructions || order.delivery_notes) ? `
+                        <div class="separator"></div>
+                        <div style="text-align: left; font-size: 10pt;">
+                            ${order.kitchen_instructions ? `
+                                <div style="margin-bottom: 2mm;">
+                                    <div class="bold">KITCHEN NOTE:</div>
+                                    <div>${order.kitchen_instructions}</div>
+                                </div>
+                            ` : ''}
+                            ${order.delivery_notes ? `
+                                <div>
+                                    <div class="bold">DELIVERY NOTE:</div>
+                                    <div>${order.delivery_notes}</div>
+                                </div>
+                            ` : ''}
                         </div>
-                    `).join('')}
+                    ` : ''}
 
-                    <div class="divider"></div>
+                    <div class="separator"></div>
 
-                    <div class="total-row">
-                        <span>TOTAL</span>
-                        <span>Rs. ${order.total}</span>
+                    <div style="text-align: left;">
+                        <div class="bold" style="margin-bottom: 1.5mm;">DELIVER TO:</div>
+                        <div class="bold" style="font-size: 11pt;">${order.customer_name}</div>
+                        <div style="font-size: 10pt;">${order.customer_address}</div>
+                        <div style="font-size: 10pt;">Contact: ${order.customer_phone}</div>
                     </div>
 
-                    <div class="divider"></div>
-
-                    <div class="info">
-                        <p><strong>Kitchen Note:</strong><br/>${order.kitchen_instructions || '-'}</p>
-                        <p><strong>Delivery Note:</strong><br/>${order.delivery_notes || '-'}</p>
-                    </div>
-
-                    <div class="footer">
-                        <p>THANK YOU FOR ORDERING!</p>
-                        <p>www.gustopizzeria.com</p>
+                    <div style="margin-top: 10mm;">
+                         <svg width="100%" height="45" viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" width="2" height="45" fill="black" />
+                            <rect x="4" width="1" height="45" fill="black" />
+                            <rect x="7" width="3" height="45" fill="black" />
+                            <rect x="12" width="1" height="45" fill="black" />
+                            <rect x="15" width="2" height="45" fill="black" />
+                            <rect x="110" width="4" height="45" fill="black" />
+                            <rect x="150" width="2" height="45" fill="black" />
+                            <rect x="190" width="3" height="45" fill="black" />
+                         </svg>
+                         <div style="font-size: 8pt; margin-top: 1.5mm; font-style: italic;">https://saadmughal-gravity.vercel.app/</div>
+                         <div style="font-size: 9pt; margin-top: 1mm; font-weight: bold;">SCAN FOR STUDIO MENU</div>
+                         <div class="footer-text">© GRAVITY STUDIO</div>
                     </div>
                     
-                    <script>window.print(); window.close();</script>
+                    <script>
+                        setTimeout(() => {
+                            window.print();
+                            window.close();
+                        }, 500);
+                    </script>
                 </body>
                 </html>
             `);
