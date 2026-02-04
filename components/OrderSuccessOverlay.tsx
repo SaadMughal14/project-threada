@@ -96,10 +96,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
     if (orderData?.status) {
       setLiveStatus(orderData.status);
-      // Override phase based on live status
-      if (orderData.status !== 'pending') {
-        setPhase(mapStatusToPhase(orderData.status));
-      }
+      // Phase is fully controlled by live status
+      setPhase(mapStatusToPhase(orderData.status));
     }
 
     // Fetch messages for this order
@@ -147,17 +145,13 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   useEffect(() => {
     let interval: number;
     if (isOpen && order?.placedAt) {
+      // Pure progress indicator based on time (not controlling phase)
       const updateProgress = () => {
         const elapsed = Date.now() - order.placedAt;
-        if (elapsed < BAKING_DURATION) {
-          setPhase('baking');
-          setProgress((elapsed / BAKING_DURATION) * 100);
-        } else if (elapsed < TOTAL_DURATION) {
-          setPhase('delivering');
-          const deliveryElapsed = elapsed - BAKING_DURATION;
-          setProgress((deliveryElapsed / DELIVERY_DURATION) * 100);
+        // Progress is just visual - phase is controlled by live status
+        if (elapsed < TOTAL_DURATION) {
+          setProgress(Math.min((elapsed / TOTAL_DURATION) * 100, 100));
         } else {
-          setPhase('completed');
           setProgress(100);
         }
       };
@@ -413,13 +407,24 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
           {/* Card 1: Status */}
           <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[300px] md:min-h-[450px]">
-            <div className="w-full flex justify-end mb-2">
-              <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
+            <div className="w-full flex justify-between items-center mb-2">
+              <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${liveStatus === 'pending' ? 'bg-yellow-100 border-yellow-400 text-yellow-600' :
+                liveStatus === 'confirmed' ? 'bg-green-100 border-green-400 text-green-600' :
+                  liveStatus === 'cooking' ? 'bg-orange-100 border-orange-400 text-orange-600' :
+                    liveStatus === 'ready' ? 'bg-blue-100 border-blue-400 text-blue-600' :
+                      'bg-purple-100 border-purple-400 text-purple-600'
+                }`}>
+                {liveStatus === 'pending' ? '⏳ Awaiting Confirmation' :
+                  liveStatus === 'confirmed' ? '✅ Confirmed' :
+                    liveStatus === 'cooking' ? '🍳 Cooking Now' :
+                      liveStatus === 'ready' ? '📦 Ready for Pickup' : '🚀 Out for Delivery'}
+              </span>
+              <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Live</span>
             </div>
 
             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center w-full">
               <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
-                {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'OUT FOR DELIVERY' : 'ORDER DELIVERED'}
+                {phase === 'baking' ? 'PREPARING YOUR ORDER' : phase === 'delivering' ? 'ON THE WAY' : 'ORDER DELIVERED'}
               </h3>
 
               <div className="relative w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
@@ -515,24 +520,6 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
               <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
                 {order.customer.deliveryNotes || '"Gravity is pulling your cookie toward your doorstep."'}
               </p>
-            </div>
-          </div>
-
-          {/* Live Order Status */}
-          <div className="bg-[#1C1C1C] text-white rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-4">
-            <div className="flex justify-between items-center">
-              <p className="text-[7px] font-black tracking-[0.4em] text-[#D97B8D] uppercase">Live Status</p>
-              <span className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${liveStatus === 'pending' ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400' :
-                  liveStatus === 'confirmed' ? 'bg-green-500/20 border-green-500/50 text-green-400' :
-                    liveStatus === 'cooking' ? 'bg-orange-500/20 border-orange-500/50 text-orange-400' :
-                      liveStatus === 'ready' ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' :
-                        'bg-purple-500/20 border-purple-500/50 text-purple-400'
-                }`}>
-                {liveStatus === 'pending' ? '⏳ Awaiting Confirmation' :
-                  liveStatus === 'confirmed' ? '✅ Confirmed' :
-                    liveStatus === 'cooking' ? '🍳 Cooking' :
-                      liveStatus === 'ready' ? '📦 Ready' : '🚀 Dispatched'}
-              </span>
             </div>
           </div>
 
