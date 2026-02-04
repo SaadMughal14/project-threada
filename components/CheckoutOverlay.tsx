@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { PizzaProductExtended, SizeOption } from '../constants';
+import { supabase } from '../supabaseClient';
 
 interface CartItem extends PizzaProductExtended {
   quantity: number;
@@ -127,41 +128,86 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     const encodedOrder = encodeURIComponent(btoa(unescape(encodeURIComponent(slimJson))));
     const kitchenPrintLink = `${window.location.origin}${window.location.pathname}?receipt=${encodedOrder}&autoPrint=1`;
 
-    const payload = {
-      content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
-      embeds: [{
-        title: "👨‍🍳 New Order - Kitchen Copy",
-        description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
-        color: 14252941,
-        fields: [
-          { name: "📍 Delivery Address", value: `\`\`\`\n${truncate(formData.address, 900)}\n\`\`\`` },
-          { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${truncate(orderNotes, 900) || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
-          { name: "🛵 Delivery Instructions", value: `\`\`\`\n${truncate(formData.deliveryNotes, 900) || 'STANDARD DELIVERY'}\n\`\`\`` },
-          { name: "🛒 Items Selected", value: truncate(cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n'), 1000) },
-          { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
-          { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
-        ],
-        footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
-        timestamp: new Date().toISOString()
-      }]
-    };
-
     try {
-      const response = await fetch(DISCORD_WEBHOOK, {
+      // 1. Upload payment screenshot if digital payment
+      let screenshotUrl: string | null = null;
+      if (paymentMethod === 'digital' && screenshot) {
+        try {
+          // Convert base64 to blob
+          const base64Data = screenshot.split(',')[1];
+          const byteString = atob(base64Data);
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: 'image/jpeg' });
+          const fileName = `${orderId}-${Date.now()}.jpg`;
+
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('payment-screenshots')
+            .upload(fileName, blob);
+
+          if (!uploadError && uploadData) {
+            const { data: { publicUrl } } = supabase.storage
+              .from('payment-screenshots')
+              .getPublicUrl(fileName);
+            screenshotUrl = publicUrl;
+          }
+        } catch (uploadErr) {
+          console.error('Screenshot upload failed:', uploadErr);
+        }
+      }
+
+      // 2. Save order to Supabase database
+      const { error: dbError } = await supabase.from('orders').insert({
+        order_number: orderId,
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        customer_address: formData.address,
+        delivery_notes: formData.deliveryNotes,
+        kitchen_instructions: orderNotes,
+        items: slimOrder.items,
+        total: totalPrice,
+        payment_method: paymentMethod,
+        payment_screenshot: screenshotUrl,
+        status: 'pending'
+      });
+
+      if (dbError) {
+        console.error('Order DB insert failed:', dbError);
+      }
+
+      // 3. Send Discord notification (backup/legacy)
+      const payload = {
+        content: `### 🚨 NEW ORDER RECEIVED: #${orderId}`,
+        embeds: [{
+          title: "👨‍🍳 New Order - Kitchen Copy",
+          description: `**ID:** #${orderId}\n**Customer:** ${formData.name}\n**Phone:** ${formData.phone}`,
+          color: 14252941,
+          fields: [
+            { name: "📍 Delivery Address", value: `\`\`\`\n${truncate(formData.address, 900)}\n\`\`\`` },
+            { name: "👨‍🍳 Kitchen Instructions", value: `\`\`\`\n${truncate(orderNotes, 900) || 'NO SPECIAL INSTRUCTIONS'}\n\`\`\`` },
+            { name: "🛵 Delivery Instructions", value: `\`\`\`\n${truncate(formData.deliveryNotes, 900) || 'STANDARD DELIVERY'}\n\`\`\`` },
+            { name: "🛒 Items Selected", value: truncate(cartItems.map(i => `• ${i.quantity}x ${i.name} (${i.selectedSize.name})`).join('\n'), 1000) },
+            { name: "💰 Total & Payment", value: `**Total:** Rs. ${totalPrice}\n**Method:** ${paymentMethod === 'cash' ? 'CASH ON DELIVERY' : `DIGITAL (${providerInfo?.name || 'N/A'})`}`, inline: true },
+            { name: "🖨️ Kitchen Tools", value: `[CLICK HERE TO PRINT THERMAL RECEIPT](${kitchenPrintLink})` }
+          ],
+          footer: { text: "GRAVITY STUDIO | Kitchen Queue" },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      await fetch(DISCORD_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      });
+      }).catch(() => { });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Discord error status:", response.status, "body:", errorText);
-        throw new Error('Discord response not ok');
-      }
       onOrderSuccess(orderData);
     } catch (e) {
       console.error("Order submission critical error:", e);
-      // Still show success to user so they don't get stuck, even if Discord fails
+      // Still show success to user so they don't get stuck
       onOrderSuccess(orderData);
     } finally {
       setIsSubmitting(false);

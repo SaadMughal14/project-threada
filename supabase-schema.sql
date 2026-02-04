@@ -120,3 +120,99 @@ CREATE TRIGGER products_updated_at
 -- 3. Enter email and password for your admin
 -- 4. Use these credentials to login at /admin-panel0/
 -- ================================================
+
+-- ================================================
+-- PRODUCT OPTIONS TABLE (for customizations)
+-- ================================================
+CREATE TABLE IF NOT EXISTS product_options (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  group_name TEXT NOT NULL,
+  options JSONB DEFAULT '[]',
+  is_required BOOLEAN DEFAULT false,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE product_options ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read for product_options" ON product_options
+  FOR SELECT USING (true);
+
+CREATE POLICY "Auth modify product_options" ON product_options
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- ================================================
+-- ORDERS TABLE
+-- ================================================
+CREATE TABLE IF NOT EXISTS orders (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  order_number TEXT NOT NULL UNIQUE,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  customer_address TEXT,
+  delivery_notes TEXT,
+  kitchen_instructions TEXT,
+  items JSONB NOT NULL DEFAULT '[]',
+  total INTEGER NOT NULL DEFAULT 0,
+  payment_method TEXT NOT NULL DEFAULT 'cash',
+  payment_screenshot TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  placed_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can create orders (customers placing orders)
+CREATE POLICY "Public insert orders" ON orders
+  FOR INSERT WITH CHECK (true);
+
+-- Anyone can read their own order (by order_number in URL)
+CREATE POLICY "Public read orders" ON orders
+  FOR SELECT USING (true);
+
+-- Only authenticated users (staff) can update orders
+CREATE POLICY "Auth update orders" ON orders
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- Auto-update timestamp trigger for orders
+DROP TRIGGER IF EXISTS orders_updated_at ON orders;
+CREATE TRIGGER orders_updated_at
+  BEFORE UPDATE ON orders
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ================================================
+-- ORDER MESSAGES TABLE (two-way communication)
+-- ================================================
+CREATE TABLE IF NOT EXISTS order_messages (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+  sender TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE order_messages ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read messages for an order
+CREATE POLICY "Public read order_messages" ON order_messages
+  FOR SELECT USING (true);
+
+-- Anyone can insert messages (customer or staff)
+CREATE POLICY "Public insert order_messages" ON order_messages
+  FOR INSERT WITH CHECK (true);
+
+-- ================================================
+-- STORAGE BUCKET FOR PAYMENT SCREENSHOTS
+-- ================================================
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('payment-screenshots', 'payment-screenshots', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Public read for payment screenshots" ON storage.objects 
+  FOR SELECT USING (bucket_id = 'payment-screenshots');
+
+CREATE POLICY "Public upload for payment screenshots" ON storage.objects 
+  FOR INSERT WITH CHECK (bucket_id = 'payment-screenshots');
+

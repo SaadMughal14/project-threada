@@ -7,6 +7,9 @@ import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
 import ProductList from './admin/ProductList';
 import ProductForm from './admin/ProductForm';
+import KitchenLogin from './kitchen/KitchenLogin';
+import KitchenLayout from './kitchen/KitchenLayout';
+import KitchenDashboard from './kitchen/KitchenDashboard';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -69,6 +72,12 @@ root.render(
           <Route path="products" element={<ProductList />} />
           <Route path="products/new" element={<ProductForm />} />
           <Route path="products/:id" element={<ProductForm />} />
+        </Route>
+
+        {/* Kitchen Dashboard */}
+        <Route path="/kitchen" element={<KitchenLogin />} />
+        <Route path="/kitchen" element={<KitchenLayout />}>
+          <Route path="dashboard" element={<KitchenDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

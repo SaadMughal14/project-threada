@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import ReactDOM from 'react-dom';
+import { supabase } from '../supabaseClient';
 
 interface SuccessProps {
   isOpen: boolean;
@@ -25,16 +26,16 @@ const DeliveryRider = () => (
       {/* Wheels */}
       <circle cx="65" cy="155" r="18" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="4" />
       <circle cx="65" cy="155" r="10" fill="#1C1C1C" />
-      
+
       <circle cx="135" cy="155" r="18" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="4" />
       <circle cx="135" cy="155" r="10" fill="#1C1C1C" />
 
       {/* Main Body (The Scooter/Vehicle) */}
-      <path 
-        d="M50 135 Q50 85 100 85 L140 85 Q150 85 150 100 L150 135 Z" 
-        fill="#D97B8D" 
-        stroke="#1C1C1C" 
-        strokeWidth="4" 
+      <path
+        d="M50 135 Q50 85 100 85 L140 85 Q150 85 150 100 L150 135 Z"
+        fill="#D97B8D"
+        stroke="#1C1C1C"
+        strokeWidth="4"
       />
 
       {/* Handlebar */}
@@ -46,7 +47,7 @@ const DeliveryRider = () => (
 
       {/* Delivery Box */}
       <rect x="120" y="55" r="4" width="35" height="30" fill="#FDFCFB" stroke="#1C1C1C" strokeWidth="3" />
-      
+
       {/* Cookie Logo on Box */}
       <g transform="translate(125, 60) scale(0.25)">
         <circle cx="50" cy="50" r="45" fill="#D97B8D" />
@@ -60,14 +61,88 @@ const DeliveryRider = () => (
 
 const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose }) => {
   const [phase, setPhase] = useState<OrderPhase>('baking');
-  const [progress, setProgress] = useState(0); 
+  const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasPrintedRef = useRef(false);
-  
-  const BAKING_DURATION = 120000; 
-  const DELIVERY_DURATION = 180000; 
+
+  // Live status from Kitchen Dashboard
+  const [liveStatus, setLiveStatus] = useState<string>('pending');
+  const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string }[]>([]);
+  const [customerReply, setCustomerReply] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+
+  const BAKING_DURATION = 120000;
+  const DELIVERY_DURATION = 180000;
   const TOTAL_DURATION = BAKING_DURATION + DELIVERY_DURATION;
+
+  // Map Kitchen status to display phase
+  const mapStatusToPhase = useCallback((status: string): OrderPhase => {
+    if (status === 'dispatched') return 'completed';
+    if (status === 'ready' || status === 'cooking' || status === 'confirmed') return 'delivering';
+    return 'baking';
+  }, []);
+
+  // Fetch live status and messages from Supabase
+  const fetchLiveData = useCallback(async () => {
+    if (!order?.id) return;
+
+    // Fetch order status by order_number
+    const { data: orderData } = await supabase
+      .from('orders')
+      .select('status')
+      .eq('order_number', order.id)
+      .single();
+
+    if (orderData?.status) {
+      setLiveStatus(orderData.status);
+      // Override phase based on live status
+      if (orderData.status !== 'pending') {
+        setPhase(mapStatusToPhase(orderData.status));
+      }
+    }
+
+    // Fetch messages for this order
+    const { data: dbOrder } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('order_number', order.id)
+      .single();
+
+    if (dbOrder?.id) {
+      const { data: messages } = await supabase
+        .from('order_messages')
+        .select('*')
+        .eq('order_id', dbOrder.id)
+        .order('created_at', { ascending: true });
+
+      if (messages) setStoreMessages(messages);
+    }
+  }, [order?.id, mapStatusToPhase]);
+
+  // Send customer reply
+  const sendReply = async () => {
+    if (!customerReply.trim() || !order?.id) return;
+    setSendingReply(true);
+
+    // Get the actual order UUID first
+    const { data: dbOrder } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('order_number', order.id)
+      .single();
+
+    if (dbOrder?.id) {
+      await supabase.from('order_messages').insert({
+        order_id: dbOrder.id,
+        sender: 'customer',
+        message: customerReply.trim()
+      });
+      setCustomerReply('');
+      fetchLiveData();
+    }
+    setSendingReply(false);
+  };
 
   useEffect(() => {
     let interval: number;
@@ -92,7 +167,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
       const params = new URLSearchParams(window.location.search);
       const shouldAutoPrint = params.get('autoPrint') === '1';
-      
+
       if (shouldAutoPrint && !hasPrintedRef.current) {
         const printTimer = setTimeout(() => {
           window.print();
@@ -110,6 +185,19 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
     }
   }, [order?.id]);
 
+  // Real-time subscription for order status and messages
+  useEffect(() => {
+    if (!isOpen || !order?.id) return;
+
+    // Initial fetch
+    fetchLiveData();
+
+    // Poll every 5 seconds for updates (backup for real-time)
+    const pollInterval = setInterval(fetchLiveData, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [isOpen, order?.id, fetchLiveData]);
+
   useGSAP(() => {
     if (isOpen) {
       gsap.to(containerRef.current, { y: 0, duration: 1, ease: "expo.out" });
@@ -123,7 +211,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const getETAText = () => {
     const totalElapsed = Date.now() - (order.placedAt || Date.now());
     if (totalElapsed >= TOTAL_DURATION) return "ARRIVED";
-    
+
     const remainingMs = TOTAL_DURATION - totalElapsed;
     const remainingMins = Math.ceil(remainingMs / 60000);
     return `${remainingMins} ${remainingMins === 1 ? 'MIN' : 'MINS'}`;
@@ -149,7 +237,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
     return ReactDOM.createPortal(
       <div className="thermal-receipt">
         <h1>Receipt</h1>
-        
+
         <div className="logo-bw">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="45" fill="black" />
@@ -198,7 +286,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           <span>Balance Due</span>
           <span>Rs.{order.paymentMethod === 'digital' ? '0.00' : `${order.total}.00`}</span>
         </div>
-        
+
         {(order.kitchenInstructions || order.customer.deliveryNotes) && (
           <>
             <div className="separator"></div>
@@ -291,8 +379,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   };
 
   return (
-    <div 
-      ref={containerRef} 
+    <div
+      ref={containerRef}
       className="fixed inset-0 z-[400] bg-[#F2DCE0] transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none"
       id="order-success-overlay"
     >
@@ -300,13 +388,13 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
       <ThermalReceiptPortal />
 
       {/* Screen Interactive UI (Hidden during print via .no-print class) */}
-      <div 
+      <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-12 scrollbar-hide touch-pan-y no-scrollbar no-print"
         data-lenis-prevent
       >
         <div className="max-w-lg mx-auto w-full space-y-4 md:space-y-6 flex flex-col min-h-full pb-20">
-          
+
           {/* Header */}
           <div className="flex justify-between items-center flex-shrink-0 pt-2">
             <div className="space-y-0">
@@ -315,150 +403,200 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
                 GRAVITY <span className="text-[#D97B8D]">RECEIPT</span>
               </h1>
             </div>
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="p-2.5 bg-[#1C1C1C] text-white rounded-full hover:bg-[#D97B8D] transition-colors shadow-lg active:scale-90"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
 
           {/* Card 1: Status */}
           <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-sm relative overflow-hidden flex flex-col items-center justify-between min-h-[300px] md:min-h-[450px]">
-             <div className="w-full flex justify-end mb-2">
-                <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
-             </div>
-             
-             <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center w-full">
-                <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
-                  {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'OUT FOR DELIVERY' : 'ORDER DELIVERED'}
-                </h3>
-                
-                <div className="relative w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
-                  {phase === 'baking' ? (
-                     <div className="w-full h-full relative group">
-                        <img 
-                          src="https://i.imgur.com/PxuIhOT.gif" 
-                          className="w-full h-full object-cover rounded-3xl shadow-2xl transition-transform duration-700" 
-                          alt="Baking Animation"
-                        />
-                        <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
-                     </div>
-                  ) : phase === 'delivering' ? (
-                     <DeliveryRider />
-                  ) : (
-                     <div className="relative flex flex-col items-center justify-center">
-                        <div className="relative flex items-center justify-center">
-                          {/* House Icon */}
-                          <span className="text-8xl md:text-9xl">🏠</span>
-                          
-                          {/* Cookie Logo "Inside" the house area */}
-                          <div className="absolute top-[58%] left-1/2 -translate-x-1/2 w-8 h-8 md:w-12 md:h-12 logo-spin-wrapper">
-                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-                              <circle cx="50" cy="50" r="45" fill="#D97B8D" />
-                              <circle cx="35" cy="35" r="5" fill="#4A3728" />
-                              <circle cx="65" cy="40" r="6" fill="#4A3728" />
-                              <circle cx="45" cy="65" r="7" fill="#4A3728" />
-                            </svg>
-                          </div>
+            <div className="w-full flex justify-end mb-2">
+              <span className="text-[8px] font-black tracking-widest text-black/20 uppercase">Status</span>
+            </div>
 
-                          {/* Checkmark Circle on top right of house */}
-                          <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white find-house-ping w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10">
-                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5"/></svg>
-                          </div>
-                        </div>
-                     </div>
-                  )}
-                </div>
-             </div>
+            <div className="flex flex-col items-center gap-6 text-center flex-1 justify-center w-full">
+              <h3 className="font-display text-xl md:text-3xl font-black text-[#1C1C1C] uppercase tracking-tighter">
+                {phase === 'baking' ? 'BAKING YOUR ORDER' : phase === 'delivering' ? 'OUT FOR DELIVERY' : 'ORDER DELIVERED'}
+              </h3>
 
-             <div className="w-full h-2 bg-black/5 rounded-full mt-6 relative overflow-hidden">
-                <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700 shadow-[0_0_15px_#D97B8D]" style={{ width: `${progress}%` }}></div>
-             </div>
+              <div className="relative w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
+                {phase === 'baking' ? (
+                  <div className="w-full h-full relative group">
+                    <img
+                      src="https://i.imgur.com/PxuIhOT.gif"
+                      className="w-full h-full object-cover rounded-3xl shadow-2xl transition-transform duration-700"
+                      alt="Baking Animation"
+                    />
+                    <div className="absolute inset-0 bg-[#D97B8D]/5 rounded-3xl"></div>
+                  </div>
+                ) : phase === 'delivering' ? (
+                  <DeliveryRider />
+                ) : (
+                  <div className="relative flex flex-col items-center justify-center">
+                    <div className="relative flex items-center justify-center">
+                      {/* House Icon */}
+                      <span className="text-8xl md:text-9xl">🏠</span>
+
+                      {/* Cookie Logo "Inside" the house area */}
+                      <div className="absolute top-[58%] left-1/2 -translate-x-1/2 w-8 h-8 md:w-12 md:h-12 logo-spin-wrapper">
+                        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                          <circle cx="50" cy="50" r="45" fill="#D97B8D" />
+                          <circle cx="35" cy="35" r="5" fill="#4A3728" />
+                          <circle cx="65" cy="40" r="6" fill="#4A3728" />
+                          <circle cx="45" cy="65" r="7" fill="#4A3728" />
+                        </svg>
+                      </div>
+
+                      {/* Checkmark Circle on top right of house */}
+                      <div className="absolute -top-2 -right-2 bg-[#D97B8D] text-white find-house-ping w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5"><path d="M20 6L9 17l-5-5" /></svg>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="w-full h-2 bg-black/5 rounded-full mt-6 relative overflow-hidden">
+              <div className="absolute left-0 top-0 h-full bg-[#D97B8D] transition-all duration-700 shadow-[0_0_15px_#D97B8D]" style={{ width: `${progress}%` }}></div>
+            </div>
           </div>
 
           {/* Card 2: Selection */}
           <div className="bg-[#1C1C1C] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white space-y-6 shadow-2xl">
-             <div className="space-y-1">
-                <p className="text-[8px] font-black tracking-[0.3em] text-[#D97B8D] uppercase">Your Selection</p>
-                <div className="space-y-4 pt-2">
-                  {order.items.map((item: any, idx: number) => (
-                    <div key={`${item.id}-${idx}`} className="flex justify-between items-center group">
-                      <div className="flex gap-4 items-center">
-                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
-                           <img src={item.image} className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <h4 className="font-display text-xs md:text-lg font-black uppercase tracking-tighter leading-none">{item.name}</h4>
-                          <p className="text-[7px] font-black text-[#D97B8D] uppercase tracking-widest mt-1">QTY: {item.quantity} • {item.selectedSize.name}</p>
-                        </div>
+            <div className="space-y-1">
+              <p className="text-[8px] font-black tracking-[0.3em] text-[#D97B8D] uppercase">Your Selection</p>
+              <div className="space-y-4 pt-2">
+                {order.items.map((item: any, idx: number) => (
+                  <div key={`${item.id}-${idx}`} className="flex justify-between items-center group">
+                    <div className="flex gap-4 items-center">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+                        <img src={item.image} className="w-full h-full object-cover" />
                       </div>
-                      <span className="font-display text-sm md:text-2xl font-black tracking-tighter">Rs. {parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}</span>
+                      <div>
+                        <h4 className="font-display text-xs md:text-lg font-black uppercase tracking-tighter leading-none">{item.name}</h4>
+                        <p className="text-[7px] font-black text-[#D97B8D] uppercase tracking-widest mt-1">QTY: {item.quantity} • {item.selectedSize.name}</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-             </div>
+                    <span className="font-display text-sm md:text-2xl font-black tracking-tighter">Rs. {parseInt(item.selectedSize.price.replace(/[^\d]/g, '')) * item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-             <div className="pt-6 border-t border-white/5 flex flex-col gap-4">
-                <div className="flex justify-between items-end">
-                   <p className="text-[8px] font-black tracking-[0.3em] text-white/40 uppercase">Total</p>
-                   <h4 className="font-display text-2xl md:text-6xl font-black tracking-tighter leading-none text-white">Rs. {order.total}</h4>
-                </div>
-                <div className="flex justify-between items-center">
-                   <p className="text-[8px] font-black tracking-[0.3em] text-white/40 uppercase">Payment Status</p>
-                   <span className="bg-white/10 text-white/60 text-[7px] font-black px-3 py-1.5 rounded uppercase tracking-widest">
-                     {order.paymentMethod === 'digital' ? 'Digital Payment Received' : 'Cash on Delivery'}
-                   </span>
-                </div>
-             </div>
+            <div className="pt-6 border-t border-white/5 flex flex-col gap-4">
+              <div className="flex justify-between items-end">
+                <p className="text-[8px] font-black tracking-[0.3em] text-white/40 uppercase">Total</p>
+                <h4 className="font-display text-2xl md:text-6xl font-black tracking-tighter leading-none text-white">Rs. {order.total}</h4>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[8px] font-black tracking-[0.3em] text-white/40 uppercase">Payment Status</p>
+                <span className="bg-white/10 text-white/60 text-[7px] font-black px-3 py-1.5 rounded uppercase tracking-widest">
+                  {order.paymentMethod === 'digital' ? 'Digital Payment Received' : 'Cash on Delivery'}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Note Section (Updated to show User Notes) */}
           <div className="bg-white/40 border border-black/5 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-6">
-             <div className="space-y-2">
-               <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Kitchen Instructions</p>
-               <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
-                 {order.kitchenInstructions || '"No special requests for the chefs."'}
-               </p>
-             </div>
-             
-             <div className="space-y-2">
-               <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Delivery Notes</p>
-               <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
-                 {order.customer.deliveryNotes || '"Gravity is pulling your cookie toward your doorstep."'}
-               </p>
-             </div>
+            <div className="space-y-2">
+              <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Kitchen Instructions</p>
+              <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
+                {order.kitchenInstructions || '"No special requests for the chefs."'}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[7px] font-black tracking-[0.4em] text-black/20 uppercase">Delivery Notes</p>
+              <p className="italic text-[#1C1C1C]/60 font-black text-[10px] md:text-sm leading-relaxed tracking-tight">
+                {order.customer.deliveryNotes || '"Gravity is pulling your cookie toward your doorstep."'}
+              </p>
+            </div>
           </div>
+
+          {/* Live Order Status */}
+          <div className="bg-[#1C1C1C] text-white rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-4">
+            <div className="flex justify-between items-center">
+              <p className="text-[7px] font-black tracking-[0.4em] text-[#D97B8D] uppercase">Live Status</p>
+              <span className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${liveStatus === 'pending' ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400' :
+                  liveStatus === 'confirmed' ? 'bg-green-500/20 border-green-500/50 text-green-400' :
+                    liveStatus === 'cooking' ? 'bg-orange-500/20 border-orange-500/50 text-orange-400' :
+                      liveStatus === 'ready' ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' :
+                        'bg-purple-500/20 border-purple-500/50 text-purple-400'
+                }`}>
+                {liveStatus === 'pending' ? '⏳ Awaiting Confirmation' :
+                  liveStatus === 'confirmed' ? '✅ Confirmed' :
+                    liveStatus === 'cooking' ? '🍳 Cooking' :
+                      liveStatus === 'ready' ? '📦 Ready' : '🚀 Dispatched'}
+              </span>
+            </div>
+          </div>
+
+          {/* Store Messages */}
+          {storeMessages.length > 0 && (
+            <div className="bg-white border border-[#D97B8D]/20 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 space-y-4">
+              <p className="text-[7px] font-black tracking-[0.4em] text-[#D97B8D] uppercase">🔔 Messages from Store</p>
+              <div className="space-y-3 max-h-40 overflow-y-auto">
+                {storeMessages.map((msg, idx) => (
+                  <div key={idx} className={`p-3 rounded-xl text-sm ${msg.sender === 'store' ? 'bg-[#D97B8D]/10 text-[#D97B8D] border border-[#D97B8D]/20' : 'bg-blue-500/10 text-blue-600 border border-blue-500/20'}`}>
+                    <p className="text-[8px] uppercase tracking-widest opacity-60 mb-1 font-bold">{msg.sender === 'store' ? '🏪 Store' : '👤 You'}</p>
+                    <p className="font-medium">{msg.message}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={customerReply}
+                  onChange={(e) => setCustomerReply(e.target.value)}
+                  placeholder="Reply to store..."
+                  className="flex-1 bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-[#1C1C1C] text-sm font-medium focus:outline-none focus:border-[#D97B8D]"
+                  onKeyDown={(e) => e.key === 'Enter' && sendReply()}
+                />
+                <button
+                  onClick={sendReply}
+                  disabled={sendingReply}
+                  className="bg-[#D97B8D] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase hover:bg-[#D97B8D]/90 disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Time Display */}
           <div className="flex flex-col items-start pt-2 px-2">
-             <p className="text-[8px] font-black tracking-[0.3em] text-black/40 uppercase mb-1">Status</p>
-             <h2 className="font-display text-4xl md:text-7xl font-black text-[#1C1C1C] tracking-tighter leading-none uppercase">
-                - {getETAText()}
-             </h2>
+            <p className="text-[8px] font-black tracking-[0.3em] text-black/40 uppercase mb-1">Status</p>
+            <h2 className="font-display text-4xl md:text-7xl font-black text-[#1C1C1C] tracking-tighter leading-none uppercase">
+              - {getETAText()}
+            </h2>
           </div>
 
           {/* Action Buttons */}
           <div className="space-y-3 pt-4 flex-shrink-0">
             <div className="flex gap-3">
-              <button 
-                onClick={() => window.print()} 
+              <button
+                onClick={() => window.print()}
                 className="flex-1 bg-[#D97B8D] text-white py-4 md:py-5 rounded-2xl font-black uppercase text-[9px] tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 4H8v-4h8v4z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-2 4H8v-4h8v4z" /></svg>
                 Print Receipt
               </button>
-              <button 
-                onClick={shareReceipt} 
+              <button
+                onClick={shareReceipt}
                 className="flex-1 bg-[#1C1C1C] text-white py-4 md:py-5 rounded-2xl font-black uppercase text-[9px] tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#D97B8D] transition-colors shadow-xl active:scale-95"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-4-6l-4-4-4 4m4-4v13"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-4-6l-4-4-4 4m4-4v13" /></svg>
                 Share Receipt
               </button>
             </div>
-            
-            <button 
-              onClick={onClose} 
+
+            <button
+              onClick={onClose}
               className="w-full bg-[#1C1C1C] text-white py-4 md:py-5 rounded-2xl font-black uppercase text-[9px] tracking-[0.3em] flex items-center justify-center hover:bg-[#D97B8D] transition-colors active:scale-95 shadow-lg"
             >
               Back to Studio
