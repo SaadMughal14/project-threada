@@ -154,10 +154,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasPrintedRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Live status from Kitchen Dashboard
   const [liveStatus, setLiveStatus] = useState<string>('pending');
   const [storeMessages, setStoreMessages] = useState<{ sender: string; message: string; created_at: string; id?: string }[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [customerReply, setCustomerReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [messagePopup, setMessagePopup] = useState<{ message: string } | null>(null);
@@ -197,6 +199,17 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
 
     if (orderData?.status) {
       setLiveStatus(orderData.status);
+
+      // Update progress bar based on status
+      const progressValue =
+        orderData.status === 'confirmed' ? 20 :
+          orderData.status === 'cooking' ? 50 :
+            orderData.status === 'ready' ? 70 :
+              orderData.status === 'dispatched' ? 90 :
+                orderData.status === 'delivered' ? 100 : 10;
+
+      setProgress(progressValue);
+
       // Phase is fully controlled by live status
       setPhase(mapStatusToPhase(orderData.status));
     }
@@ -260,37 +273,19 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
     setSendingReply(false);
   };
 
+  // Auto-print logic
   useEffect(() => {
-    let interval: number;
-    if (isOpen && order?.placedAt) {
-      // Pure progress indicator based on time (not controlling phase)
-      const updateProgress = () => {
-        const elapsed = Date.now() - order.placedAt;
-        // Progress is just visual - phase is controlled by live status
-        if (elapsed < TOTAL_DURATION) {
-          setProgress(Math.min((elapsed / TOTAL_DURATION) * 100, 100));
-        } else {
-          setProgress(100);
-        }
-      };
+    const params = new URLSearchParams(window.location.search);
+    const shouldAutoPrint = params.get('autoPrint') === '1';
 
-      updateProgress();
-      interval = window.setInterval(updateProgress, 500);
-
-      const params = new URLSearchParams(window.location.search);
-      const shouldAutoPrint = params.get('autoPrint') === '1';
-
-      if (shouldAutoPrint && !hasPrintedRef.current) {
-        const printTimer = setTimeout(() => {
-          window.print();
-          hasPrintedRef.current = true;
-        }, 1500);
-        return () => clearTimeout(printTimer);
-      }
+    if (shouldAutoPrint && !hasPrintedRef.current && isOpen) {
+      const printTimer = setTimeout(() => {
+        window.print();
+        hasPrintedRef.current = true;
+      }, 1500);
+      return () => clearTimeout(printTimer);
     }
-    return () => { if (interval) clearInterval(interval); };
-  }, [isOpen, order?.placedAt, order?.id]);
-
+  }, [isOpen, order?.id]);
   useEffect(() => {
     if (order?.id) {
       hasPrintedRef.current = false;
@@ -322,6 +317,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             // Only show popup for store messages
             if (payload.new?.sender === 'store') {
               setMessagePopup({ message: payload.new.message });
+              setUnreadCount(prev => prev + 1);
+              audioRef.current?.play().catch(e => console.log('Audio play failed', e));
               // Auto-dismiss after 8 seconds
               setTimeout(() => setMessagePopup(null), 8000);
             }
@@ -752,7 +749,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           top: `${messengerPos.y}px`,
           touchAction: 'none'
         }}
-        onClick={() => !isDragging && setShowMessenger(!showMessenger)}
+        onClick={() => {
+          if (!isDragging) {
+            setShowMessenger(!showMessenger);
+            if (!showMessenger) setUnreadCount(0); // Clear on open
+          }
+        }}
         onMouseDown={(e) => {
           dragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: messengerPos.x, startPosY: messengerPos.y };
           setIsDragging(false);
@@ -770,12 +772,12 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         }}
         onMouseUp={() => { dragRef.current = null; setTimeout(() => setIsDragging(false), 100); }}
       >
-        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${storeMessages.length > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
+        <div className={`w-14 h-14 md:w-16 md:h-16 bg-[#D97B8D] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform ${unreadCount > 0 ? 'animate-[bell-ring_0.5s_ease-in-out_infinite]' : ''}`}>
           <span className="text-2xl md:text-3xl">💬</span>
         </div>
-        {storeMessages.length > 0 && (
+        {unreadCount > 0 && (
           <div className="absolute -top-1 -right-1 w-6 h-6 bg-white text-[#D97B8D] rounded-full flex items-center justify-center text-xs font-black border-2 border-[#D97B8D] animate-bounce">
-            {storeMessages.filter(m => m.sender === 'store').length}
+            {unreadCount}
           </div>
         )}
       </div>
@@ -859,6 +861,9 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
           </div>
         )
       }
+    </div >
+      {/* Audio for notifications */ }
+  <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
     </div >
   );
 };

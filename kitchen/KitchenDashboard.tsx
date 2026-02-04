@@ -79,8 +79,14 @@ const KitchenDashboard: React.FC = () => {
     const prevOrderIdsRef = useRef<Set<string>>(new Set());
     const newOrderIdsRef = useRef<Set<string>>(new Set());
 
+    const [showHistory, setShowHistory] = useState(false);
+    const [historyOrders, setHistoryOrders] = useState<Order[]>([]);
+    const [showReports, setShowReports] = useState(false);
+
     // Popup message notification
     const [messagePopup, setMessagePopup] = useState<{ orderId: string; orderNumber: string; message: string; sender: string; color: string } | null>(null);
+
+
 
     // Optimized fetch - batch requests, debounced
     const fetchOrders = useCallback(async () => {
@@ -217,9 +223,72 @@ const KitchenDashboard: React.FC = () => {
         } else {
             // Refetch to get real ID and confirm
             fetchMessages(currentOrderId);
+            // Auto-close messages after sending (User request)
+            setTimeout(() => {
+                setShowMessages(false);
+                setMessageOrderId(null);
+            }, 1000);
         }
 
         setSendingMessage(false);
+    };
+
+    // Fetch history (delivered orders)
+    const fetchHistory = async () => {
+        setLoading(true);
+        const { data } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('status', 'delivered')
+            .order('placed_at', { ascending: false })
+            .limit(50);
+
+        if (data) setHistoryOrders(data);
+        setLoading(false);
+    };
+
+    // Export Sales Data (Full History)
+    const exportSalesData = async (period: 'daily' | 'weekly' | 'monthly') => {
+        const now = new Date();
+        let startDate = new Date();
+
+        if (period === 'daily') startDate.setHours(0, 0, 0, 0);
+        if (period === 'weekly') startDate.setDate(now.getDate() - 7);
+        if (period === 'monthly') startDate.setMonth(now.getMonth() - 1);
+
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .gte('placed_at', startDate.toISOString())
+            .order('placed_at', { ascending: true });
+
+        if (error || !data) {
+            alert('Failed to fetch data');
+            return;
+        }
+
+        // Generate CSV
+        const headers = ['Order No', 'Date', 'Customer', 'Details', 'Total', 'Status', 'Payment'];
+        const rows = data.map(o => [
+            o.order_number,
+            new Date(o.placed_at).toLocaleString(),
+            `"${o.customer_name}"`,
+            `"${o.items.map((i: any) => `${i.q}x ${i.n}`).join(', ')}"`,
+            o.total,
+            o.status,
+            o.payment_method
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(r => r.join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `sales_report_${period}_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
     };
 
     const openMessages = (order: Order) => {
@@ -295,7 +364,7 @@ const KitchenDashboard: React.FC = () => {
         openMessages(order);
     };
 
-    // Print thermal receipt
+    // Print thermal receipt (Improved Styling)
     const printOrder = (order: Order) => {
         const printWindow = window.open('', '_blank', 'width=300,height=600');
         if (printWindow) {
@@ -304,42 +373,75 @@ const KitchenDashboard: React.FC = () => {
                 <head>
                     <title>Order #${order.order_number}</title>
                     <style>
-                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 10px; width: 270px; }
-                        h1 { font-size: 16px; text-align: center; margin: 0 0 10px 0; }
-                        .divider { border-top: 1px dashed #000; margin: 8px 0; }
-                        .item { display: flex; justify-content: space-between; }
-                        .total { font-weight: bold; font-size: 14px; }
-                        .center { text-align: center; }
+                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 15px; width: 280px; margin: 0 auto; color: #000; }
+                        .header { text-align: center; margin-bottom: 15px; }
+                        h1 { font-size: 20px; font-weight: 900; margin: 0; letter-spacing: 2px; }
+                        h2 { font-size: 14px; margin: 5px 0 0; text-transform: uppercase; }
+                        .divider { border-top: 2px dashed #000; margin: 10px 0; }
+                        .divider-thin { border-top: 1px solid #ccc; margin: 8px 0; }
+                        .info { margin-bottom: 10px; font-size: 11px; }
+                        .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+                        .option { font-size: 10px; color: #444; margin-left: 15px; display: block; }
+                        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin-top: 10px; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 10px; }
                     </style>
                 </head>
                 <body>
-                    <h1>GUSTO PIZZERIA</h1>
-                    <div class="center">Order #${order.order_number}</div>
+                    <div class="header">
+                        <h1>GUSTO</h1>
+                        <h2>PIZZERIA</h2>
+                        <p style="margin:5px 0 0; font-size:10px;">${new Date(order.placed_at).toLocaleString()}</p>
+                    </div>
+                    
                     <div class="divider"></div>
-                    <p><strong>${order.customer_name}</strong></p>
-                    <p>${order.customer_phone}</p>
-                    <p>${order.customer_address}</p>
+                    
+                    <div class="info">
+                        <p style="font-size:14px; font-weight:bold;">ORDER #${order.order_number}</p>
+                        <p><strong>${order.customer_name}</strong></p>
+                        <p>${order.customer_phone}</p>
+                        <p style="font-size:10px;">${order.customer_address}</p>
+                    </div>
+
                     <div class="divider"></div>
-                    ${order.items.map(item => `<div class="item"><span>${item.q}x ${item.n}</span><span>${item.s}</span></div>`).join('')}
+
+                    ${order.items.map(item => `
+                        <div class="item">
+                            <span>${item.q}x ${item.n}</span>
+                            <span>${(parseInt(item.s.replace(/\D/g, '')) * item.q) || 0}</span>
+                        </div>
+                    `).join('')}
+
                     <div class="divider"></div>
-                    <div class="item total"><span>TOTAL</span><span>Rs. ${order.total}</span></div>
+
+                    <div class="total-row">
+                        <span>TOTAL</span>
+                        <span>Rs. ${order.total}</span>
+                    </div>
+
                     <div class="divider"></div>
-                    <p><strong>Kitchen:</strong> ${order.kitchen_instructions || 'None'}</p>
-                    <p><strong>Delivery:</strong> ${order.delivery_notes || 'None'}</p>
-                    <div class="divider"></div>
-                    <div class="center">${new Date().toLocaleString()}</div>
+
+                    <div class="info">
+                        <p><strong>Kitchen Note:</strong><br/>${order.kitchen_instructions || '-'}</p>
+                        <p><strong>Delivery Note:</strong><br/>${order.delivery_notes || '-'}</p>
+                    </div>
+
+                    <div class="footer">
+                        <p>THANK YOU FOR ORDERING!</p>
+                        <p>www.gustopizzeria.com</p>
+                    </div>
+                    
+                    <script>window.print(); window.close();</script>
                 </body>
                 </html>
             `);
             printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
         }
     };
 
     // Memoized filtered lists
     const pendingOrders = useMemo(() => orders.filter(o => o.status === 'pending'), [orders]);
     const activeOrders = useMemo(() => orders.filter(o => ['confirmed', 'cooking', 'ready'].includes(o.status)), [orders]);
+    // Only show Dispatched in "Completed Today" column (Delivered goes to History)
     const completedOrders = useMemo(() => orders.filter(o => o.status === 'dispatched'), [orders]);
 
     const currentOrders = activeTab === 'pending' ? pendingOrders : activeTab === 'active' ? activeOrders : completedOrders;
@@ -358,30 +460,82 @@ const KitchenDashboard: React.FC = () => {
             <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
 
             {/* Header - Responsive */}
-            <div className="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-white/5 px-4 py-3 md:px-8 md:py-4">
+            <header className="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-white/5 px-4 py-3 md:px-8 md:py-4 shadow-xl">
                 <div className="flex items-center justify-between max-w-7xl mx-auto">
-                    <div>
-                        <h1 className="text-lg md:text-2xl font-black uppercase tracking-tight">🍳 Kitchen</h1>
-                        <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-widest">Live Orders</p>
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <h1 className="text-lg md:text-2xl font-black uppercase tracking-tight">🍳 Kitchen</h1>
+                            <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-widest">Live Orders</p>
+                        </div>
                     </div>
 
-                    {/* Stats Pills - Responsive */}
-                    <div className="flex gap-2 md:gap-3">
-                        <div className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-center ${pendingOrders.length > 0 ? 'bg-yellow-500/20 border border-yellow-500/50 animate-pulse' : 'bg-white/5 border border-white/10'}`}>
-                            <span className="text-lg md:text-2xl font-black text-yellow-400">{pendingOrders.length}</span>
-                            <span className="text-[8px] md:text-[10px] uppercase tracking-wider text-yellow-400/60 ml-1 hidden sm:inline">NEW</span>
+                    <div className="flex items-center gap-3">
+                        {/* Stats Pills - Hidden on very small screens if needed, but vital for kitchen */}
+                        <div className="hidden lg:flex gap-3 mr-4">
+                            <div className={`px-3 py-1.5 rounded-full text-center ${pendingOrders.length > 0 ? 'bg-yellow-500/20 border border-yellow-500/50 animate-pulse' : 'bg-white/5 border border-white/10'}`}>
+                                <span className="text-xl font-black text-yellow-400">{pendingOrders.length}</span>
+                                <span className="text-[10px] uppercase tracking-wider text-yellow-400/60 ml-2">NEW</span>
+                            </div>
+                            <div className="px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-center">
+                                <span className="text-xl font-black text-orange-400">{activeOrders.length}</span>
+                                <span className="text-[10px] uppercase tracking-wider text-orange-400/60 ml-2">Active</span>
+                            </div>
                         </div>
-                        <div className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-orange-500/10 border border-orange-500/30 text-center">
-                            <span className="text-lg md:text-2xl font-black text-orange-400">{activeOrders.length}</span>
-                            <span className="text-[8px] md:text-[10px] uppercase tracking-wider text-orange-400/60 ml-1 hidden sm:inline">ACTIVE</span>
-                        </div>
-                        <div className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-green-500/10 border border-green-500/30 text-center hidden md:block">
-                            <span className="text-lg md:text-2xl font-black text-green-400">{completedOrders.length}</span>
-                            <span className="text-[8px] md:text-[10px] uppercase tracking-wider text-green-400/60 ml-1">DONE</span>
+
+                        {/* Action Buttons */}
+                        <button
+                            onClick={() => { setShowHistory(true); fetchHistory(); }}
+                            className="bg-white/5 hover:bg-white/10 px-3 py-2 md:px-4 md:py-2 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all border border-white/10 flex items-center gap-2 whitespace-nowrap"
+                        >
+                            📦 History
+                        </button>
+
+                        <div className="relative group">
+                            <button
+                                className="bg-[#D97B8D]/20 hover:bg-[#D97B8D]/30 text-[#D97B8D] px-3 py-2 md:px-4 md:py-2 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all border border-[#D97B8D]/30 flex items-center gap-2 whitespace-nowrap"
+                            >
+                                📊 Reports
+                            </button>
+                            <div className="absolute right-0 top-full mt-2 w-40 bg-[#1C1C1C] border border-white/10 rounded-xl shadow-xl overflow-hidden hidden group-hover:block z-50">
+                                <button onClick={() => exportSalesData('daily')} className="w-full text-left px-4 py-3 text-sm hover:bg-white/5 text-white/70 hover:text-white transition-colors">Today</button>
+                                <button onClick={() => exportSalesData('weekly')} className="w-full text-left px-4 py-3 text-sm hover:bg-white/5 text-white/70 hover:text-white transition-colors">This Week</button>
+                                <button onClick={() => exportSalesData('monthly')} className="w-full text-left px-4 py-3 text-sm hover:bg-white/5 text-white/70 hover:text-white transition-colors">This Month</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </header>
+
+            {/* History Modal */}
+            {showHistory && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+                    <div className="bg-[#1C1C1C] border border-white/10 rounded-3xl w-full max-w-5xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+                        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
+                            <div>
+                                <h2 className="text-xl font-black uppercase tracking-widest text-[#D97B8D]">📦 Delivered History</h2>
+                                <p className="text-xs text-white/40 mt-1">Archive of completed orders</p>
+                            </div>
+                            <button onClick={() => setShowHistory(false)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors text-white">✕</button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {historyOrders.map(order => (
+                                <OrderCard
+                                    key={order.id}
+                                    order={order}
+                                    onSelect={() => setSelectedOrder(order)}
+                                    onStatusChange={() => { }}
+                                    onMessage={() => openMessagesAndClear(order)}
+                                    onPrint={() => printOrder(order)}
+                                    isComplete
+                                    hasUnreadMessages={unreadMessages.has(order.id)}
+                                />
+                            ))}
+                            {loading && <p className="col-span-full text-center py-10 text-white/30 animate-pulse">Loading archive...</p>}
+                            {!loading && historyOrders.length === 0 && <p className="col-span-full text-center py-10 text-white/30">No delivered orders found</p>}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Mobile Tab Bar */}
             <div className="md:hidden sticky top-[60px] z-30 bg-black border-b border-white/5 flex">
