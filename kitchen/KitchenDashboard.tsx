@@ -385,9 +385,9 @@ const KitchenDashboard: React.FC = () => {
                     <style>
                         @page { size: 80mm auto; margin: 0; }
                         body { 
-                            width: 76mm;
-                            margin: 0 auto; 
-                            padding: 0; 
+                            width: 80mm;
+                            margin: 0; 
+                            padding: 5mm; 
                             font-family: 'Courier Prime', monospace; 
                             text-align: center; 
                             color: black;
