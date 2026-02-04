@@ -311,6 +311,8 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
     // Poll every 5 seconds for updates (backup for real-time)
     const pollInterval = setInterval(fetchLiveData, 5000);
 
+    let channel: any = null;
+
     // Get order UUID for real-time subscription
     const setupRealtimeSub = async () => {
       const { data: dbOrder } = await supabase
@@ -320,7 +322,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
         .single();
 
       if (dbOrder?.id) {
-        const messageChannel = supabase
+        channel = supabase
           .channel(`customer-messages-${dbOrder.id}`)
           .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages', filter: `order_id=eq.${dbOrder.id}` }, (payload: any) => {
             // Only show popup for store messages
@@ -339,14 +341,15 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             fetchLiveData();
           })
           .subscribe();
-
-        return () => { messageChannel.unsubscribe(); };
       }
     };
 
     setupRealtimeSub();
 
-    return () => clearInterval(pollInterval);
+    return () => {
+      clearInterval(pollInterval);
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [isOpen, order?.id, fetchLiveData]);
 
   useGSAP(() => {
@@ -809,7 +812,7 @@ const OrderSuccessOverlay: React.FC<SuccessProps> = ({ isOpen, order, onClose })
             <button onClick={() => setShowMessenger(false)} className="text-white/40 hover:text-white">✕</button>
           </div>
 
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-60">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3">
             {storeMessages.length === 0 ? (
               <p className="text-white/30 text-sm text-center py-8">No messages yet</p>
             ) : (
