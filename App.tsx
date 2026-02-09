@@ -444,7 +444,7 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5 text-[7px] uppercase font-black tracking-[0.6em]">
               <p className="opacity-15">©2025 GRAVITY STUDIO</p>
               <a
-                href="https://saad-mughal-portfolio.vercel.app/"
+                href="https://saadmughal.space"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-2 bg-gradient-to-r from-white/5 to-white/10 border border-white/10 px-6 py-3 rounded-full text-white/60 text-[8px] font-black uppercase tracking-[0.2em] hover:border-[#D97B8D]/50 hover:text-white transition-all hover:shadow-[0_0_20px_rgba(217,123,141,0.2)]"
