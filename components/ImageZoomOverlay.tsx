@@ -41,11 +41,11 @@ const ImageZoomOverlay: React.FC = () => {
                 onClick={handleClose}
             ></div>
 
-            <div className="zoom-image-container relative max-w-[95vw] max-h-[95vh] w-auto h-auto shadow-2xl rounded-xl overflow-hidden pointer-events-none">
+            <div className="zoom-image-container relative max-w-[95vw] max-h-[95vh] w-auto h-auto shadow-2xl pointer-events-none">
                 <img
                     src={zoomedImageSrc || ''}
                     alt="Zoomed Product"
-                    className="w-full h-full object-contain max-h-[90vh] pointer-events-auto"
+                    className="w-full h-full object-contain max-h-[90vh] pointer-events-auto rounded-xl"
                 />
 
                 <button
