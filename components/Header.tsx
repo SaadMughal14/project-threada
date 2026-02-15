@@ -29,11 +29,13 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Title - Logoza Style (Geometric Thin) */}
-                <div className="py-2 md:py-4 overflow-hidden text-center">
-                    <h1 className="font-brand text-[13vw] md:text-[16vw] leading-[0.8] text-black select-none pointer-events-none tracking-tight font-light">
-                        Threada
-                    </h1>
+                {/* Giant Brand Logo - Image Based */}
+                <div className="py-2 md:py-4 overflow-hidden flex justify-center items-center">
+                    <img
+                        src="/logo1.png"
+                        alt="Threada Logo"
+                        className="w-[60%] md:w-[40%] object-contain mix-blend-multiply grayscale contrast-200"
+                    />
                 </div>
             </div>
         </header>
