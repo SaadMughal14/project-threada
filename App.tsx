@@ -45,8 +45,8 @@ const Homepage = () => {
 
         <div className="w-full h-[60vh] md:h-[85vh] overflow-hidden relative group">
           <img
-            src="https://images.unsplash.com/photo-1523396870124-25b410e6a06c?q=80&w=2670&auto=format&fit=crop"
-            className="w-full h-full object-cover grayscale transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
+            src="/hero.png"
+            className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
             alt="Hero Campaign"
           />
         </div>
@@ -120,7 +120,7 @@ const Homepage = () => {
         <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-6 mb-8 border-b border-gray-200 pb-8">
           {/* Card 1 */}
           <div className="relative group overflow-hidden h-[450px]">
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="/cat-summer.png" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-white p-4 flex justify-between items-center border-t border-gray-100">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-gray-400">01</span>
@@ -146,7 +146,7 @@ const Homepage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 3 */}
           <div className="relative group overflow-hidden h-[350px]">
-            <img src="https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="/cat-street.png" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur p-4 flex justify-between items-center">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-gray-500">03</span>
