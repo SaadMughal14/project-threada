@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&family=Oswald:wght@500;700&display=swap');
+
 @layer base {
   :root {
     /* Brand Colors */
@@ -11,9 +13,10 @@
     --cream-vanilla: #FDFCFB;
 
     /* Typography */
+    --font-logo: 'Oswald', sans-serif;
+    /* New "Logo" font */
     --font-heading: 'Inter', sans-serif;
-    /* Switched to Inter for that bold, clean look in reference */
-    --font-body: 'Source Sans Pro', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
 
   html {
@@ -22,7 +25,6 @@
 
   body {
     @apply bg-white text-black font-body antialiased;
-    /* White bg per reference */
   }
 
   h1,
@@ -33,21 +35,29 @@
   h6,
   .font-heading {
     @apply font-heading font-black tracking-tight;
-    /* Extra bold/black weight */
+  }
+
+  /* Custom Logo Class */
+  .font-logo {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    text-transform: uppercase;
   }
 }
 
 @layer components {
+
+  /* Enhanced Lines */
+  .border-heavy {
+    @apply border-black border-2;
+    /* Thicker lines as requested */
+  }
+
   .btn-primary {
     @apply bg-black text-white px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-outline {
-    @apply border border-black px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300;
+    @apply border-2 border-black px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300;
   }
-}
-
-/* Custom Utilities */
-.mix-blend-exclusion {
-  mix-blend-mode: exclusion;
 }

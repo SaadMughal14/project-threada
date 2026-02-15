@@ -8,9 +8,9 @@ export const Header: React.FC = () => {
 
     return (
         <header className="w-full bg-white z-50 relative">
-            {/* Top Utility Bar - Max Width to match content */}
+            {/* Top Utility Bar */}
             <div className="max-w-[1920px] mx-auto px-4 md:px-6">
-                <div className="flex justify-between items-center py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest border-b border-black">
+                <div className="flex justify-between items-center py-4 text-[11px] font-bold uppercase tracking-widest border-b-2 border-black">
                     {/* Left: Collections */}
                     <div className="flex gap-8">
                         <Link to="/" className="hover:text-gray-500 transition-colors">Man</Link>
@@ -27,16 +27,10 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Title - Full Width Justified */}
-                <div className="border-b border-black py-2 md:py-0 overflow-hidden">
-                    <h1 className="font-heading text-[12vw] md:text-[18.5vw] leading-[0.8] tracking-tighter uppercase text-center md:text-justify w-full flex justify-between select-none pointer-events-none transform scale-y-110 origin-top">
-                        <span>T</span>
-                        <span>H</span>
-                        <span>R</span>
-                        <span>E</span>
-                        <span>A</span>
-                        <span>D</span>
-                        <span>A</span>
+                {/* Giant Brand Title - Logo Style */}
+                <div className="border-b-2 border-black py-0 overflow-hidden text-center leading-none">
+                    <h1 className="font-logo text-[16vw] md:text-[22vw] leading-[0.8] tracking-tighter uppercase select-none pointer-events-none transform scale-y-[1.15] block">
+                        Threada
                     </h1>
                 </div>
             </div>
