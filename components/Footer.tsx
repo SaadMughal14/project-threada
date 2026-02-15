@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Linkedin, Instagram, X } from 'lucide-react';
+import { InfoModal } from './InfoModal';
 
 export const Footer: React.FC = () => {
+    const [modalInfo, setModalInfo] = useState<{ title: string; content: string } | null>(null);
+
+    const openModal = (title: string, content: string) => {
+        setModalInfo({ title, content });
+    };
+
     return (
-        <footer className="bg-black text-white pt-20 pb-8 px-4 md:px-6 mt-20">
+        <footer className="bg-black text-white pt-20 pb-8 px-4 md:px-6 mt-20 relative z-40">
+            {modalInfo && <InfoModal title={modalInfo.title} content={modalInfo.content} onClose={() => setModalInfo(null)} />}
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 border-b border-white/20 pb-12">
                 {/* Brand */}
                 <div>
@@ -11,44 +21,44 @@ export const Footer: React.FC = () => {
                     <p className="text-xs text-gray-400 leading-relaxed mb-4">
                         128 Market St. 20193 <br /> San Fransisco California
                     </p>
-                    <div className="flex gap-4 text-lg">
-                        <i className="cursor-pointer hover:text-gray-300">fb</i>
-                        <i className="cursor-pointer hover:text-gray-300">tw</i>
-                        <i className="cursor-pointer hover:text-gray-300">in</i>
-                        <i className="cursor-pointer hover:text-gray-300">ig</i>
+                    <div className="flex gap-6 text-gray-400">
+                        <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
+                        <Twitter className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
+                        <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
+                        <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
                     </div>
                 </div>
 
                 {/* Management */}
                 <div>
                     <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Management</h4>
-                    <ul className="space-y-3 text-xs">
-                        <li className="hover:text-gray-300 cursor-pointer">Features</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Blog</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Careers</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Privacy Policy</li>
+                    <ul className="space-y-3 text-xs text-gray-400">
+                        <li onClick={() => openModal('Features', 'Explore our cutting-edge features designed for modern living.')} className="hover:text-white transition-colors cursor-pointer">Features</li>
+                        <li onClick={() => openModal('Blog', 'Read our latest stories, style guides, and design philosophy.')} className="hover:text-white transition-colors cursor-pointer">Blog</li>
+                        <li onClick={() => openModal('Careers', 'Join our team. We are looking for creative minds.')} className="hover:text-white transition-colors cursor-pointer">Careers</li>
+                        <li onClick={() => openModal('Privacy Policy', 'Your privacy is paramount. Read our commitment to data protection.')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</li>
                     </ul>
                 </div>
 
                 {/* Minimalist */}
                 <div>
                     <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Minimalist</h4>
-                    <ul className="space-y-3 text-xs">
-                        <li className="hover:text-gray-300 cursor-pointer">Classic</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Retro</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Modern</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Sporty</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Best Seller</li>
+                    <ul className="space-y-3 text-xs text-gray-400">
+                        <Link to="/category/classic" className="block hover:text-white transition-colors">Classic</Link>
+                        <Link to="/category/retro" className="block hover:text-white transition-colors">Retro</Link>
+                        <Link to="/category/modern" className="block hover:text-white transition-colors">Modern</Link>
+                        <Link to="/category/sporty" className="block hover:text-white transition-colors">Sporty</Link>
+                        <Link to="/category/best-seller" className="block hover:text-white transition-colors">Best Seller</Link>
                     </ul>
                 </div>
 
                 {/* Contact */}
                 <div>
                     <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Contact Us</h4>
-                    <p className="text-xs mb-6">hello@threada.com</p>
+                    <p className="text-xs mb-6 text-gray-400">hello@threada.com</p>
 
                     <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Get the App</h4>
-                    <button className="bg-white text-black px-4 py-2 text-xs font-bold uppercase w-full max-w-[150px]">
+                    <button className="bg-white text-black px-4 py-2 text-xs font-bold uppercase w-full max-w-[150px] hover:bg-gray-200 transition-colors">
                         Download App
                     </button>
                 </div>
@@ -56,7 +66,9 @@ export const Footer: React.FC = () => {
 
             <div className="flex justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest">
                 <p>&copy; 2026 Threada • All rights reserved.</p>
-                <p>Terms and Conditions</p>
+                <div className="flex gap-4">
+                    <span onClick={() => openModal('Terms', 'Terms and Conditions applied.')} className="cursor-pointer hover:text-white">Terms and Conditions</span>
+                </div>
             </div>
         </footer>
     );

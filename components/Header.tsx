@@ -6,6 +6,7 @@ export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
     const itemCount = getItemCount();
     const [isScrolled, setIsScrolled] = React.useState(false);
+    const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -33,9 +34,9 @@ export const Header: React.FC = () => {
                 <div className={`flex flex-row justify-between items-center transition-all duration-300 ${isScrolled ? 'py-3 border-b border-black' : 'py-3 md:py-4 border-b border-black'} text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative`}>
                     {/* Left: Collections */}
                     <div className="flex gap-3 md:gap-10">
-                        <Link to="/" className="hover:text-gray-500 transition-colors">Man</Link>
-                        <Link to="/" className="hover:text-gray-500 transition-colors">Woman</Link>
-                        <Link to="/" className="hover:text-gray-500 transition-colors">Kids</Link>
+                        <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
+                        <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
+                        <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
                     </div>
 
                     {/* Center: Tiny Logo */}
@@ -55,10 +56,35 @@ export const Header: React.FC = () => {
                     />
 
                     {/* Right: Utilities */}
-                    <div className="flex gap-3 md:gap-10">
-                        <Link to="/admin-panel0/login" className="hover:text-gray-500 transition-colors">Account</Link>
+                    <div className="flex gap-3 md:gap-10 items-center">
+                        <Link to="/login" className="hover:text-gray-500 transition-colors">Account</Link>
                         {/* Wishlist Removed for Balance */}
-                        <button className="hover:text-gray-500 transition-colors">Search</button>
+
+                        {/* Search Dropdown Trigger */}
+                        <div className="relative group">
+                            <button
+                                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                className="hover:text-gray-500 transition-colors flex items-center gap-2"
+                            >
+                                Search
+                            </button>
+
+                            {/* Search Dropdown Overlay */}
+                            <div className={`absolute right-0 top-full mt-4 w-[300px] bg-white shadow-xl border border-gray-100 p-4 transition-all duration-300 origin-top-right ${isSearchOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
+                                <div className="flex items-center border-b-2 border-black pb-2">
+                                    <input
+                                        type="text"
+                                        placeholder="SEARCH PRODUCTS..."
+                                        className="w-full text-sm font-bold uppercase placeholder-gray-400 focus:outline-none"
+                                        autoFocus={isSearchOpen}
+                                    />
+                                    <button className="text-gray-400 hover:text-black">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <button onClick={toggleCart} className="hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
                     </div>
                 </div>
