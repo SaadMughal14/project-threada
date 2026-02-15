@@ -32,20 +32,20 @@ const Homepage = () => {
     <main>
       {/* Immersive Hero Section */}
       <section className="h-screen w-full relative overflow-hidden flex items-center justify-center">
-        <div className="absolute inset-0 z-0 bg-black">
+        <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2670&auto=format&fit=crop"
-            className="w-full h-full object-cover opacity-60 scale-105 animate-slow-zoom"
+            className="w-full h-full object-cover grayscale brightness-75 scale-105 animate-slow-zoom"
             alt="Editorial Campaign"
           />
         </div>
-        <div className="relative z-10 text-center text-white px-4">
-          <h2 className="font-heading text-[12vw] leading-[0.85] mb-6 drop-shadow-xl">
+        <div className="relative z-10 text-center text-white mix-blend-difference px-4">
+          <h2 className="font-heading text-[12vw] leading-[0.85] mb-6">
             THREADA
             <br />
             ARCHIVE
           </h2>
-          <Link to="/products/obsidian-tee" className="inline-block mt-8 bg-white text-black border border-white px-12 py-4 font-body text-sm font-bold uppercase tracking-[0.3em] hover:bg-black hover:text-white hover:border-black transition-all duration-300 shadow-xl">
+          <Link to="/products/obsidian-tee" className="inline-block mt-8 border border-white px-12 py-4 font-body text-sm font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-colors">
             Explore Collection
           </Link>
         </div>
