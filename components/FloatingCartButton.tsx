@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useCartStore } from '../src/store/cartStore';
 
 export const FloatingCartButton: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
     const itemCount = getItemCount();
-    const [position, setPosition] = useState({ x: 20, y: 80 }); // Initial position (bottom-leftish or specific corner)
+    const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const dragStartPos = useRef({ x: 0, y: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
 
-    // Set initial position to bottom-right corner on mount
     useEffect(() => {
+        // Initialize position to bottom-right
         setPosition({
             x: window.innerWidth - 80,
             y: window.innerHeight - 100
@@ -33,15 +34,10 @@ export const FloatingCartButton: React.FC = () => {
         if (!isDragging) return;
         const touch = e.touches[0];
 
-        // Prevent default scrolling only if we are clearly dragging this element
-        // e.preventDefault(); // React synthetic events might complain, but usually CSS touch-action: none is better
-
-        // Calculate new position
         let newX = touch.clientX - dragStartPos.current.x;
         let newY = touch.clientY - dragStartPos.current.y;
 
-        // Boundary constraints
-        const maxX = window.innerWidth - 60; // Button width approx 60
+        const maxX = window.innerWidth - 60;
         const maxY = window.innerHeight - 60;
 
         newX = Math.max(10, Math.min(newX, maxX));
@@ -54,12 +50,13 @@ export const FloatingCartButton: React.FC = () => {
         setIsDragging(false);
     };
 
-    // Click handler - only fire if not dragging (simple check/heuristic)
     const handleClick = () => {
-        toggleCart();
+        if (!isDragging) toggleCart();
     };
 
-    return (
+    if (!position) return null;
+
+    return createPortal(
         <button
             ref={buttonRef}
             onClick={handleClick}
@@ -69,11 +66,12 @@ export const FloatingCartButton: React.FC = () => {
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
-                touchAction: 'none' // Critical for preventing scroll while dragging
+                position: 'fixed',
+                touchAction: 'none'
             }}
-            className="md:hidden fixed z-[100] w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-transform"
+            className="md:hidden z-[9999] w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-transform border border-white/10"
         >
-            <div className="relative">
+            <div className="relative pointer-events-none">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 20C9 21.1046 8.10457 22 7 22C5.89543 22 5 21.1046 5 20C5 18.8954 5.89543 18 7 18C8.10457 18 9 18.8954 9 20Z" fill="currentColor" />
                     <path d="M20 20C20 21.1046 19.1046 22 18 22C16.8954 22 16 21.1046 16 20C16 18.8954 16.8954 18 18 18C19.1046 18 20 18.8954 20 20Z" fill="currentColor" />
@@ -85,6 +83,7 @@ export const FloatingCartButton: React.FC = () => {
                     </span>
                 )}
             </div>
-        </button>
+        </button>,
+        document.body
     );
 };
