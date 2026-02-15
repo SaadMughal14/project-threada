@@ -62,25 +62,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        {/* Main public site */}
-        <Route path="/" element={<App />} />
-
-        {/* Admin Panel */}
-        <Route path="/admin-panel0/login" element={<AdminLogin />} />
-        <Route path="/admin-panel0" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<ProductList />} />
-          <Route path="products/new" element={<ProductForm />} />
-          <Route path="products/:id" element={<ProductForm />} />
-        </Route>
-
-        {/* Fulfillment Dashboard */}
-        <Route path="/fulfillment" element={<KitchenLogin />} />
-        <Route path="/fulfillment" element={<KitchenLayout />}>
-          <Route path="dashboard" element={<KitchenDashboard />} />
-        </Route>
-      </Routes>
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );
