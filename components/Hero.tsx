@@ -149,7 +149,7 @@ const Hero: React.FC = () => {
       </div>
 
       {/* --- CONTENT (Shared but positioned) --- */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 pb-20 md:pb-0">
+      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 pb-20 md:pb-0 short-hero-padding">
         <div className="overflow-hidden w-full flex justify-center">
           <h1 className="hero-title font-display text-hero font-black text-[#1C1C1C] uppercase select-none will-change-transform mix-blend-multiply">
             GRAVITY

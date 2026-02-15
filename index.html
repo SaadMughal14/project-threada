@@ -98,6 +98,19 @@
       white-space: nowrap;
     }
 
+    /* Short Screen Adaptation (e.g. standard 16:9 phones vs tall pixels) */
+    @media screen and (max-height: 780px) {
+      .text-hero {
+        font-size: clamp(2rem, 9.5vw, 12rem);
+        /* Slightly smaller on short screens */
+      }
+
+      .short-hero-padding {
+        padding-bottom: 2.5rem !important;
+        /* Force reduced padding (pb-10) */
+      }
+    }
+
     /* Category Scrollbar */
     .category-scrollbar {
       -ms-overflow-style: none;
