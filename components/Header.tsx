@@ -29,9 +29,9 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Title - Script Font */}
+                {/* Giant Brand Title - Bold Vintage Font */}
                 <div className="py-2 md:py-4 overflow-hidden text-center">
-                    <h1 className="font-brand text-[10vw] md:text-[12vw] leading-[0.8] text-black select-none pointer-events-none transform -rotate-2 origin-center">
+                    <h1 className="font-brand text-[12vw] md:text-[15vw] leading-[0.8] text-black select-none pointer-events-none tracking-wide">
                         Threada
                     </h1>
                 </div>

@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 
 @layer base {
   :root {
@@ -15,7 +15,7 @@
     /* Typography */
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Source Sans Pro', sans-serif;
-    --font-brand: 'Grand Hotel', cursive;
+    --font-brand: 'Shrikhand', cursive;
   }
 
   html {
