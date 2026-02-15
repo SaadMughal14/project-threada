@@ -33,35 +33,36 @@ const Homepage = () => {
     <main className="px-4 md:px-6 max-w-[1920px] mx-auto pb-20">
 
       {/* Editorial Hero: Text Top / Image Bottom */}
-      <section className="mb-24 mt-8 md:mt-12">
-        <div className="border-t border-b border-black py-2 mb-4 flex justify-between items-start">
-          <p className="w-1/3 text-xs md:text-sm font-bold uppercase leading-relaxed">
-            In the whole summer show, this is the designer's best look yet.
+      <section className="mb-16">
+        <div className="flex justify-between items-start pt-4 pb-2 mb-2">
+          <p className="w-1/3 text-xs md:text-sm font-bold leading-snug">
+            In the whole summer show, this <br /> is the designer's best look yet. //
           </p>
-          <p className="text-xs md:text-sm font-bold uppercase">
+          <p className="text-xs md:text-sm font-bold uppercase text-right leading-snug">
             05.11 <br /> 2026
           </p>
         </div>
 
-        <div className="w-full h-[60vh] md:h-[80vh] overflow-hidden relative group">
+        <div className="w-full h-[60vh] md:h-[85vh] overflow-hidden relative group">
           <img
             src="https://images.unsplash.com/photo-1523396870124-25b410e6a06c?q=80&w=2670&auto=format&fit=crop"
-            className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+            className="w-full h-full object-cover grayscale transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
             alt="Hero Campaign"
           />
         </div>
       </section>
 
       {/* Best Seller Section */}
-      <section className="mb-24">
-        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
-          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Best Seller</h2>
-          <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
-            See All <span>↗</span>
+      <section className="mb-20">
+        <div className="border-t border-black mb-6"></div> {/* Heavy Line */}
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="font-heading text-4xl md:text-5xl uppercase font-black tracking-tighter">Best Seller</h2>
+          <Link to="/" className="text-[10px] font-bold uppercase hover:underline flex items-center gap-2">
+            See All <span className="text-xs">↗</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PIZZAS.slice(0, 3).map((product: any) => (
             <ProductCard
               key={product.id}
@@ -75,27 +76,28 @@ const Homepage = () => {
             />
           ))}
         </div>
+        <div className="border-b border-black mt-12"></div> {/* Heavy Line */}
       </section>
 
       {/* Latest Arrivals Section */}
-      <section className="mb-24">
-        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
-          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Latest Arrivals</h2>
-          <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
-            See All <span>↗</span>
+      <section className="mb-20">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="font-heading text-4xl md:text-5xl uppercase font-black tracking-tighter">Latest Arrivals</h2>
+          <Link to="/" className="text-[10px] font-bold uppercase hover:underline flex items-center gap-2">
+            See All <span className="text-xs">↗</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {PIZZAS.slice(3, 5).map((product: any) => (
             <div key={product.id} className="group cursor-pointer">
-              <div className="bg-[#F0F0F0] mb-4 aspect-square md:aspect-[4/3] overflow-hidden relative">
+              <div className="bg-[#F4F4F4] mb-4 aspect-[4/3] overflow-hidden relative">
                 <img
                   src={product.image}
                   className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div className="flex justify-between items-center text-sm font-bold uppercase">
+              <div className="flex justify-between items-center text-xs font-bold uppercase border-b border-gray-300 pb-2">
                 <span>{product.name}</span>
                 <span>{product.price}</span>
               </div>
@@ -105,48 +107,63 @@ const Homepage = () => {
       </section>
 
       {/* Fashion Category - Asymmetrical Grid */}
-      <section className="mb-24">
-        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
-          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Fashion Category</h2>
-          <div className="text-xs font-bold uppercase border border-black px-4 py-2 rounded-full cursor-pointer hover:bg-black hover:text-white transition-colors">
-            Men's Fashion ▾
+      <section className="mb-20">
+        <div className="border-t border-black mb-6"></div>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="font-heading text-4xl md:text-5xl uppercase font-black tracking-tighter">Fashion Category</h2>
+          <div className="text-[10px] font-bold uppercase border border-gray-300 px-3 py-1 rounded-full cursor-pointer hover:border-black transition-colors flex items-center gap-2">
+            Men's Fashion <span className="text-[8px]">▼</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
-          {/* Large Card 1 */}
-          <div className="relative group overflow-hidden h-[400px]">
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <span className="text-xs font-bold bg-white px-2 py-1">01 / Summer Style</span>
-              <span className="text-xs font-bold bg-white px-2 py-1">Explore ↗</span>
+        {/* Row 1 */}
+        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-6 mb-8 border-b border-gray-200 pb-8">
+          {/* Card 1 */}
+          <div className="relative group overflow-hidden h-[450px]">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-x-0 bottom-0 bg-white p-4 flex justify-between items-center border-t border-gray-100">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-gray-400">01</span>
+                <span className="text-sm font-bold uppercase">Summer Style</span>
+              </div>
+              <span className="text-xs font-bold uppercase">Explore ↗</span>
             </div>
           </div>
-          {/* Large Card 2 */}
-          <div className="relative group overflow-hidden h-[400px]">
-            <img src="https://images.unsplash.com/photo-1529139574466-a302c27e3844?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <span className="text-xs font-bold bg-white px-2 py-1">02 / Art of Beat</span>
-              <span className="text-xs font-bold bg-white px-2 py-1">Explore ↗</span>
+          {/* Card 2 */}
+          <div className="relative group overflow-hidden h-[450px]">
+            <img src="https://images.unsplash.com/photo-1529139574466-a302c27e3844?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-x-0 bottom-0 bg-white p-4 flex justify-between items-center border-t border-gray-100">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-gray-400">02</span>
+                <span className="text-sm font-bold uppercase">Art of Beat</span>
+              </div>
+              <span className="text-xs font-bold uppercase">Explore ↗</span>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-          {/* Wide Card 3 */}
-          <div className="relative group overflow-hidden h-[300px]">
-            <img src="https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white">
-              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">03 / Street Style</span>
-              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">Explore ↗</span>
+        {/* Row 2 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Card 3 */}
+          <div className="relative group overflow-hidden h-[350px]">
+            <img src="https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur p-4 flex justify-between items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-gray-500">03</span>
+                <span className="text-sm font-bold uppercase">Street Style</span>
+              </div>
+              <span className="text-xs font-bold uppercase">Explore ↗</span>
             </div>
           </div>
-          {/* Wide Card 4 */}
-          <div className="relative group overflow-hidden h-[300px]">
-            <img src="https://images.unsplash.com/photo-1485230948943-b26a8d626ef9?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white">
-              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">04 / Classic Elegant</span>
-              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">Explore ↗</span>
+          {/* Card 4 */}
+          <div className="relative group overflow-hidden h-[350px]">
+            <img src="https://images.unsplash.com/photo-1485230948943-b26a8d626ef9?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur p-4 flex justify-between items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-gray-500">04</span>
+                <span className="text-sm font-bold uppercase">Classic Elegant</span>
+              </div>
+              <span className="text-xs font-bold uppercase">Explore ↗</span>
             </div>
           </div>
         </div>
