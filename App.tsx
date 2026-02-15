@@ -316,9 +316,9 @@ const App: React.FC = () => {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black uppercase text-[8px] md:text-[10px] tracking-widest transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeCategory === cat.name ? 'bg-[#1C1C1C] text-[#D97B8D] shadow-sm scale-105' : 'text-[#1C1C1C]/40 hover:text-[#1C1C1C] hover:bg-black/5'}`}
               >
                 {cat.type === 'image' ? (
-                  <img src={cat.icon} alt={cat.name} className="w-4 h-4 md:w-6 md:h-6 object-contain" />
+                  <img src={cat.icon} alt={cat.name} className={`w-4 h-4 md:w-6 md:h-6 object-contain ${activeCategory === cat.name ? 'opacity-100' : 'opacity-40'}`} />
                 ) : (
-                  <span className="text-sm md:text-base">{cat.icon}</span>
+                  <span className={`text-sm md:text-base ${activeCategory === cat.name ? 'opacity-100' : 'opacity-40'}`}>{cat.icon}</span>
                 )}
                 {cat.name}
               </button>
