@@ -11,7 +11,8 @@
     --cream-vanilla: #FDFCFB;
 
     /* Typography */
-    --font-heading: 'Playfair Display', serif;
+    --font-heading: 'Inter', sans-serif;
+    /* Switched to Inter for that bold, clean look in reference */
     --font-body: 'Source Sans Pro', sans-serif;
   }
 
@@ -20,7 +21,8 @@
   }
 
   body {
-    @apply bg-[var(--cream-vanilla)] text-[var(--deep-basil)] font-body antialiased;
+    @apply bg-white text-black font-body antialiased;
+    /* White bg per reference */
   }
 
   h1,
@@ -30,7 +32,8 @@
   h5,
   h6,
   .font-heading {
-    @apply font-heading font-normal tracking-tight;
+    @apply font-heading font-black tracking-tight;
+    /* Extra bold/black weight */
   }
 }
 
@@ -42,13 +45,9 @@
   .btn-outline {
     @apply border border-black px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300;
   }
-
-  .input-field {
-    @apply w-full bg-transparent border-b border-gray-300 py-3 font-body focus:border-black focus:outline-none transition-colors;
-  }
 }
 
 /* Custom Utilities */
-.mix-blend-difference {
-  mix-blend-mode: difference;
+.mix-blend-exclusion {
+  mix-blend-mode: exclusion;
 }

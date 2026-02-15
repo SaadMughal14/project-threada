@@ -10,6 +10,7 @@ import { ProductCard } from './components/ProductCard';
 import { ProductDetail } from './pages/ProductDetail';
 import CheckoutOverlay from './components/CheckoutOverlay';
 import OrderSuccessOverlay from './components/OrderSuccessOverlay';
+import { Footer } from './components/Footer';
 
 // Store & Data
 import { useCartStore } from './src/store/cartStore';
@@ -29,53 +30,39 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Homepage = () => {
   return (
-    <main>
-      {/* Immersive 3D Threaded Hero Section */}
-      <section className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-black">
-        <div className="absolute inset-0 z-0">
+    <main className="px-4 md:px-6 max-w-[1920px] mx-auto pb-20">
+
+      {/* Editorial Hero: Text Top / Image Bottom */}
+      <section className="mb-24 mt-8 md:mt-12">
+        <div className="border-t border-b border-black py-2 mb-4 flex justify-between items-start">
+          <p className="w-1/3 text-xs md:text-sm font-bold uppercase leading-relaxed">
+            In the whole summer show, this is the designer's best look yet.
+          </p>
+          <p className="text-xs md:text-sm font-bold uppercase">
+            05.11 <br /> 2026
+          </p>
+        </div>
+
+        <div className="w-full h-[60vh] md:h-[80vh] overflow-hidden relative group">
           <img
-            // Using an image with high contrast lines/ropes for the threading effect
-            src="https://images.unsplash.com/photo-1571685799337-b676a917361c?q=80&w=2670&auto=format&fit=crop"
-            className="w-full h-full object-cover grayscale brightness-90 animate-slow-zoom"
-            alt="Threaded Hero"
+            src="https://images.unsplash.com/photo-1523396870124-25b410e6a06c?q=80&w=2670&auto=format&fit=crop"
+            className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+            alt="Hero Campaign"
           />
-        </div>
-
-        {/* Threaded Text Effect:
-            Using Difference/Exclusion blend mode allows the light/dark parts of the image 
-            to invert the text color, making it look 'inside' the ropes/texture.
-        */}
-        <div className="relative z-10 text-center px-4 mix-blend-exclusion text-white pointer-events-none">
-          <h2 className="font-heading text-[15vw] leading-[0.8] tracking-tighter opacity-90 blur-[1px]">
-            THREADA
-          </h2>
-          <h2 className="font-heading text-[15vw] leading-[0.8] tracking-tighter absolute inset-0 text-white mix-blend-overlay opacity-50 translate-x-1 translate-y-1">
-            THREADA
-          </h2>
-        </div>
-
-        {/* Floating CTA - Outside the blend container to stay sharp */}
-        <div className="absolute bottom-12 z-20">
-          <Link to="/products/obsidian-tee" className="inline-block border border-white/40 bg-black/20 backdrop-blur-md px-12 py-4 text-white font-body text-xs font-bold uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all duration-500">
-            Enter Archive
-          </Link>
         </div>
       </section>
 
-      {/* Featured Collection Grid */}
-      <section className="py-24 px-4 md:px-6 max-w-[1800px] mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-black/10 pb-6">
-          <h3 className="font-heading text-4xl md:text-5xl">New Arrivals</h3>
-          <span className="font-body text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mt-4 md:mt-0">SS / 2026</span>
+      {/* Best Seller Section */}
+      <section className="mb-24">
+        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
+          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Best Seller</h2>
+          <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
+            See All <span>↗</span>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16">
-          {(!PIZZAS || PIZZAS.length === 0) && (
-            <div className="col-span-full py-20 text-center text-xl text-gray-400 font-light">
-              Archive Empty.
-            </div>
-          )}
-          {PIZZAS && PIZZAS.map((product: any) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+          {PIZZAS.slice(0, 3).map((product: any) => (
             <ProductCard
               key={product.id}
               product={{
@@ -90,11 +77,81 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Footer / Statement */}
-      <section className="py-32 bg-black text-white text-center px-4">
-        <h2 className="font-heading text-4xl md:text-6xl mb-8">Defined by Void.</h2>
-        <p className="font-body text-sm uppercase tracking-[0.3em] opacity-50">Est. 2026 • Global Shipping</p>
+      {/* Latest Arrivals Section */}
+      <section className="mb-24">
+        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
+          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Latest Arrivals</h2>
+          <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
+            See All <span>↗</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+          {PIZZAS.slice(3, 5).map((product: any) => (
+            <div key={product.id} className="group cursor-pointer">
+              <div className="bg-[#F0F0F0] mb-4 aspect-square md:aspect-[4/3] overflow-hidden relative">
+                <img
+                  src={product.image}
+                  className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="flex justify-between items-center text-sm font-bold uppercase">
+                <span>{product.name}</span>
+                <span>{product.price}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
+
+      {/* Fashion Category - Asymmetrical Grid */}
+      <section className="mb-24">
+        <div className="flex justify-between items-end mb-6 border-b border-black pb-2">
+          <h2 className="font-heading text-4xl md:text-6xl uppercase tracking-tighter">Fashion Category</h2>
+          <div className="text-xs font-bold uppercase border border-black px-4 py-2 rounded-full cursor-pointer hover:bg-black hover:text-white transition-colors">
+            Men's Fashion ▾
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
+          {/* Large Card 1 */}
+          <div className="relative group overflow-hidden h-[400px]">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+              <span className="text-xs font-bold bg-white px-2 py-1">01 / Summer Style</span>
+              <span className="text-xs font-bold bg-white px-2 py-1">Explore ↗</span>
+            </div>
+          </div>
+          {/* Large Card 2 */}
+          <div className="relative group overflow-hidden h-[400px]">
+            <img src="https://images.unsplash.com/photo-1529139574466-a302c27e3844?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+              <span className="text-xs font-bold bg-white px-2 py-1">02 / Art of Beat</span>
+              <span className="text-xs font-bold bg-white px-2 py-1">Explore ↗</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+          {/* Wide Card 3 */}
+          <div className="relative group overflow-hidden h-[300px]">
+            <img src="https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white">
+              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">03 / Street Style</span>
+              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">Explore ↗</span>
+            </div>
+          </div>
+          {/* Wide Card 4 */}
+          <div className="relative group overflow-hidden h-[300px]">
+            <img src="https://images.unsplash.com/photo-1485230948943-b26a8d626ef9?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white">
+              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">04 / Classic Elegant</span>
+              <span className="text-xs font-bold bg-black/50 backdrop-blur px-2 py-1">Explore ↗</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 };
@@ -117,10 +174,10 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-[var(--cream-vanilla)] min-h-screen text-[var(--deep-basil)] font-body selection:bg-black selection:text-white">
+    <div className="bg-white min-h-screen text-black font-body selection:bg-black selection:text-white">
       <Routes>
-        <Route path="/" element={<><Header /><Homepage /></>} />
-        <Route path="/products/:id" element={<><Header /><ProductDetail /></>} />
+        <Route path="/" element={<><Header /><Homepage /><Footer /></>} />
+        <Route path="/products/:id" element={<><Header /><ProductDetail /><Footer /></>} />
 
         <Route path="/admin-panel0/login" element={<AdminLogin />} />
         <Route path="/admin-panel0" element={<AdminLayout />}>
