@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Phase 3 Components
+// Components
 import { Header } from './components/Header';
 import { ProductCard } from './components/ProductCard';
 import { ProductDetail } from './pages/ProductDetail';
-import CheckoutOverlay from './components/CheckoutOverlay'; // Keeping existing checkout for now
+import CheckoutOverlay from './components/CheckoutOverlay';
 import OrderSuccessOverlay from './components/OrderSuccessOverlay';
-import StatusBar from './components/StatusBar';
 
-// Hooks/Store
+// Store & Data
 import { useCartStore } from './src/store/cartStore';
-import { PIZZAS } from './constants'; // Mock data
+import { PIZZAS } from './constants';
 
-// Admin/Kitchen (Legacy routes kept intact)
+// Backend Pages
 import AdminLogin from './admin/AdminLogin';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
@@ -30,44 +29,42 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Homepage = () => {
   return (
-    <main className="pt-24 px-4 md:px-6 max-w-[1600px] mx-auto">
-      {/* Hero Section */}
-      <section className="mb-20 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="h-[60vh] md:h-[80vh] bg-gray-200 relative overflow-hidden group">
+    <main>
+      {/* Immersive Hero Section */}
+      <section className="h-screen w-full relative overflow-hidden flex items-center justify-center">
+        <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=2788&auto=format&fit=crop"
-            className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
-            alt="Hero 1"
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2670&auto=format&fit=crop"
+            className="w-full h-full object-cover grayscale brightness-75 scale-105 animate-slow-zoom"
+            alt="Editorial Campaign"
           />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="font-heading text-6xl text-white mix-blend-difference">ESSENTIALS</h2>
-          </div>
         </div>
-        <div className="h-[60vh] md:h-[80vh] bg-gray-300 relative overflow-hidden group">
-          <img
-            src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2787&auto=format&fit=crop"
-            className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
-            alt="Hero 2"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="font-heading text-6xl text-white mix-blend-difference">AVANT-GARDE</h2>
-          </div>
+        <div className="relative z-10 text-center text-white mix-blend-difference px-4">
+          <h2 className="font-heading text-[12vw] leading-[0.85] mb-6">
+            THREADA
+            <br />
+            ARCHIVE
+          </h2>
+          <Link to="/products/obsidian-tee" className="inline-block mt-8 border border-white px-12 py-4 font-body text-sm font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-colors">
+            Explore Collection
+          </Link>
         </div>
       </section>
 
-      {/* Featured Collection */}
-      <section>
-        <div className="flex justify-between items-end mb-8">
-          <h3 className="font-heading text-3xl">Latest Drops</h3>
-          <span className="font-body text-xs font-bold uppercase tracking-widest border-b border-black pb-1">View All</span>
+      {/* Featured Collection Grid */}
+      <section className="py-24 px-4 md:px-6 max-w-[1800px] mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-black/10 pb-6">
+          <h3 className="font-heading text-4xl md:text-5xl">New Arrivals</h3>
+          <span className="font-body text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mt-4 md:mt-0">SS / 2026</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 gap-y-12">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16">
           {(!PIZZAS || PIZZAS.length === 0) && (
-            <div className="col-span-full text-center py-20 text-xl text-gray-400">
-              No products found.
+            <div className="col-span-full py-20 text-center text-xl text-gray-400 font-light">
+              Archive Empty.
             </div>
           )}
-          {PIZZAS && PIZZAS.slice(0, 8).map((product: any) => (
+          {PIZZAS && PIZZAS.map((product: any) => (
             <ProductCard
               key={product.id}
               product={{
@@ -82,8 +79,11 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Footer Space */}
-      <div className="h-40" />
+      {/* Footer / Statement */}
+      <section className="py-32 bg-black text-white text-center px-4">
+        <h2 className="font-heading text-4xl md:text-6xl mb-8">Defined by Void.</h2>
+        <p className="font-body text-sm uppercase tracking-[0.3em] opacity-50">Est. 2026 • Global Shipping</p>
+      </section>
     </main>
   );
 };
@@ -94,7 +94,10 @@ const App: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    const lenis = new Lenis();
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
@@ -103,23 +106,11 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-[var(--cream-vanilla)] min-h-screen text-[var(--deep-basil)] font-body">
+    <div className="bg-[var(--cream-vanilla)] min-h-screen text-[var(--deep-basil)] font-body selection:bg-black selection:text-white">
       <Routes>
-        {/* Main Storefront Routes */}
-        <Route path="/" element={
-          <>
-            <Header />
-            <Homepage />
-          </>
-        } />
-        <Route path="/products/:id" element={
-          <>
-            <Header />
-            <ProductDetail />
-          </>
-        } />
+        <Route path="/" element={<><Header /><Homepage /></>} />
+        <Route path="/products/:id" element={<><Header /><ProductDetail /></>} />
 
-        {/* Admin & Fulfillment (Legacy/Refactored) */}
         <Route path="/admin-panel0/login" element={<AdminLogin />} />
         <Route path="/admin-panel0" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
@@ -133,41 +124,46 @@ const App: React.FC = () => {
         </Route>
       </Routes>
 
-      {/* Global Overlays */}
-      <div className={`fixed inset-0 z-[100] pointer-events-none transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-        {/* Cart Drawer */}
-        <div className={`pointer-events-auto absolute top-0 right-0 h-full w-[400px] bg-white shadow-2xl transform transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
-          <div className="p-6 flex justify-between items-center border-b">
-            <h2 className="font-heading text-2xl">Cart ({items.length})</h2>
-            <button onClick={toggleCart} className="text-xl">×</button>
+      {/* Cart Drawer - Minimalist */}
+      <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isOpen ? 'visible' : 'invisible'}`}>
+        <div onClick={toggleCart} className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0'}`} />
+        <div className={`absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+          <div className="p-8 flex justify-between items-center border-b border-gray-100">
+            <h2 className="font-heading text-3xl">Cart ({items.length})</h2>
+            <button onClick={toggleCart} className="text-xl hover:rotate-90 transition-transform">×</button>
           </div>
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-auto p-8 space-y-8">
+            {items.length === 0 && (
+              <p className="text-center text-gray-400 mt-20 font-light">Your bag is empty.</p>
+            )}
             {items.map(item => (
-              <div key={item.id} className="flex gap-4 mb-6">
-                <img src={item.image} className="w-20 h-24 object-cover bg-gray-100" />
-                <div>
-                  <h4 className="font-bold text-sm uppercase">{item.name}</h4>
-                  <p className="text-xs text-gray-500 mb-2">{item.size} / {item.color}</p>
-                  <p className="font-bold">${item.price}</p>
+              <div key={item.id} className="flex gap-6">
+                <img src={item.image} className="w-24 h-32 object-cover bg-gray-100" style={{ aspectRatio: '4/5' }} />
+                <div className="flex flex-col justify-between py-1">
+                  <div>
+                    <h4 className="font-bold text-sm uppercase tracking-wide">{item.name}</h4>
+                    <p className="text-xs text-gray-500 mt-1">{item.size} — {item.color}</p>
+                  </div>
+                  <p className="font-bold text-lg">${item.price}</p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="p-6 border-t bg-gray-50">
-            <div className="flex justify-between mb-4 font-bold text-lg">
-              <span>Total</span>
-              <span>${getCartTotal()}</span>
+          {items.length > 0 && (
+            <div className="p-8 border-t border-gray-100 bg-gray-50">
+              <div className="flex justify-between mb-6 font-heading text-2xl">
+                <span>Total</span>
+                <span>${getCartTotal()}</span>
+              </div>
+              <button
+                onClick={() => { toggleCart(); setIsCheckoutOpen(true); }}
+                className="btn-primary w-full"
+              >
+                Checkout
+              </button>
             </div>
-            <button
-              onClick={() => { toggleCart(); setIsCheckoutOpen(true); }}
-              className="w-full bg-black text-white py-4 font-bold uppercase tracking-widest"
-            >
-              Checkout
-            </button>
-          </div>
+          )}
         </div>
-        {/* Backdrop */}
-        <div onClick={toggleCart} className={`pointer-events-auto absolute inset-0 bg-black/20 -z-10 ${isOpen ? 'block' : 'hidden'}`} />
       </div>
 
       <CheckoutOverlay
@@ -178,13 +174,7 @@ const App: React.FC = () => {
         onOrderSuccess={() => { setIsCheckoutOpen(false); setShowSuccess(true); clearCart(); }}
         orderNotes=""
       />
-
-      <OrderSuccessOverlay
-        isOpen={showSuccess}
-        onClose={() => setShowSuccess(false)}
-        order={null}
-      />
-
+      <OrderSuccessOverlay isOpen={showSuccess} onClose={() => setShowSuccess(false)} order={null} />
     </div>
   );
 };

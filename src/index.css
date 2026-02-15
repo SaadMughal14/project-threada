@@ -2,49 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Brand Colors */
-  --brand-primary: #D97B8D;
-  --brand-light: #F2DCE0;
-  --deep-basil: #1C1C1C;
-  --cream-vanilla: #FDFCFB;
+@layer base {
+  :root {
+    /* Brand Colors */
+    --brand-primary: #D97B8D;
+    --brand-light: #F2DCE0;
+    --deep-basil: #1C1C1C;
+    --cream-vanilla: #FDFCFB;
 
-  /* Typography */
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Source Sans Pro', sans-serif;
-}
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Source Sans Pro', sans-serif;
+  }
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--cream-vanilla);
-  color: var(--deep-basil);
-  -webkit-font-smoothing: antialiased;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-h1, h2, h3, h4, h5, h6, .font-display {
-  font-family: var(--font-heading);
-}
+  body {
+    @apply bg-[var(--cream-vanilla)] text-[var(--deep-basil)] font-body antialiased;
+  }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-heading {
+    @apply font-heading font-normal tracking-tight;
+  }
 }
 
-/* Utilities */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+@layer components {
+  .btn-primary {
+    @apply bg-black text-white px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply border border-black px-8 py-4 font-body font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full bg-transparent border-b border-gray-300 py-3 font-body focus:border-black focus:outline-none transition-colors;
+  }
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+/* Custom Utilities */
+.mix-blend-difference {
+  mix-blend-mode: difference;
 }
