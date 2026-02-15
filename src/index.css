@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
 @layer base {
   :root {
     /* Brand Colors */
@@ -13,6 +15,7 @@
     /* Typography */
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Source Sans Pro', sans-serif;
+    --font-brand: 'Grand Hotel', cursive;
   }
 
   html {
@@ -23,7 +26,13 @@
     @apply bg-white text-black font-body antialiased;
   }
 
-  /* HEADINGS: Big, Bold, Tight like a Newspaper Headline */
+  /* Brand Font Utility */
+  .font-brand {
+    font-family: var(--font-brand);
+    font-weight: 400;
+  }
+
+  /* HEADINGS */
   h1,
   h2,
   h3,
@@ -34,7 +43,7 @@
     @apply font-heading font-black tracking-tighter;
   }
 
-  /* BODY: "Premium Thin", Tighter spacing ("close words") */
+  /* BODY */
   p,
   span,
   li,
@@ -43,10 +52,8 @@
     @apply font-body font-light tracking-tight;
   }
 
-  /* Overrides for specific UI elements that need bold (buttons, nav) */
   .font-bold {
     font-weight: 600 !important;
-    /* Force semi-bold instead of heavy bold for premium feel */
   }
 }
 

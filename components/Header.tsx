@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
 
     return (
         <header className="w-full bg-white z-50 relative pt-4 pb-2">
-            {/* Main Container - Constrained width for "Newspaper" margins */}
+            {/* Main Container */}
             <div className="max-w-[1400px] mx-auto px-4 md:px-12 border-b-4 border-black">
 
                 {/* Top Utility Bar */}
@@ -29,16 +29,10 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Title - Full Width Justified */}
-                <div className="py-2 md:py-1 overflow-hidden">
-                    <h1 className="font-heading text-[13vw] md:text-[14.5vw] leading-[0.8] tracking-tighter uppercase text-justify w-full flex justify-between select-none pointer-events-none transform scale-y-110 origin-top text-black">
-                        <span>T</span>
-                        <span>H</span>
-                        <span>R</span>
-                        <span>E</span>
-                        <span>A</span>
-                        <span>D</span>
-                        <span>A</span>
+                {/* Giant Brand Title - Script Font */}
+                <div className="py-2 md:py-4 overflow-hidden text-center">
+                    <h1 className="font-brand text-[10vw] md:text-[12vw] leading-[0.8] text-black select-none pointer-events-none transform -rotate-2 origin-center">
+                        Threada
                     </h1>
                 </div>
             </div>
