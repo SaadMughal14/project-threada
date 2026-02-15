@@ -298,7 +298,7 @@ const App: React.FC = () => {
       {isMounted && (
         <nav
           style={{ display: scrolled ? 'block' : 'none' }}
-          className={`fixed top-[44px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
+          className={`fixed top-[52px] md:top-[56px] left-0 w-full z-[90] border-b border-black/5 ${activeOrder ? 'mt-8 md:mt-10' : ''} 
             ${scrolled
               ? 'bg-[#FDFCFB] translate-y-0 opacity-100 visible transition-all duration-500'
               : '-translate-y-full opacity-0 invisible pointer-events-none'

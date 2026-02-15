@@ -94,7 +94,7 @@ const Hero: React.FC = () => {
   }, { scope: container });
 
   return (
-    <section ref={container} className="h-[75dvh] md:h-[90dvh] w-full flex items-start md:items-center justify-center relative bg-[#F2DCE0] overflow-hidden">
+    <section ref={container} className="h-[75dvh] md:h-[90dvh] w-full flex items-end md:items-center justify-center relative bg-[#F2DCE0] overflow-hidden">
 
       {/* --- DESKTOP VIEW (Video + SVGs) --- */}
       <div className="hidden md:block absolute inset-0 z-0 overflow-hidden">
@@ -149,7 +149,7 @@ const Hero: React.FC = () => {
       </div>
 
       {/* --- CONTENT (Shared but positioned) --- */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 h-full justify-start pt-32 md:pt-0 md:justify-center md:pb-0">
+      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 pb-20 md:pb-0">
         <div className="overflow-hidden w-full flex justify-center">
           <h1 className="hero-title font-display text-hero font-black text-[#1C1C1C] uppercase select-none will-change-transform mix-blend-multiply">
             GRAVITY
