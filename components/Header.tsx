@@ -29,12 +29,12 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Logo - Image Based */}
-                <div className="py-2 md:py-4 overflow-hidden flex justify-center items-center">
+                {/* Giant Brand Logo - Image Based - Full Width / No Padding */}
+                <div className="overflow-hidden flex justify-center items-center w-full">
                     <img
                         src="/logo1.png"
                         alt="Threada Logo"
-                        className="w-[60%] md:w-[40%] object-contain mix-blend-multiply grayscale contrast-200"
+                        className="w-full object-cover mix-blend-multiply grayscale contrast-200"
                     />
                 </div>
             </div>
