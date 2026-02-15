@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,7 +15,7 @@
     /* Typography */
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Source Sans Pro', sans-serif;
-    --font-brand: 'Shrikhand', cursive;
+    --font-brand: 'Outfit', sans-serif;
   }
 
   html {
