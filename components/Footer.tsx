@@ -7,7 +7,7 @@ export const Footer: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 border-b border-white/20 pb-12">
                 {/* Brand */}
                 <div>
-                    <img src="/logo1.png" alt="Threada Logo" className="h-16 w-auto mb-6 invert brightness-0" />
+                    <img src="/logo1.png" alt="Threada Logo" className="h-16 w-auto mb-10 invert brightness-0" />
                     <p className="text-xs text-gray-400 leading-relaxed mb-4">
                         128 Market St. 20193 <br /> San Fransisco California
                     </p>

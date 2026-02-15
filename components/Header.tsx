@@ -1,7 +1,6 @@
 import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link } from 'react-router-dom';
-import { FloatingCartButton } from './FloatingCartButton';
 
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
@@ -46,7 +45,6 @@ export const Header: React.FC = () => {
                         - HIDDEN AT TOP (opacity-0).
                         - VISIBLE ON SCROLL (opacity-100).
                         - Applies to BOTH Mobile and Desktop.
-                        - Mobile Size: h-9 (was h-6)
                     */}
                     <img
                         src="/logo1.png"
@@ -59,10 +57,9 @@ export const Header: React.FC = () => {
                     {/* Right: Utilities */}
                     <div className="flex gap-3 md:gap-10">
                         <Link to="/admin-panel0/login" className="hover:text-gray-500 transition-colors">Account</Link>
-                        <button className="hover:text-gray-500 transition-colors">Wishlist</button>
+                        {/* Wishlist Removed for Balance */}
                         <button className="hover:text-gray-500 transition-colors">Search</button>
-                        {/* Cart hidden on mobile to balance layout (3 items left, 3 right) */}
-                        <button onClick={toggleCart} className="hidden md:block hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
+                        <button onClick={toggleCart} className="hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
                     </div>
                 </div>
 
@@ -95,9 +92,6 @@ export const Header: React.FC = () => {
                 </div>
 
             </div>
-
-            {/* Draggable Floating Cart (Mobile Only) */}
-            <FloatingCartButton />
         </header>
     );
 };
