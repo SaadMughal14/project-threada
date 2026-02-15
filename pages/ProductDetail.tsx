@@ -10,15 +10,11 @@ export const ProductDetail: React.FC = () => {
     const { addItem } = useCartStore();
 
     // Create a merged product object (mock logic for now)
-    const product = PIZZAS.find(p => p.id === id) || {
-        id: '1',
-        name: 'Sample Product',
-        price: '150',
-        description: 'A premium garment crafted for the modern individual.',
-        image: 'sample-id',
-        category: 'Tops',
-        ingredients: []
-    };
+    const product = PIZZAS.find((p: any) => p.id === id);
+
+    if (!product) {
+        return <div className="min-h-screen pt-32 text-center text-2xl font-bold">Product not found</div>;
+    }
 
     const [selectedSize, setSelectedSize] = useState<string>('');
     const [selectedColor, setSelectedColor] = useState<string>('');

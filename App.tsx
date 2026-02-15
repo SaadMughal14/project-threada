@@ -62,7 +62,12 @@ const Homepage = () => {
           <span className="font-body text-xs font-bold uppercase tracking-widest border-b border-black pb-1">View All</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 gap-y-12">
-          {PIZZAS.slice(0, 8).map((product) => (
+          {(!PIZZAS || PIZZAS.length === 0) && (
+            <div className="col-span-full text-center py-20 text-xl text-gray-400">
+              No products found.
+            </div>
+          )}
+          {PIZZAS && PIZZAS.slice(0, 8).map((product: any) => (
             <ProductCard
               key={product.id}
               product={{

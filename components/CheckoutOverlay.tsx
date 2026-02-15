@@ -1,13 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { PizzaProductExtended, SizeOption } from '../constants';
 import { supabase } from '../supabaseClient';
-
-interface CartItem extends PizzaProductExtended {
-  quantity: number;
-  selectedSize: SizeOption;
-}
+import { CartItem } from '../src/store/cartStore';
 
 interface CheckoutOverlayProps {
   isOpen: boolean;
@@ -110,7 +105,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
     // Slimmed data for URL (further reduced to save space)
     const slimOrder = {
       id: orderId,
-      items: cartItems.map(i => ({ id: i.id, n: i.name, q: i.quantity, s: i.selectedSize.name, pr: parseInt(i.selectedSize.price.replace(/[^\d]/g, '')) })),
+      items: cartItems.map(i => ({ id: i.id, n: i.name, q: i.quantity, s: i.size, pr: i.price })),
       p: totalPrice,
       c: { n: formData.name, p: formData.phone, a: formData.address, d: formData.deliveryNotes },
       kn: orderNotes,

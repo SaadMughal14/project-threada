@@ -19,7 +19,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <Link to={`/products/${product.id}`} className="block group cursor-pointer">
-            <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 mb-4">
+            <div className="relative overflow-hidden bg-gray-100 mb-4" style={{ aspectRatio: '4/5' }}>
                 {/* Main Image */}
                 <img
                     src={cloudinaryLoader({ src: product.image, width: 600 })}
