@@ -133,7 +133,7 @@ const Hero: React.FC = () => {
       {/* --- MOBILE VIEW (GIF) --- */}
       <div className="block md:hidden absolute inset-0 z-0 overflow-hidden bg-[#F2DCE0]">
         {/* Navbar background match area */}
-        <div className="absolute top-0 left-0 w-full h-20 bg-[#F2DCE0] z-20"></div>
+        <div className="absolute top-0 left-0 w-full h-[52px] bg-[#F2DCE0] z-20"></div>
 
         {/* Texture Overlay */}
         <div className="absolute inset-0 z-10 opacity-20 pointer-events-none mix-blend-overlay"
@@ -143,7 +143,7 @@ const Hero: React.FC = () => {
         <img
           src="/hero.gif"
           alt="Hero Animation"
-          className="w-full h-full object-cover object-bottom translate-y-12" // Push down slightly to clear navbar
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#F2DCE0]/0 via-transparent to-[#F2DCE0]/30 pointer-events-none"></div>
       </div>
