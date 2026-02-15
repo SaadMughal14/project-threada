@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { PIZZAS, PizzaProductExtended } from '../constants';
 import { useProducts } from '../hooks/useProducts';
 import BounceCards from './BounceCards';
+import { useImageZoom } from '../context/ImageZoomContext';
 
 const MenuGrid: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
@@ -11,6 +12,7 @@ const MenuGrid: React.FC = () => {
 
   // Fetch products from Supabase (falls back to mock data)
   const { products } = useProducts();
+  const { openZoom } = useImageZoom();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -60,6 +62,7 @@ const MenuGrid: React.FC = () => {
             easeType="expo.out"
             transformStyles={transformStyles}
             enableHover={true}
+            onZoom={openZoom}
           />
         </div>
       </div>

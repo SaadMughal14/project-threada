@@ -21,8 +21,9 @@ const getIngredientEmoji = (name: string) => {
 const PizzaSection: React.FC<{
   pizza: PizzaProductExtended,
   index: number,
-  onAddToCart: (p: PizzaProductExtended, s: SizeOption) => void
-}> = ({ pizza, index, onAddToCart }) => {
+  onAddToCart: (p: PizzaProductExtended, s: SizeOption) => void,
+  onZoom: (src: string) => void
+}> = ({ pizza, index, onAddToCart, onZoom }) => {
   const container = useRef<HTMLDivElement>(null);
   const pizzaRef = useRef<HTMLDivElement>(null);
   const [selectedSize, setSelectedSize] = useState<SizeOption>(pizza.sizeOptions[0]);
@@ -54,9 +55,10 @@ const PizzaSection: React.FC<{
         <div className="flex-1 flex justify-center w-full">
           <div
             ref={pizzaRef}
-            className="w-[50vw] h-[50vw] md:w-[25vw] md:h-[25vw] max-w-[260px] max-h-[260px] rounded-xl md:rounded-[2.5rem] shadow-xl border-[6px] md:border-[10px] border-white/5 overflow-hidden will-change-transform"
+            className="w-[50vw] h-[50vw] md:w-[25vw] md:h-[25vw] max-w-[260px] max-h-[260px] rounded-xl md:rounded-[2.5rem] shadow-xl border-[6px] md:border-[10px] border-white/5 overflow-hidden will-change-transform group cursor-zoom-in"
+            onClick={() => onZoom(pizza.image)}
           >
-            <img src={pizza.image} alt={pizza.name} className="w-full h-full object-cover scale-[1.1]" />
+            <img src={pizza.image} alt={pizza.name} className="w-full h-full object-cover scale-[1.1] group-hover:scale-105 transition-transform duration-500" />
           </div>
         </div>
 
@@ -104,6 +106,8 @@ const PizzaSection: React.FC<{
   );
 };
 
+import { useImageZoom } from '../context/ImageZoomContext';
+
 const GustoRotator: React.FC<{
   onAddToCart: (p: PizzaProductExtended, s: SizeOption) => void,
   category: string,
@@ -112,6 +116,8 @@ const GustoRotator: React.FC<{
   // Use passed products or fallback to PIZZAS
   const allProducts = products || PIZZAS;
   const filteredProducts = allProducts.filter(p => p.category === category);
+  const { openZoom } = useImageZoom();
+
   if (filteredProducts.length === 0) return null;
 
   return (
@@ -124,7 +130,7 @@ const GustoRotator: React.FC<{
         </div>
       </div>
       {filteredProducts.map((pizza, i) => (
-        <PizzaSection key={pizza.id} pizza={pizza} index={i} onAddToCart={onAddToCart} />
+        <PizzaSection key={pizza.id} pizza={pizza} index={i} onAddToCart={onAddToCart} onZoom={openZoom} />
       ))}
     </div>
   );

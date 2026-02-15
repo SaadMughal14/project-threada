@@ -12,6 +12,8 @@ import OrderSuccessOverlay from './components/OrderSuccessOverlay';
 import StatusBar from './components/StatusBar';
 import { PIZZAS, PizzaProductExtended, SizeOption } from './constants';
 import { useProducts } from './hooks/useProducts';
+import { ImageZoomProvider } from './context/ImageZoomContext';
+import ImageZoomOverlay from './components/ImageZoomOverlay';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -466,8 +468,15 @@ const App: React.FC = () => {
           animation: bounce-slow 4s ease-in-out infinite;
         }
       `}</style>
+      <ImageZoomOverlay />
     </div>
   );
 };
 
-export default App;
+const AppWithZoom = () => (
+  <ImageZoomProvider>
+    <App />
+  </ImageZoomProvider>
+);
+
+export default AppWithZoom;

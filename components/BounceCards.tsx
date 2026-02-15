@@ -11,6 +11,7 @@ interface BounceCardsProps {
   easeType?: string;
   transformStyles?: string[];
   enableHover?: boolean;
+  onZoom?: (src: string) => void;
 }
 
 export default function BounceCards({
@@ -28,7 +29,8 @@ export default function BounceCards({
     'rotate(-10deg) translate(85px)',
     'rotate(2deg) translate(170px)'
   ],
-  enableHover = false
+  enableHover = false,
+  onZoom
 }: BounceCardsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -162,9 +164,13 @@ export default function BounceCards({
           }}
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
-          onClick={() => pushSiblings(idx)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onZoom) onZoom(src);
+            else pushSiblings(idx);
+          }}
         >
-          <img className="w-full h-full object-cover" src={src} alt={`card-${idx}`} />
+          <img className="w-full h-full object-cover pointer-events-none" src={src} alt={`card-${idx}`} />
         </div>
       ))}
     </div>
