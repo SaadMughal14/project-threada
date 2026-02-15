@@ -30,23 +30,34 @@ gsap.registerPlugin(ScrollTrigger);
 const Homepage = () => {
   return (
     <main>
-      {/* Immersive Hero Section */}
-      <section className="h-screen w-full relative overflow-hidden flex items-center justify-center">
+      {/* Immersive 3D Threaded Hero Section */}
+      <section className="h-screen w-full relative overflow-hidden flex items-center justify-center bg-black">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2670&auto=format&fit=crop"
-            className="w-full h-full object-cover grayscale brightness-75 scale-105 animate-slow-zoom"
-            alt="Editorial Campaign"
+            // Using an image with high contrast lines/ropes for the threading effect
+            src="https://images.unsplash.com/photo-1571685799337-b676a917361c?q=80&w=2670&auto=format&fit=crop"
+            className="w-full h-full object-cover grayscale brightness-90 animate-slow-zoom"
+            alt="Threaded Hero"
           />
         </div>
-        <div className="relative z-10 text-center text-white mix-blend-difference px-4">
-          <h2 className="font-heading text-[12vw] leading-[0.85] mb-6">
+
+        {/* Threaded Text Effect:
+            Using Difference/Exclusion blend mode allows the light/dark parts of the image 
+            to invert the text color, making it look 'inside' the ropes/texture.
+        */}
+        <div className="relative z-10 text-center px-4 mix-blend-exclusion text-white pointer-events-none">
+          <h2 className="font-heading text-[15vw] leading-[0.8] tracking-tighter opacity-90 blur-[1px]">
             THREADA
-            <br />
-            ARCHIVE
           </h2>
-          <Link to="/products/obsidian-tee" className="inline-block mt-8 border border-white px-12 py-4 font-body text-sm font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-colors">
-            Explore Collection
+          <h2 className="font-heading text-[15vw] leading-[0.8] tracking-tighter absolute inset-0 text-white mix-blend-overlay opacity-50 translate-x-1 translate-y-1">
+            THREADA
+          </h2>
+        </div>
+
+        {/* Floating CTA - Outside the blend container to stay sharp */}
+        <div className="absolute bottom-12 z-20">
+          <Link to="/products/obsidian-tee" className="inline-block border border-white/40 bg-black/20 backdrop-blur-md px-12 py-4 text-white font-body text-xs font-bold uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all duration-500">
+            Enter Archive
           </Link>
         </div>
       </section>
