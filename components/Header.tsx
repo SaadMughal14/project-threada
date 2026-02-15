@@ -62,8 +62,8 @@ export const Header: React.FC = () => {
                     - h-[14vw]: Specific desktop height ratio
                     - object-cover: Fills/Stretches
                 */}
-                <div className="hidden md:block w-full overflow-hidden py-4">
-                    <div className="w-full h-[14vw] flex justify-center items-center">
+                <div className="hidden md:block w-full overflow-hidden">
+                    <div className="w-full aspect-[100/22] flex justify-center items-center">
                         <img
                             src="/logo1.png"
                             alt="Threada Logo Desktop"
