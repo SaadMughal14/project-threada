@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
 
                 {/* Giant Brand Title - Bold Vintage Font */}
                 <div className="py-2 md:py-4 overflow-hidden text-center">
-                    <h1 className="font-brand text-[12vw] md:text-[15vw] leading-[0.8] text-black select-none pointer-events-none tracking-wide">
+                    <h1 className="font-brand text-[13vw] md:text-[16vw] leading-[0.8] text-black select-none pointer-events-none tracking-tighter uppercase">
                         Threada
                     </h1>
                 </div>
