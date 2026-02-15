@@ -30,8 +30,8 @@ export const Header: React.FC = () => {
                 </div>
 
                 {/* Giant Brand Logo - Image Based - Full Width / Cropped Height */}
-                {/* Constraining height to ~12-16vw to simulate the text stripe and crop whitespace */}
-                <div className="w-full h-[12vw] md:h-[16vw] overflow-hidden flex justify-center items-center pt-2">
+                {/* Constraining height to ~10-13vw to make it smaller/sleeker while maintaining crop */}
+                <div className="w-full h-[10vw] md:h-[13vw] overflow-hidden flex justify-center items-center pt-1 md:pt-2">
                     <img
                         src="/logo1.png"
                         alt="Threada Logo"
