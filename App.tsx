@@ -1,42 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Components
 import { Header } from './components/Header';
-import { ProductCard } from './components/ProductCard';
+import { ProductDetail } from './pages/ProductDetail';
+import CheckoutOverlay from './components/CheckoutOverlay';
+import OrderSuccessOverlay from './components/OrderSuccessOverlay';
+import { Footer } from './components/Footer';
+
+// Pages
+import { Homepage } from './pages/Homepage';
 import { CategoryPage } from './pages/CategoryPage';
 import { LoginPage } from './pages/LoginPage';
 
-// ... (existing imports)
+// Store & Data
+import { useCartStore } from './src/store/cartStore';
 
-// ...
+// Backend Pages
+import AdminLogin from './admin/AdminLogin';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/AdminDashboard';
+import ProductList from './admin/ProductList';
+import ProductForm from './admin/ProductForm';
+import FulfillmentLogin from './fulfillment/FulfillmentLogin';
+import FulfillmentLayout from './fulfillment/FulfillmentLayout';
+import FulfillmentDashboard from './fulfillment/FulfillmentDashboard';
 
-<Routes>
-  <Route path="/" element={<><Header /><Homepage /><Footer /></>} />
-  <Route path="/products/:id" element={<><Header /><ProductDetail /><Footer /></>} />
+gsap.registerPlugin(ScrollTrigger);
 
-  {/* New Pages */}
-  <Route path="/category/:category" element={<><Header /><CategoryPage /><Footer /></>} />
-  <Route path="/login" element={<><Header /><LoginPage /><Footer /></>} />
-  <Route path="/register" element={<><Header /><LoginPage /><Footer /></>} />
+const App: React.FC = () => {
+  const { isOpen, items, getCartTotal, toggleCart, clearCart } = useCartStore();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  <Route path="/admin-panel0/login" element={<AdminLogin />} />
-  <Route path="/admin-panel0" element={<AdminLayout />}>
-    <Route index element={<AdminDashboard />} />
-    <Route path="products" element={<ProductList />} />
-    <Route path="products/new" element={<ProductForm />} />
-    <Route path="products/:id" element={<ProductForm />} />
-  </Route>
-  <Route path="/fulfillment" element={<FulfillmentLogin />} />
-  <Route path="/fulfillment" element={<FulfillmentLayout />}>
-    <Route path="dashboard" element={<FulfillmentDashboard />} />
-  </Route>
-</Routes>
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }, []);
 
-{/* Cart Drawer - Minimalist */ }
+  return (
+    <div className="bg-white min-h-screen text-black font-body selection:bg-black selection:text-white">
+      <Routes>
+        <Route path="/" element={<><Header /><Homepage /><Footer /></>} />
+        <Route path="/products/:id" element={<><Header /><ProductDetail /><Footer /></>} />
+
+        {/* New Pages */}
+        <Route path="/category/:category" element={<><Header /><CategoryPage /><Footer /></>} />
+        <Route path="/login" element={<><Header /><LoginPage /><Footer /></>} />
+        <Route path="/register" element={<><Header /><LoginPage /><Footer /></>} />
+
+        <Route path="/admin-panel0/login" element={<AdminLogin />} />
+        <Route path="/admin-panel0" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<ProductList />} />
+          <Route path="products/new" element={<ProductForm />} />
+          <Route path="products/:id" element={<ProductForm />} />
+        </Route>
+        <Route path="/fulfillment" element={<FulfillmentLogin />} />
+        <Route path="/fulfillment" element={<FulfillmentLayout />}>
+          <Route path="dashboard" element={<FulfillmentDashboard />} />
+        </Route>
+      </Routes>
+
+      {/* Cart Drawer - Minimalist */}
       <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isOpen ? 'visible' : 'invisible'}`}>
         <div onClick={toggleCart} className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0'}`} />
         <div className={`absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
@@ -87,7 +123,7 @@ import { LoginPage } from './pages/LoginPage';
         orderNotes=""
       />
       <OrderSuccessOverlay isOpen={showSuccess} onClose={() => setShowSuccess(false)} order={null} />
-    </div >
+    </div>
   );
 };
 

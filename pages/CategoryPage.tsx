@@ -54,11 +54,24 @@ export const CategoryPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6">
                     {PRODUCTS.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard
+                            key={product.id}
+                            product={{
+                                ...product,
+                                price: parseInt(product.price.replace(/[^0-9]/g, ''))
+                            }}
+                        />
                     ))}
                     {/* Duplicate to fill space if needed */}
                     {PRODUCTS.map((product) => (
-                        <ProductCard key={`${product.id}-dup`} product={{ ...product, id: `${product.id}-dup` }} />
+                        <ProductCard
+                            key={`${product.id}-dup`}
+                            product={{
+                                ...product,
+                                id: `${product.id}-dup`,
+                                price: parseInt(product.price.replace(/[^0-9]/g, ''))
+                            }}
+                        />
                     ))}
                 </div>
             </div>
