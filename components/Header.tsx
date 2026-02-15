@@ -18,13 +18,20 @@ export const Header: React.FC = () => {
                     - text-[9px]: Ensures fit on small screens
                     - gap-3: Tight spacing
                 */}
-                <div className="flex flex-row justify-between items-center py-3 md:py-4 text-[9px] md:text-sm font-bold uppercase tracking-tight border-b border-black whitespace-nowrap">
+                <div className="flex flex-row justify-between items-center py-3 md:py-4 text-[9px] md:text-sm font-bold uppercase tracking-tight border-b border-black whitespace-nowrap relative">
                     {/* Left: Collections */}
                     <div className="flex gap-3 md:gap-10">
                         <Link to="/" className="hover:text-gray-500 transition-colors">Man</Link>
                         <Link to="/" className="hover:text-gray-500 transition-colors">Woman</Link>
                         <Link to="/" className="hover:text-gray-500 transition-colors">Kids</Link>
                     </div>
+
+                    {/* Center: Tiny Logo */}
+                    <img
+                        src="/logo1.png"
+                        alt="Threada Tiny"
+                        className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-10 md:h-14 w-auto object-contain brightness-0"
+                    />
 
                     {/* Right: Utilities */}
                     <div className="flex gap-3 md:gap-10">
