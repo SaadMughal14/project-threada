@@ -1,12 +1,15 @@
 import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
     const itemCount = getItemCount();
     const [isScrolled, setIsScrolled] = React.useState(false);
     const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+
+    const location = useLocation();
+    const pathname = location.pathname;
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -15,6 +18,42 @@ export const Header: React.FC = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const getNavLinks = () => {
+        if (pathname.includes('/category/man')) {
+            return (
+                <>
+                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                </>
+            );
+        } else if (pathname.includes('/category/woman')) {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                </>
+            );
+        } else if (pathname.includes('/category/kids')) {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                </>
+            );
+        }
+    };
 
     return (
         <header
@@ -34,26 +73,17 @@ export const Header: React.FC = () => {
                 <div className={`flex flex-row justify-between items-center transition-all duration-300 ${isScrolled ? 'py-3 border-b border-black' : 'py-3 md:py-4 border-b border-black'} text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative`}>
                     {/* Left: Collections */}
                     <div className="flex gap-3 md:gap-10">
-                        <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
-                        <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
-                        <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                        {getNavLinks()}
                     </div>
 
                     {/* Center: Tiny Logo */}
-                    {/* 
-                        Logic: 
-                        - ALWAYS CENTERED via absolute positioning.
-                        - HIDDEN AT TOP (opacity-0).
-                        - VISIBLE ON SCROLL (opacity-100).
-                        - Applies to BOTH Mobile and Desktop.
-                    */}
-                    <img
-                        src="/logo1.png"
-                        alt="Threada Tiny"
-                        className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto object-contain brightness-0 transition-opacity duration-300 ease-in-out pointer-events-none 
-                            ${isScrolled ? 'h-9 md:h-10 opacity-100 pointer-events-auto' : 'h-8 md:h-12 opacity-0 pointer-events-none'}
-                        `}
-                    />
+                    <Link to="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                        <img
+                            src="/logo1.png"
+                            alt="Threada Tiny"
+                            className="h-9 md:h-10 w-auto object-contain brightness-0"
+                        />
+                    </Link>
 
                     {/* Right: Utilities */}
                     <div className="flex gap-3 md:gap-10 items-center">

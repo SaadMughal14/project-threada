@@ -63,7 +63,7 @@ export const CategoryPage: React.FC = () => {
                     </div>
                     <div>
                         <p className="font-mono text-xs md:text-sm text-gray-500 leading-relaxed">
-                            Our {categoryTitle} collection embodies the Threada philosophy of "Sculpted by Heat."
+                            Our {categoryTitle} collection embodies the Threada philosophy.
                             We prioritize materials that breathe, move, and endure. From the molecular structure of our
                             textiles to the architectural cut of our silhouettes, every piece is designed to be a
                             foundational element of your personal expression. This is not just fashion; it is

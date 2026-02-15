@@ -152,22 +152,22 @@ const Hero: React.FC = () => {
       <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 pb-20 md:pb-0 short-hero-padding">
         <div className="overflow-hidden w-full flex justify-center">
           <h1 className="hero-title font-display text-hero font-black text-[#1C1C1C] uppercase select-none will-change-transform mix-blend-multiply">
-            GRAVITY
+            THREADA
           </h1>
         </div>
 
         <div className="studio-details flex flex-col items-center mt-4 md:mt-10 text-center space-y-4 md:space-y-8">
           {/* Mobile: Space reserved in GIF negative space / Desktop: Standard Layout */}
           <div className="flex items-center gap-3 md:gap-10 opacity-60 md:opacity-60 w-full justify-center px-4">
-            <span className="font-black uppercase text-[10px] md:text-[14px] tracking-[0.6em] md:tracking-[1em] whitespace-nowrap text-[#1C1C1C]">Sculpted by Heat</span>
+            <span className="font-black uppercase text-[10px] md:text-[14px] tracking-[0.6em] md:tracking-[1em] whitespace-nowrap text-[#1C1C1C]">ESTABLISHED 2026</span>
           </div>
 
           <div className="space-y-2 px-2">
             <p className="font-black text-[#1C1C1C] uppercase text-[12px] md:text-3xl tracking-[0.2em] md:tracking-[0.3em] leading-tight max-w-2xl mx-auto">
-              Defined by gravity.
+              Defined by You.
             </p>
             <p className="hidden md:block text-[#D97B8D] opacity-60 uppercase text-[7px] md:text-[10px] font-black tracking-[0.4em] italic">
-              EST 2025 • ARTISANAL BATCHES
+              SCULPTED BY HEAT • ARTISANAL QUALITY
             </p>
           </div>
         </div>

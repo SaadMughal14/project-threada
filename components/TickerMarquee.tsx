@@ -19,7 +19,7 @@ const TickerMarquee: React.FC = () => {
       <div className="marquee-inner flex font-display text-3xl md:text-7xl lg:text-8xl font-black uppercase text-[#FDFCFB] tracking-tighter items-center">
         <div className="flex items-center gap-12 md:gap-24 px-6 md:px-12">
           <span>BAKED FRESH</span>
-          <span className="text-outline-pink opacity-20">GRAVITY</span>
+          <span className="text-outline-pink opacity-20">THREADA</span>
           <span>HAND-CRAFTED</span>
           <span className="text-[#D97B8D]">EVERY DAY</span>
           <span>PREMIUM</span>
@@ -27,7 +27,7 @@ const TickerMarquee: React.FC = () => {
         </div>
         <div className="flex items-center gap-12 md:gap-24 px-6 md:px-12">
           <span>BAKED FRESH</span>
-          <span className="text-outline-pink opacity-20">GRAVITY</span>
+          <span className="text-outline-pink opacity-20">THREADA</span>
           <span>HAND-CRAFTED</span>
           <span className="text-[#D97B8D]">EVERY DAY</span>
           <span>PREMIUM</span>
