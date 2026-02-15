@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link } from 'react-router-dom';
+import { FloatingCartButton } from './FloatingCartButton';
 
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
@@ -45,12 +46,13 @@ export const Header: React.FC = () => {
                         - HIDDEN AT TOP (opacity-0).
                         - VISIBLE ON SCROLL (opacity-100).
                         - Applies to BOTH Mobile and Desktop.
+                        - Mobile Size: h-9 (was h-6)
                     */}
                     <img
                         src="/logo1.png"
                         alt="Threada Tiny"
                         className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto object-contain brightness-0 transition-opacity duration-300 ease-in-out pointer-events-none 
-                            ${isScrolled ? 'h-6 md:h-10 opacity-100 pointer-events-auto' : 'h-8 md:h-12 opacity-0 pointer-events-none'}
+                            ${isScrolled ? 'h-9 md:h-10 opacity-100 pointer-events-auto' : 'h-8 md:h-12 opacity-0 pointer-events-none'}
                         `}
                     />
 
@@ -59,7 +61,8 @@ export const Header: React.FC = () => {
                         <Link to="/admin-panel0/login" className="hover:text-gray-500 transition-colors">Account</Link>
                         <button className="hover:text-gray-500 transition-colors">Wishlist</button>
                         <button className="hover:text-gray-500 transition-colors">Search</button>
-                        <button onClick={toggleCart} className="hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
+                        {/* Cart hidden on mobile to balance layout (3 items left, 3 right) */}
+                        <button onClick={toggleCart} className="hidden md:block hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
                     </div>
                 </div>
 
@@ -92,6 +95,9 @@ export const Header: React.FC = () => {
                 </div>
 
             </div>
+
+            {/* Draggable Floating Cart (Mobile Only) */}
+            <FloatingCartButton />
         </header>
     );
 };
