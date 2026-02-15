@@ -28,10 +28,10 @@ export const CategoryPage: React.FC = () => {
     // Different cover images based on category
     const getCoverImage = () => {
         switch (normalizedCategory) {
-            case 'man': return "https://images.unsplash.com/photo-1488161628813-99c974fc5bcd?auto=format&fit=crop&q=80&w=2000";
-            case 'woman': return "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=2000";
-            case 'kids': return "https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&q=80&w=2000";
-            default: return "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000";
+            case 'man': return "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&q=80&w=2000";
+            case 'woman': return "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=2000";
+            case 'kids': return "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&q=80&w=2000";
+            default: return "https://images.unsplash.com/photo-1490481651871-61848521577e?auto=format&fit=crop&q=80&w=2000";
         }
     };
 
