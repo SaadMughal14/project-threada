@@ -29,12 +29,13 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Giant Brand Logo - Image Based - Full Width / No Padding */}
-                <div className="overflow-hidden flex justify-center items-center w-full">
+                {/* Giant Brand Logo - Image Based - Full Width / Cropped Height */}
+                {/* Constraining height to ~12-16vw to simulate the text stripe and crop whitespace */}
+                <div className="w-full h-[12vw] md:h-[16vw] overflow-hidden flex justify-center items-center">
                     <img
                         src="/logo1.png"
                         alt="Threada Logo"
-                        className="w-full object-cover mix-blend-multiply grayscale contrast-200"
+                        className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
                     />
                 </div>
             </div>
