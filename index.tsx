@@ -7,11 +7,12 @@ import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
 import ProductList from './admin/ProductList';
 import ProductForm from './admin/ProductForm';
-import KitchenLogin from './kitchen/KitchenLogin';
-import KitchenLayout from './kitchen/KitchenLayout';
-import KitchenDashboard from './kitchen/KitchenDashboard';
+import KitchenLogin from './fulfillment/FulfillmentLogin';
+import KitchenLayout from './fulfillment/FulfillmentLayout';
+import KitchenDashboard from './fulfillment/FulfillmentDashboard';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import './src/index.css';
 
 // Fix for background tab throttling: prevents animations from "jumping" 
 // when the user returns to the tab after a long period.
@@ -74,9 +75,9 @@ root.render(
           <Route path="products/:id" element={<ProductForm />} />
         </Route>
 
-        {/* Kitchen Dashboard */}
-        <Route path="/kitchen" element={<KitchenLogin />} />
-        <Route path="/kitchen" element={<KitchenLayout />}>
+        {/* Fulfillment Dashboard */}
+        <Route path="/fulfillment" element={<KitchenLogin />} />
+        <Route path="/fulfillment" element={<KitchenLayout />}>
           <Route path="dashboard" element={<KitchenDashboard />} />
         </Route>
       </Routes>
