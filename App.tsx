@@ -279,7 +279,7 @@ const App: React.FC = () => {
     <div className="relative w-full min-h-screen">
       <StatusBar activeOrder={activeOrder} onShowReceipt={() => setShowSuccess(true)} />
 
-      <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 py-1.5 md:py-2 flex justify-between items-center ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
+      <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-4 md:px-12 h-[52px] md:h-auto md:py-2 flex justify-between items-center ${activeOrder ? 'mt-8 md:mt-10' : ''} ${scrolled ? 'bg-[#FDFCFB]/95 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'}`}>
         <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <CookieLogo />
           <span className="font-display font-black text-lg md:text-2xl tracking-tighter uppercase transition-colors">
