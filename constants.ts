@@ -96,7 +96,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$350",
     color: "#E2E8F0",
     materials: ["Mulberry Silk", "Bias Cut"],
-    image: "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1605763240004-7e93b172d754?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -109,7 +109,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$420",
     color: "#18181B",
     materials: ["Virgin Wool", "Silk Lining"],
-    image: "https://images.unsplash.com/photo-1548624149-f321d4d649c2?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -137,7 +137,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$110",
     color: "#475569",
     materials: ["Nylon", "Cotton Ribbing"],
-    image: "https://images.unsplash.com/photo-1519238263496-63536758428a?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1555009365-74760d4b0d72?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -150,7 +150,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$65",
     color: "#F1F5F9",
     materials: ["Organic Cotton", "Fleece Lined"],
-    image: "https://images.unsplash.com/photo-1503919545889-aef6d7e5341c?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1519238263496-63536758428a?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
