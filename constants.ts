@@ -37,7 +37,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$280",
     color: "#64748B",
     materials: ["Nylon Blend", "Water Resistant", "YKK Zippers"],
-    image: "https://images.unsplash.com/photo-1517445312882-68393557e5b5?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -49,7 +49,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$450",
     color: "#0F172A",
     materials: ["Gore-Tex", "Waterproof", "Windproof"],
-    image: "https://images.unsplash.com/photo-1551488852-080175865e57?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -73,7 +73,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$180",
     color: "#000000",
     materials: ["Full Grain Leather", "Suede Lining"],
-    image: "https://images.unsplash.com/photo-1590874103328-3603713054e2?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   }
 ];

@@ -131,7 +131,7 @@ const Homepage = () => {
           </div>
           {/* Card 2 */}
           <div className="relative group overflow-hidden h-[500px]">
-            <img src="https://images.unsplash.com/photo-1529139574466-a302c27e3844?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-white p-5 flex justify-between items-center border-t border-gray-100">
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-gray-400">02</span>
@@ -157,7 +157,7 @@ const Homepage = () => {
           </div>
           {/* Card 4 */}
           <div className="relative group overflow-hidden h-[400px]">
-            <img src="https://images.unsplash.com/photo-1485230948943-b26a8d626ef9?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-5 flex justify-between items-center">
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-gray-400">04</span>
