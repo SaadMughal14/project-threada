@@ -408,7 +408,7 @@ const App: React.FC = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(217,123,141,0.05)_0%,transparent_70%)] pointer-events-none"></div>
           <div className="px-6 md:px-12">
             <h2 className="font-display text-[7vw] md:text-[4vw] text-white uppercase font-black tracking-tighter leading-none relative z-10">
-              FRESH COOKIES.<br /><span className="text-[#D97B8D]">BAKED DAILY.</span>
+              FRESH GOODNESS.<br /><span className="text-[#D97B8D]">BAKED DAILY.</span>
             </h2>
           </div>
         </section>
