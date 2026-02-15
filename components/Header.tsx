@@ -5,11 +5,23 @@ import { Link } from 'react-router-dom';
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
     const itemCount = getItemCount();
+    const [isScrolled, setIsScrolled] = React.useState(false);
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <header className="w-full bg-white z-50 relative pt-2 pb-2">
+        <header
+            className={`sticky top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md pt-0 pb-0 shadow-sm' : 'bg-white pt-2 pb-2'
+                }`}
+        >
             {/* Main Container */}
-            <div className="max-w-[1400px] mx-auto px-4 md:px-12 border-b-4 border-black">
+            <div className={`max-w-[1400px] mx-auto px-4 md:px-12 transition-all duration-300 ${isScrolled ? 'border-b-0' : 'border-b-4 border-black'}`}>
 
                 {/* 
                     NAVBAR: Single Line on Mobile & Desktop (FORCED)
@@ -18,7 +30,7 @@ export const Header: React.FC = () => {
                     - text-[9px]: Ensures fit on small screens
                     - gap-3: Tight spacing
                 */}
-                <div className="flex flex-row justify-between items-center py-3 md:py-4 text-[9px] md:text-sm font-bold uppercase tracking-tight border-b border-black whitespace-nowrap relative">
+                <div className={`flex flex-row justify-between items-center transition-all duration-300 ${isScrolled ? 'py-3 border-b border-black' : 'py-3 md:py-4 border-b border-black'} text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative`}>
                     {/* Left: Collections */}
                     <div className="flex gap-3 md:gap-10">
                         <Link to="/" className="hover:text-gray-500 transition-colors">Man</Link>
@@ -27,10 +39,19 @@ export const Header: React.FC = () => {
                     </div>
 
                     {/* Center: Tiny Logo */}
+                    {/* 
+                        Logic: 
+                        - ALWAYS CENTERED via absolute positioning.
+                        - HIDDEN AT TOP (opacity-0).
+                        - VISIBLE ON SCROLL (opacity-100).
+                        - Applies to BOTH Mobile and Desktop.
+                    */}
                     <img
                         src="/logo1.png"
                         alt="Threada Tiny"
-                        className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-10 md:h-14 w-auto object-contain brightness-0"
+                        className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto object-contain brightness-0 transition-opacity duration-300 ease-in-out pointer-events-none 
+                            ${isScrolled ? 'h-6 md:h-10 opacity-100 pointer-events-auto' : 'h-8 md:h-12 opacity-0 pointer-events-none'}
+                        `}
                     />
 
                     {/* Right: Utilities */}
@@ -45,15 +66,11 @@ export const Header: React.FC = () => {
                 {/* 
                     SPLIT LAYOUT STRATEGY: 
                     Two separate visual blocks. One for Mobile, One for Desktop.
+                    COLLAPSE ON SCROLL
                 */}
 
                 {/* MOBILE LOGO (Visible only on mobile) */}
-                {/* 
-                    - block md:hidden: Shows only on mobile
-                    - h-[18vw]: Specific mobile height ratio
-                    - object-cover: Fills/Stretches to remove whitespace
-                */}
-                <div className="block md:hidden w-full overflow-hidden py-4">
+                <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                     <div className="w-full h-[18vw] flex justify-center items-center">
                         <img
                             src="/logo1.png"
@@ -64,12 +81,7 @@ export const Header: React.FC = () => {
                 </div>
 
                 {/* DESKTOP LOGO (Visible only on md+) */}
-                {/* 
-                    - hidden md:block: Shows only on desktop
-                    - h-[14vw]: Specific desktop height ratio
-                    - object-cover: Fills/Stretches
-                */}
-                <div className="hidden md:block w-full overflow-hidden">
+                <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
                     <div className="w-full aspect-[100/22] flex justify-center items-center">
                         <img
                             src="/logo1.png"
