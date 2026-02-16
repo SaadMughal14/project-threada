@@ -33,22 +33,26 @@ const LogoAnimation = () => {
         hidden: {},
         visible: {
             transition: {
-                staggerChildren: 0.05,
+                staggerChildren: 0.1, // Slower bleed
             },
         },
     };
 
     const letterVariants = {
         hidden: {
-            y: 25,
+            y: 10,
             opacity: 0,
+            scale: 1.1,
+            filter: "blur(12px)",
         },
         visible: {
             y: 0,
             opacity: 1,
+            scale: 1,
+            filter: "blur(0px)",
             transition: {
-                duration: 0.9,
-                ease: [0.16, 1, 0.3, 1] as const,
+                duration: 1.4,
+                ease: [0.22, 1, 0.36, 1] as const,
             },
         },
     };
