@@ -144,30 +144,34 @@ export const Header: React.FC = () => {
                     SPLIT LAYOUT STRATEGY: 
                     Two separate visual blocks. One for Mobile, One for Desktop.
                     COLLAPSE ON SCROLL
+                    
+                    CRITICAL: Only show on Home Page ('/')
                 */}
+                {pathname === '/' && (
+                    <>
+                        {/* MOBILE LOGO (Visible only on mobile) */}
+                        <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
+                            <div className="w-full h-[18vw] flex justify-center items-center">
+                                <img
+                                    src="/logo1.png"
+                                    alt="Threada Logo Mobile"
+                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
+                                />
+                            </div>
+                        </div>
 
-                {/* MOBILE LOGO (Visible only on mobile) */}
-                <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
-                    <div className="w-full h-[18vw] flex justify-center items-center">
-                        <img
-                            src="/logo1.png"
-                            alt="Threada Logo Mobile"
-                            className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                        />
-                    </div>
-                </div>
-
-                {/* DESKTOP LOGO (Visible only on md+) */}
-                <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
-                    <div className="w-full aspect-[100/22] flex justify-center items-center">
-                        <img
-                            src="/logo1.png"
-                            alt="Threada Logo Desktop"
-                            className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                        />
-                    </div>
-                </div>
-
+                        {/* DESKTOP LOGO (Visible only on md+) */}
+                        <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
+                            <div className="w-full aspect-[100/22] flex justify-center items-center">
+                                <img
+                                    src="/logo1.png"
+                                    alt="Threada Logo Desktop"
+                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </header>
     );
