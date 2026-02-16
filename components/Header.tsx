@@ -145,33 +145,33 @@ export const Header: React.FC = () => {
         if (pathname.includes('/category/man')) {
             return (
                 <>
-                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
                 </>
             );
         } else if (pathname.includes('/category/woman')) {
             return (
                 <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
-                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
                 </>
             );
         } else if (pathname.includes('/category/kids')) {
             return (
                 <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
-                    <Link to="/" className="hover:text-gray-500 transition-colors">Home</Link>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
                 </>
             );
         } else {
             return (
                 <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors">Man</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors">Woman</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors">Kids</Link>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
                 </>
             );
         }
@@ -219,7 +219,7 @@ export const Header: React.FC = () => {
 
                     {/* Right: Utilities */}
                     <div className="flex gap-3 md:gap-10 items-center">
-                        <Link to="/login" className="hover:text-gray-500 transition-colors">Account</Link>
+                        <Link to="/login" className="hover:text-gray-500 transition-colors font-bold">Account</Link>
                         {/* Wishlist Removed for Balance */}
 
                         {/* Search Dropdown Trigger */}
