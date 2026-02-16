@@ -294,14 +294,13 @@ export const Header: React.FC = () => {
                 </div>
 
                 {/* 
-                    COLLAPSIBLE HERO LOGO
-                    Only on Home Page
+                    COLLAPSIBLE HERO LOGO - Absolute Overlay
+                    Only on Home Page. Absolute positioning ensures it doesn't push the hero image down.
                 */}
                 {pathname === '/' && (
                     <motion.div
-                        className="w-full overflow-hidden"
+                        className="absolute inset-x-0 top-0 pointer-events-none z-0"
                         style={{
-                            maxHeight: bigLogoMaxHeight,
                             opacity: bigLogoOpacity,
                             scale: bigLogoScale,
                             y: bigLogoY,
