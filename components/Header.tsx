@@ -58,22 +58,15 @@ const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValu
 
     const variants = {
         hidden: {
+            y: 25,
             opacity: 0,
-            rotateX: 90,
-            y: 100,
-            z: -500,
-            filter: "blur(15px)",
         },
         visible: {
-            opacity: 1,
-            rotateX: 0,
             y: 0,
-            z: 0,
-            filter: "blur(0px)",
+            opacity: 1,
             transition: {
-                type: "spring",
-                damping: 18,
-                stiffness: 80,
+                duration: 0.9,
+                ease: [0.16, 1, 0.3, 1],
             },
         },
     };
@@ -126,7 +119,6 @@ const LogoAnimation = () => {
         visible: {
             transition: {
                 staggerChildren: 0.05,
-                delayChildren: 0.1,
             },
         },
     };
