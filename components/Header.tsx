@@ -143,8 +143,8 @@ export const Header: React.FC = () => {
     // Fade in white background and blur
     // Header Background & Height
     // Fade in white background and blur
-    const headerBgOpacity = useTransform(scrollY, [0, 300], [0, 0.95]);
-    const headerBackdropBlur = useTransform(scrollY, [0, 300], ["blur(0px)", "blur(12px)"]);
+    const headerBgOpacity = useTransform(scrollY, [250, 300], [0, 0.95]); // Only appear when barely navbar
+    const headerBackdropBlur = useTransform(scrollY, [250, 300], ["blur(0px)", "blur(12px)"]);
     const headerBorderOpacity = useTransform(scrollY, [0, 50], [1, 0]); // Fade out border quickly
     const headerShadowOpacity = useTransform(scrollY, [250, 300], [0, 0.1]);
 
