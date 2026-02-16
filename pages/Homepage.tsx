@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 
+import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
+import { LifestyleQuote } from '../components/LifestyleQuote';
+
 export const Homepage = () => {
     const today = new Date();
     const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace('/', '.');
@@ -87,68 +90,11 @@ export const Homepage = () => {
                 </div>
             </section>
 
-            {/* Fashion Category - Asymmetrical Grid */}
-            <section className="mb-24">
-                <div className="border-t-[1.5px] border-black mb-6"></div>
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Fashion Category</h2>
-                    <div className="text-xs font-bold uppercase border border-gray-300 px-4 py-2 rounded-full cursor-pointer hover:border-black transition-colors flex items-center gap-2">
-                        Men's Fashion <span className="text-[10px]">▼</span>
-                    </div>
-                </div>
+            {/* Full Width Lifestyle Quote */}
+            <LifestyleQuote />
 
-                {/* Row 1 */}
-                <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-8 mb-10 border-b border-gray-200 pb-10">
-                    {/* Card 1 */}
-                    <div className="relative group overflow-hidden h-[500px]">
-                        <img src="/cat-summer.png" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-x-0 bottom-0 bg-white p-5 flex justify-between items-center border-t border-gray-100">
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-400">01</span>
-                                <span className="text-base font-bold uppercase">Summer Style</span>
-                            </div>
-                            <span className="text-sm font-bold uppercase">Explore ↗</span>
-                        </div>
-                    </div>
-                    {/* Card 2 */}
-                    <div className="relative group overflow-hidden h-[500px]">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-x-0 bottom-0 bg-white p-5 flex justify-between items-center border-t border-gray-100">
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-400">02</span>
-                                <span className="text-base font-bold uppercase">Art of Beat</span>
-                            </div>
-                            <span className="text-sm font-bold uppercase">Explore ↗</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Row 2 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Card 3 */}
-                    <div className="relative group overflow-hidden h-[400px]">
-                        <img src="/cat-street.png" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-5 flex justify-between items-center">
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-400">03</span>
-                                <span className="text-base font-bold uppercase">Street Style</span>
-                            </div>
-                            <span className="text-sm font-bold uppercase">Explore ↗</span>
-                        </div>
-                    </div>
-                    {/* Card 4 */}
-                    <div className="relative group overflow-hidden h-[400px]">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-5 flex justify-between items-center">
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-400">04</span>
-                                <span className="text-base font-bold uppercase">Classic Elegant</span>
-                            </div>
-                            <span className="text-sm font-bold uppercase">Explore ↗</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* Fashion Category - Asymmetrical Grid with Editorial Numbering */}
+            <FashionCategoryGrid />
 
         </main>
     );
