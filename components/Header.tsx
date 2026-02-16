@@ -154,12 +154,12 @@ export const Header: React.FC = () => {
     const bigLogoScale = useTransform(scrollY, [0, 150], [1, 0.8]);
     const bigLogoY = useTransform(scrollY, [0, 150], [0, -50]);
     // Max Height collapse: Sync with opacity to pull layout up seamlessly
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 200], ["50vh", "0vh"]);
+    const bigLogoMaxHeight = useTransform(scrollY, [0, 150], ["50vh", "0vh"]);
 
     // Tiny Logo Transitions (Fade in & Slide Up)
     // Starts appearing as big logo is mostly gone
-    const tinyLogoOpacity = useTransform(scrollY, [100, 200], [0, 1]);
-    const tinyLogoY = useTransform(scrollY, [100, 200], [12, 0]); // Reduced travel to keep it "inside margins"
+    const tinyLogoOpacity = useTransform(scrollY, [100, 150], [0, 1]);
+    const tinyLogoY = useTransform(scrollY, [100, 150], [12, 0]); // Reduced travel to keep it "inside margins"
 
     // Pointer events helper to prevent clicking invisible tiny logo
 
