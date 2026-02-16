@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -30,6 +31,7 @@ export const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
     const location = useLocation();
+    const navigate = useNavigate();
     const pathname = location.pathname;
 
     React.useEffect(() => {
@@ -92,13 +94,27 @@ export const Header: React.FC = () => {
                     - gap-3: Tight spacing
                 */}
                 <div className={`flex flex-row justify-between items-center transition-all duration-300 ${isScrolled ? 'py-3 border-b border-black' : 'py-3 md:py-4 border-b border-black'} text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative`}>
-                    {/* Left: Collections */}
-                    <div className="flex gap-3 md:gap-10">
+                    {/* Left: Collections & Back Arrow */}
+                    <div className="flex gap-3 md:gap-10 items-center">
+                        {pathname !== '/' && (
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="hover:text-gray-500 transition-colors"
+                                aria-label="Go Back"
+                            >
+                                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                            </button>
+                        )}
                         {getNavLinks()}
                     </div>
 
                     {/* Center: Tiny Logo */}
-                    <Link to="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                    {/* 
+                        Logic: 
+                        - If on Home ('/'): Show only when scrolled (opacity-0 -> opacity-100)
+                        - If NOT on Home: ALWAYS visible (opacity-100)
+                    */}
+                    <Link to="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ease-in-out ${pathname !== '/' || isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                         <img
                             src="/logo1.png"
                             alt="Threada Tiny"
