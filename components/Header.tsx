@@ -162,11 +162,8 @@ export const Header: React.FC = () => {
     const tinyLogoY = useTransform(scrollY, [100, 200], [20, 0]);
 
     // Pointer events helper to prevent clicking invisible tiny logo
+
     const [tinyLogoPointerEvents, setTinyLogoPointerEvents] = React.useState<'none' | 'auto'>('none');
-
-    import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-
-    // ... (skipping unchanged lines)
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setTinyLogoPointerEvents(latest > 100 ? 'auto' : 'none');
