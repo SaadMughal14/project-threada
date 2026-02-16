@@ -65,7 +65,7 @@ const LogoAnimation = () => {
                 <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="font-logoza text-[24vw] md:text-[17.5vw] leading-[0.8] inline-block text-black scale-x-110 origin-center"
+                    className="font-logoza text-[27vw] md:text-[19.5vw] leading-[0.65] inline-block text-black scale-x-110 origin-center"
                 >
                     {letter}
                 </motion.span>
@@ -261,14 +261,14 @@ export const Header: React.FC = () => {
                 {pathname === '/' && (
                     <>
                         {/* MOBILE LOGO (Visible only on mobile) */}
-                        <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[40vh] opacity-100 py-6'}`}>
+                        <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[40vh] opacity-100 py-2'}`}>
                             <div className="w-full flex justify-center items-center">
                                 <LogoAnimation />
                             </div>
                         </div>
 
                         {/* DESKTOP LOGO (Visible only on md+) */}
-                        <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[50vh] opacity-100 py-8'}`}>
+                        <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[50vh] opacity-100 py-4'}`}>
                             <div className="w-full flex justify-center items-center">
                                 <LogoAnimation />
                             </div>
