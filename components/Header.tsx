@@ -43,7 +43,7 @@ const LogoAnimation = () => {
             y: 10,
             opacity: 0,
             scale: 1.1,
-            filter: "blur(12px)",
+            filter: "blur(8px)",
         },
         visible: {
             y: 0,
