@@ -68,7 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     <h3 className="font-heading font-black text-sm uppercase tracking-wide text-black leading-none">
                         {product.name}
                     </h3>
-                    <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest">
+                    <p className="font-mono text-[9px] text-gray-600 uppercase tracking-widest">
                         {product.category}
                     </p>
                 </div>

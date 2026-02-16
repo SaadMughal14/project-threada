@@ -31,8 +31,8 @@ export const Footer: React.FC = () => {
 
                 {/* Management */}
                 <div>
-                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Management</h4>
-                    <ul className="space-y-3 text-xs text-gray-400">
+                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Management</h4>
+                    <ul className="space-y-3 text-xs text-gray-300">
                         <li onClick={() => openModal('Features', 'Explore our cutting-edge features designed for modern living.')} className="hover:text-white transition-colors cursor-pointer">Features</li>
                         <li onClick={() => openModal('Blog', 'Read our latest stories, style guides, and design philosophy.')} className="hover:text-white transition-colors cursor-pointer">Blog</li>
                         <li onClick={() => openModal('Careers', 'Join our team. We are looking for creative minds.')} className="hover:text-white transition-colors cursor-pointer">Careers</li>
@@ -42,8 +42,8 @@ export const Footer: React.FC = () => {
 
                 {/* Minimalist */}
                 <div>
-                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Minimalist</h4>
-                    <ul className="space-y-3 text-xs text-gray-400">
+                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Minimalist</h4>
+                    <ul className="space-y-3 text-xs text-gray-300">
                         <Link to="/category/classic" className="block hover:text-white transition-colors">Classic</Link>
                         <Link to="/category/retro" className="block hover:text-white transition-colors">Retro</Link>
                         <Link to="/category/modern" className="block hover:text-white transition-colors">Modern</Link>
@@ -54,25 +54,25 @@ export const Footer: React.FC = () => {
 
                 {/* Contact */}
                 <div>
-                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Contact Us</h4>
-                    <p className="text-xs mb-6 text-gray-400">hello@threada.com</p>
+                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Contact Us</h4>
+                    <p className="text-xs mb-6 text-gray-300">hello@threada.com</p>
 
-                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Newsletter</h4>
-                    <p className="text-[10px] text-gray-400 mb-4 tracking-wider">SUBSCRIBE FOR EARLY ACCESS TO COLLECTIONS.</p>
+                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Newsletter</h4>
+                    <p className="text-[10px] text-gray-300 mb-4 tracking-wider">SUBSCRIBE FOR EARLY ACCESS TO COLLECTIONS.</p>
                     <form className="flex border-b border-white/20 pb-2" onSubmit={(e) => e.preventDefault()}>
                         <input
                             type="email"
                             placeholder="EMAIL ADDRESS"
-                            className="bg-transparent border-none text-xs text-white placeholder-gray-600 focus:outline-none w-full uppercase"
+                            className="bg-transparent border-none text-xs text-white placeholder-gray-500 focus:outline-none w-full uppercase"
                         />
-                        <button type="submit" className="text-gray-400 hover:text-white transition-colors">
+                        <button type="submit" className="text-gray-300 hover:text-white transition-colors">
                             →
                         </button>
                     </form>
                 </div>
             </div>
 
-            <div className="flex justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest">
+            <div className="flex justify-between items-center text-[10px] text-gray-400 uppercase tracking-widest">
                 <p>&copy; 2026 Threada • All rights reserved.</p>
                 <div className="flex gap-4">
                     <span onClick={() => openModal('Terms', 'Terms and Conditions applied.')} className="cursor-pointer hover:text-white">Terms and Conditions</span>

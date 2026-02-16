@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
                     {/* Header */}
                     <div className="mb-12">
                         <h1 className="font-heading font-black text-4xl uppercase tracking-tighter mb-2">Account</h1>
-                        <p className="font-mono text-gray-400 text-xs tracking-widest">
+                        <p className="font-mono text-gray-600 text-xs tracking-widest">
                             PLEASE SIGN IN TO ACCESS YOUR EXCLUSIVE BENEFITS.
                         </p>
                     </div>
@@ -33,26 +33,26 @@ export const LoginPage: React.FC = () => {
                     {/* Form */}
                     <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">Email Address</label>
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-700 group-focus-within:text-black transition-colors">Email Address</label>
                             <input
                                 type="email"
                                 required
-                                className="w-full border-b border-gray-300 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent placeholder-gray-300"
+                                className="w-full border-b border-gray-300 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent placeholder-gray-400"
                                 placeholder="NAME@EXAMPLE.COM"
                             />
                         </div>
 
                         <div className="space-y-2 group">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-focus-within:text-black transition-colors">Password</label>
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-700 group-focus-within:text-black transition-colors">Password</label>
                             <input
                                 type="password"
                                 required
-                                className="w-full border-b border-gray-300 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent placeholder-gray-300"
+                                className="w-full border-b border-gray-300 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent placeholder-gray-400"
                                 placeholder="••••••••"
                             />
                         </div>
 
-                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-gray-400 pt-2">
+                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-gray-600 pt-2">
                             <label className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
                                 <input type="checkbox" className="accent-black w-3 h-3" />
                                 Remember Me
@@ -67,7 +67,7 @@ export const LoginPage: React.FC = () => {
 
                     {/* Footer */}
                     <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col items-center gap-4">
-                        <p className="text-xs text-gray-500">NOT A MEMBER YET?</p>
+                        <p className="text-xs text-gray-600">NOT A MEMBER YET?</p>
                         <Link to="/register" className="text-xs font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors">
                             Create an Account
                         </Link>

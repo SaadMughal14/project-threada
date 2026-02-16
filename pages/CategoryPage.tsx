@@ -62,7 +62,7 @@ export const CategoryPage: React.FC = () => {
                         <div className="w-12 h-1 bg-black mb-6"></div>
                     </div>
                     <div>
-                        <p className="font-mono text-xs md:text-sm text-gray-500 leading-relaxed">
+                        <p className="font-mono text-xs md:text-sm text-gray-600 leading-relaxed">
                             Our {categoryTitle} collection embodies the Threada philosophy.
                             We prioritize materials that breathe, move, and endure. From the molecular structure of our
                             textiles to the architectural cut of our silhouettes, every piece is designed to be a
@@ -74,7 +74,7 @@ export const CategoryPage: React.FC = () => {
 
                 {/* Products Header */}
                 <div className="flex justify-between items-center mb-8 border-b border-black pb-4 sticky top-[70px] z-10 bg-white pt-4">
-                    <p className="font-mono text-xs text-gray-400">
+                    <p className="font-mono text-xs text-gray-600">
                         {displayProducts.length} RESULTS
                     </p>
                     <div className="flex gap-6 text-xs font-bold uppercase tracking-widest">
@@ -99,7 +99,7 @@ export const CategoryPage: React.FC = () => {
                 ) : (
                     <div className="py-20 text-center">
                         <p className="text-xl font-heading font-bold uppercase">Coming Soon</p>
-                        <p className="text-sm text-gray-400 mt-2">This collection is currently being curated.</p>
+                        <p className="text-sm text-gray-600 mt-2">This collection is currently being curated.</p>
                     </div>
                 )}
             </div>
