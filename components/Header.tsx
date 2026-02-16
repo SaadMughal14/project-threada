@@ -41,17 +41,20 @@ const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValu
     const x = useTransform(mouseX, (val) => val);
     const y = useTransform(mouseY, (val) => val);
 
-    const rotateX = useTransform(y, [-0.5, 0.5], [25, -25]); // Increased range for drama
-    const rotateY = useTransform(x, [-0.5, 0.5], [-25, 25]);
+    // AMPLIFIED 4D EFFECTS
+    const rotateX = useTransform(y, [-0.5, 0.5], [60, -60]); // Extreme tilt
+    const rotateY = useTransform(x, [-0.5, 0.5], [-50, 50]); // Extreme pan
 
     // Each letter gets its own spring physics, maybe slightly randomized or staggered could be cool,
     // but standard spring is cleaner for now.
-    const smoothRotateX = useSpring(rotateX, { damping: 15, stiffness: 150, mass: 0.8 });
-    const smoothRotateY = useSpring(rotateY, { damping: 15, stiffness: 150, mass: 0.8 });
+    const smoothRotateX = useSpring(rotateX, { damping: 12, stiffness: 120, mass: 1 });
+    const smoothRotateY = useSpring(rotateY, { damping: 12, stiffness: 120, mass: 1 });
 
-    // Parallax translation for "4D" depth
-    const moveX = useTransform(x, [-0.5, 0.5], [-20, 20]);
-    const moveY = useTransform(y, [-0.5, 0.5], [-20, 20]);
+    // Parallax translation for "4D" depth - Loosened up
+    const moveX = useTransform(x, [-0.5, 0.5], [-40, 40]);
+    const moveY = useTransform(y, [-0.5, 0.5], [-40, 40]);
+    const moveZ = useTransform(y, [-0.5, 0.5], [-50, 50]); // Z-axis movement
+    const smoothMoveZ = useSpring(moveZ, { damping: 12, stiffness: 120 });
 
     const variants = {
         hidden: {
@@ -84,9 +87,10 @@ const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValu
                 rotateY: smoothRotateY,
                 x: moveX,
                 y: moveY,
+                z: smoothMoveZ,
                 transformStyle: "preserve-3d",
             }}
-            className="font-logoza text-[21vw] md:text-[16.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
+            className="font-logoza text-[23vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
         >
             {letter}
         </motion.span>
@@ -128,8 +132,9 @@ const LogoAnimation = () => {
     };
 
     return (
+        // REMOVED PADDING HERE for tight fit
         <motion.div
-            className="flex justify-center items-center perspective-[2000px] cursor-default py-4 md:py-8"
+            className="flex justify-center items-center perspective-[2000px] cursor-default py-0"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             variants={containerVariants}
