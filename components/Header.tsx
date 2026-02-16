@@ -2,6 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -168,22 +169,61 @@ export const Header: React.FC = () => {
                         {/* MOBILE LOGO (Visible only on mobile) */}
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
-                                <img
-                                    src="/logo1.png"
-                                    alt="Threada Logo Mobile"
-                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                                />
+                                {/* Use text for consistency if desired, or keep image. Using text for brand consistency */}
+                                <h1 className="font-heading font-black text-4xl tracking-tighter mix-blend-multiply">THREADA</h1>
                             </div>
                         </div>
 
                         {/* DESKTOP LOGO (Visible only on md+) */}
+                        {/* 
+                            ANIMATION LOGIC:
+                            - Staggered entrance on load.
+                            - Only plays once (on mount).
+                            - Does not re-trigger on scroll hide/show because component stays mounted, just CSS hidden.
+                        */}
                         <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
                             <div className="w-full aspect-[100/22] flex justify-center items-center">
-                                <img
-                                    src="/logo1.png"
-                                    alt="Threada Logo Desktop"
-                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                                />
+                                <motion.div
+                                    className="flex overflow-hidden" // Flex container for letters
+                                    initial="hidden"
+                                    animate="visible"
+                                    variants={{
+                                        hidden: { opacity: 0 },
+                                        visible: {
+                                            opacity: 1,
+                                            transition: {
+                                                staggerChildren: 0.08, // 0.08s delay between letters
+                                                delayChildren: 0.2     // Small initial delay
+                                            }
+                                        }
+                                    }}
+                                >
+                                    {"THREADA".split("").map((char, index) => (
+                                        <motion.span
+                                            key={index}
+                                            className="font-heading font-black text-[10vw] leading-none tracking-tighter mix-blend-multiply text-black inline-block"
+                                            variants={{
+                                                hidden: {
+                                                    y: 100,
+                                                    opacity: 0,
+                                                    rotate: 5
+                                                },
+                                                visible: {
+                                                    y: 0,
+                                                    opacity: 1,
+                                                    rotate: 0,
+                                                    transition: {
+                                                        type: "spring",
+                                                        damping: 12,
+                                                        stiffness: 100,
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            {char}
+                                        </motion.span>
+                                    ))}
+                                </motion.div>
                             </div>
                         </div>
                     </>
