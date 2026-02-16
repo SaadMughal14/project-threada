@@ -2,13 +2,50 @@ import React from 'react';
 
 
 export const FashionCategoryGrid = () => {
+    const [selectedCategory, setSelectedCategory] = React.useState("Men's Fashion");
+    const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+    const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const categories = ["Men's Fashion", "Women's Fashion", "Kids' Fashion"];
+
     return (
         <section className="mb-24">
             <div className="border-t-[1.5px] border-black mb-6"></div>
             <div className="flex justify-between items-center mb-10">
                 <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Fashion Category</h2>
-                <div className="text-xs font-bold uppercase border border-gray-300 px-4 py-2 rounded-full cursor-pointer hover:border-black transition-colors flex items-center gap-2">
-                    Men's Fashion <span className="text-[10px]">▼</span>
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="text-xs font-bold uppercase border border-gray-300 px-4 py-2 rounded-full cursor-pointer hover:border-black transition-colors flex items-center gap-2 bg-white"
+                    >
+                        {selectedCategory} <span className={`text-[10px] transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    <div className={`absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-20 transition-all duration-300 origin-top-right ${isDropdownOpen ? 'opacity-100 scale-100 translate-y-0 visible' : 'opacity-0 scale-95 -translate-y-2 invisible'}`}>
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => {
+                                    setSelectedCategory(cat);
+                                    setIsDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-3 text-[10px] font-bold uppercase transition-colors hover:bg-black hover:text-white ${selectedCategory === cat ? 'bg-gray-100' : ''}`}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
