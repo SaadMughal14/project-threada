@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@900&family=Source+Sans+Pro:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 *, ::before, ::after{
   --tw-border-spacing-x: 0;
@@ -1263,10 +1263,6 @@ p,
   max-width: 42rem;
 }
 
-.max-w-4xl{
-  max-width: 56rem;
-}
-
 .max-w-5xl{
   max-width: 64rem;
 }
@@ -2278,7 +2274,7 @@ p,
 }
 
 .font-serif{
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
 }
 
 .text-2xl{
@@ -3605,6 +3601,11 @@ p,
 
   .lg\:text-6xl{
     font-size: 3.75rem;
+    line-height: 1;
+  }
+
+  .lg\:text-7xl{
+    font-size: 4.5rem;
     line-height: 1;
   }
 

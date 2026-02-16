@@ -25,7 +25,7 @@ export const FashionCategoryGrid = () => {
                     </div>
                     {/* Editorial Numbering & Info */}
                     <div className="flex items-center gap-3 border-b border-black pb-2 mb-2">
-                        <span className="text-sm font-body font-bold">01</span>
+                        <span className="font-serif italic font-light text-2xl">01</span>
                         <div className="flex-grow"></div>
                         <span className="text-sm font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore ↗</span>
                     </div>
@@ -43,7 +43,7 @@ export const FashionCategoryGrid = () => {
                     </div>
                     {/* Editorial Numbering & Info */}
                     <div className="flex items-center gap-3 border-b border-black pb-2 mb-2">
-                        <span className="text-sm font-body font-bold">02</span>
+                        <span className="font-serif italic font-light text-2xl">02</span>
                         <div className="flex-grow"></div>
                         <span className="text-sm font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore ↗</span>
                     </div>
@@ -64,7 +64,7 @@ export const FashionCategoryGrid = () => {
                     </div>
                     {/* Editorial Numbering & Info */}
                     <div className="flex items-center gap-3 border-b border-black pb-2 mb-2">
-                        <span className="text-sm font-body font-bold">03</span>
+                        <span className="font-serif italic font-light text-2xl">03</span>
                         <div className="flex-grow"></div>
                         <span className="text-sm font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore ↗</span>
                     </div>
@@ -82,7 +82,7 @@ export const FashionCategoryGrid = () => {
                     </div>
                     {/* Editorial Numbering & Info */}
                     <div className="flex items-center gap-3 border-b border-black pb-2 mb-2">
-                        <span className="text-sm font-body font-bold">04</span>
+                        <span className="font-serif italic font-light text-2xl">04</span>
                         <div className="flex-grow"></div>
                         <span className="text-sm font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore ↗</span>
                     </div>

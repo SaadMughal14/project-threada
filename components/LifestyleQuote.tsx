@@ -16,7 +16,7 @@ export const LifestyleQuote = () => {
 
             {/* Content Container */}
             <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-12 flex justify-center items-center h-full text-center">
-                <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-snug md:leading-tight lg:leading-tight max-w-4xl mx-auto">
+                <h2 className="font-serif italic font-light text-4xl md:text-6xl lg:text-7xl text-white leading-snug md:leading-tight lg:leading-tight max-w-5xl mx-auto tracking-wide">
                     "Threada is a fashion house delivering above-average quality and a wide variety of styles from emerging designers."
                 </h2>
             </div>

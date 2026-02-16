@@ -9,7 +9,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                serif: ['"Playfair Display"', 'serif'],
+                serif: ['"Cormorant Garamond"', 'serif'],
                 heading: ['Inter', 'sans-serif'],
                 body: ['"Source Sans Pro"', 'sans-serif'],
                 brand: ['Outfit', 'sans-serif'],
