@@ -34,7 +34,7 @@
   }
 
   body {
-    @apply bg-white text-black font-body antialiased;
+    @apply bg-white text-black antialiased;
   }
 
   /* Brand Font Utility */
@@ -51,7 +51,6 @@
   h5,
   h6,
   .font-heading {
-    font-family: var(--font-heading);
     @apply font-black tracking-tighter;
   }
 
@@ -61,7 +60,6 @@
   li,
   a,
   .font-body {
-    font-family: var(--font-body);
     @apply font-light tracking-tight;
     line-height: 1.6;
     letter-spacing: 0.01em;
