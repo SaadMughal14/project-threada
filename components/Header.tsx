@@ -2,7 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -29,47 +29,93 @@ const LogoAnimation = () => {
     const title = "THREADA";
     const letters = title.split("");
 
+    // 4D / Interactive Logic
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const { clientX, clientY, currentTarget } = e;
+        const { left, top, width, height } = currentTarget.getBoundingClientRect();
+        const x = (clientX - left) / width - 0.5;
+        const y = (clientY - top) / height - 0.5;
+        mouseX.set(x);
+        mouseY.set(y);
+    };
+
+    const handleMouseLeave = () => {
+        mouseX.set(0);
+        mouseY.set(0);
+    };
+
+    const rotateX = useTransform(mouseY, [-0.5, 0.5], [15, -15]); // Tilt up/down
+    const rotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]); // Tilt left/right
+
+    // Smooth out the movement
+    const smoothRotateX = useSpring(rotateX, { damping: 20, stiffness: 100 });
+    const smoothRotateY = useSpring(rotateY, { damping: 20, stiffness: 100 });
+
     const containerVariants = {
         hidden: {},
         visible: {
             transition: {
-                staggerChildren: 0.08,
+                staggerChildren: 0.1,
+                delayChildren: 0.2, // Wait a bit for layout
             },
         },
     };
 
     const letterVariants = {
         hidden: {
-            y: 40,
             opacity: 0,
+            rotateX: 90,
+            y: 50,
+            filter: "blur(10px)",
         },
         visible: {
-            y: 0,
             opacity: 1,
+            rotateX: 0,
+            y: 0,
+            filter: "blur(0px)",
             transition: {
-                type: "spring" as const,
-                damping: 15,
-                stiffness: 100,
+                type: "spring",
+                damping: 12,
+                stiffness: 80,
             },
         },
     };
 
     return (
         <motion.div
-            className="flex overflow-hidden"
+            className="flex justify-center items-center perspective-[1000px] cursor-default"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
+            style={{
+                perspective: 1000,
+                transformStyle: "preserve-3d",
+            }}
         >
-            {letters.map((letter, index) => (
-                <motion.span
-                    key={index}
-                    variants={letterVariants}
-                    className="font-logoza text-[24vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center"
-                >
-                    {letter}
-                </motion.span>
-            ))}
+            <motion.div
+                className="flex"
+                style={{
+                    rotateX: smoothRotateX,
+                    rotateY: smoothRotateY,
+                    transformStyle: "preserve-3d",
+                }}
+            >
+                {letters.map((letter, index) => (
+                    <motion.span
+                        key={index}
+                        variants={letterVariants}
+                        className="font-logoza text-[24vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-bottom"
+                        style={{ backfaceVisibility: "hidden" }}
+                    >
+                        {letter}
+                    </motion.span>
+                ))}
+            </motion.div>
         </motion.div>
     );
 };
