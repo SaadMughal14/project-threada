@@ -170,7 +170,39 @@ export const Header: React.FC = () => {
     });
 
     const getNavLinks = () => {
-        // ... (unchanged)
+        if (pathname.includes('/category/man')) {
+            return (
+                <>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
+                </>
+            );
+        } else if (pathname.includes('/category/woman')) {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
+                </>
+            );
+        } else if (pathname.includes('/category/kids')) {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
+                </>
+            );
+        }
     };
 
     return (
