@@ -68,7 +68,7 @@ const LogoAnimation = () => {
                 <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="font-logoza text-[23vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
+                    className="font-logoza text-[15vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
                 >
                     {letter}
                 </motion.span>
@@ -117,7 +117,7 @@ const TinyLogoAnimation = () => {
                 <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="font-logoza text-2xl md:text-3xl leading-none inline-block text-black"
+                    className="font-logoza text-xl md:text-3xl leading-none inline-block text-black"
                 >
                     {letter}
                 </motion.span>
@@ -245,12 +245,10 @@ export const Header: React.FC = () => {
 
                     {/* Center: Tiny Logo (Fade In Logic) */}
                     <motion.div
-                        className="absolute left-1/2 top-1/2"
+                        className="absolute left-1/2 top-1/2 transform -translate-x-1/2"
                         style={{
                             opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
-                            y: pathname !== '/' ? 0 : tinyLogoY,
-                            x: "-50%",
-                            translateY: "-50%",
+                            y: pathname !== '/' ? "-50%" : useTransform(tinyLogoY, y => `calc(-50% + ${y}px)`),
                             pointerEvents: pathname !== '/' ? 'auto' : tinyLogoPointerEvents
                         }}
                     >
