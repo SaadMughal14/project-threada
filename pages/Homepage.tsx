@@ -81,9 +81,9 @@ export const Homepage = () => {
                                     className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                                 />
                             </div>
-                            <div className="flex justify-between items-start mt-4 px-1">
-                                <span className="font-heading font-black text-sm uppercase tracking-wide text-black leading-none">{product.name}</span>
-                                <span className="font-mono font-medium text-sm text-black tracking-tighter">{product.price}</span>
+                            <div className="flex justify-between items-center text-sm font-bold uppercase border-b border-gray-300 pb-3">
+                                <span>{product.name}</span>
+                                <span>{product.price}</span>
                             </div>
                         </div>
                     ))}

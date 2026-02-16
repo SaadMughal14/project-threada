@@ -9,8 +9,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                serif: ['"Cormorant Garamond"', 'serif'],
-                logo: ['Logoza', 'sans-serif'],
+                serif: ['"Playfair Display"', 'serif'],
                 heading: ['Inter', 'sans-serif'],
                 body: ['"Source Sans Pro"', 'sans-serif'],
                 brand: ['Outfit', 'sans-serif'],

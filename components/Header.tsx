@@ -2,7 +2,6 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -169,7 +168,6 @@ export const Header: React.FC = () => {
                         {/* MOBILE LOGO (Visible only on mobile) */}
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
-                                {/* Use text for consistency if desired, or keep image. Using text for brand consistency */}
                                 <img
                                     src="/logo1.png"
                                     alt="Threada Logo Mobile"
@@ -181,23 +179,11 @@ export const Header: React.FC = () => {
                         {/* DESKTOP LOGO (Visible only on md+) */}
                         <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
                             <div className="w-full aspect-[100/22] flex justify-center items-center">
-                                <motion.div
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{
-                                        y: 0,
-                                        opacity: 1,
-                                        transition: {
-                                            duration: 0.8,
-                                            ease: [0.22, 1, 0.36, 1] // Custom refined ease (similar to easeOutExpo)
-                                        }
-                                    }}
-                                >
-                                    <img
-                                        src="/logo1.png"
-                                        alt="Threada Logo Desktop"
-                                        className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                                    />
-                                </motion.div>
+                                <img
+                                    src="/logo1.png"
+                                    alt="Threada Logo Desktop"
+                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
+                                />
                             </div>
                         </div>
                     </>
