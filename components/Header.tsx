@@ -65,7 +65,7 @@ const LogoAnimation = () => {
                 <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="font-logoza text-[15vw] md:text-[12vw] leading-[0.70] -my-2 inline-block text-black pt-2 pb-2"
+                    className="font-logoza text-[15vw] md:text-[12vw] leading-[0.85] inline-block text-black pt-2 pb-2"
                 >
                     {letter}
                 </motion.span>
