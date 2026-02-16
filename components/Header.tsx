@@ -143,25 +143,24 @@ export const Header: React.FC = () => {
     // Fade in white background and blur
     // Header Background & Height
     // Fade in white background and blur
-    const headerBgOpacity = useTransform(scrollY, [0, 50], [0, 0.95]);
-    const headerBackdropBlur = useTransform(scrollY, [0, 50], ["blur(0px)", "blur(12px)"]);
-    const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]); // Fade out initial heavy border
-    const headerShadowOpacity = useTransform(scrollY, [40, 60], [0, 0.1]);
+    const headerBgOpacity = useTransform(scrollY, [0, 300], [0, 0.95]);
+    const headerBackdropBlur = useTransform(scrollY, [0, 300], ["blur(0px)", "blur(12px)"]);
+    const headerBorderOpacity = useTransform(scrollY, [0, 50], [1, 0]); // Fade out border quickly
+    const headerShadowOpacity = useTransform(scrollY, [250, 300], [0, 0.1]);
 
     // Padding transition (Large to Compact)
-    const headerPaddingY = useTransform(scrollY, [0, 80], [12, 0]); // px-3 to px-0 approx logic (rem mapped to px)
+    const headerPaddingY = useTransform(scrollY, [0, 300], [12, 0]);
 
     // Big Logo Transitions (Fade out & Collapse)
-    const bigLogoOpacity = useTransform(scrollY, [0, 80], [1, 0]);
-    const bigLogoScale = useTransform(scrollY, [0, 80], [1, 0.8]);
-    const bigLogoY = useTransform(scrollY, [0, 80], [0, -50]);
-    // Max Height collapse: Sync with opacity to pull layout up seamlessly
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 80], ["50vh", "0vh"]);
+    const bigLogoOpacity = useTransform(scrollY, [0, 200], [1, 0]); // Fade out sooner
+    const bigLogoScale = useTransform(scrollY, [0, 300], [1, 0.5]); // Scale down more
+    const bigLogoY = useTransform(scrollY, [0, 300], [0, -100]); // Move up more
+    // Max Height collapse: Slower, more natural match to scroll speed
+    const bigLogoMaxHeight = useTransform(scrollY, [0, 300], ["50vh", "0vh"]);
 
     // Tiny Logo Transitions (Fade in & Slide Up)
-    // Starts appearing as big logo is mostly gone
-    const tinyLogoOpacity = useTransform(scrollY, [60, 80], [0, 1]);
-    const tinyLogoY = useTransform(scrollY, [60, 80], [12, 0]); // Reduced travel to keep it "inside margins"
+    const tinyLogoOpacity = useTransform(scrollY, [200, 300], [0, 1]);
+    const tinyLogoY = useTransform(scrollY, [200, 300], [12, 0]);
 
     // Pointer events helper to prevent clicking invisible tiny logo
 
