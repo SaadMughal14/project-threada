@@ -32,6 +32,13 @@
     font-weight: 400;
   }
 
+  @font-face {
+    font-family: 'Logoza';
+    src: url('/logoza-font/Logoza-nAeZ0.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   /* HEADINGS */
   h1,
   h2,

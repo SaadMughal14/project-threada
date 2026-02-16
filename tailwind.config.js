@@ -10,6 +10,7 @@ export default {
         extend: {
             fontFamily: {
                 serif: ['"Cormorant Garamond"', 'serif'],
+                logo: ['Logoza', 'sans-serif'],
                 heading: ['Inter', 'sans-serif'],
                 body: ['"Source Sans Pro"', 'sans-serif'],
                 brand: ['Outfit', 'sans-serif'],

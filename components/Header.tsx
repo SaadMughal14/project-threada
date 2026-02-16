@@ -170,7 +170,7 @@ export const Header: React.FC = () => {
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
                                 {/* Use text for consistency if desired, or keep image. Using text for brand consistency */}
-                                <h1 className="font-heading font-black text-4xl tracking-tighter mix-blend-multiply">THREADA</h1>
+                                <h1 className="font-logo text-4xl tracking-tighter mix-blend-multiply">THREADA</h1>
                             </div>
                         </div>
 
@@ -201,7 +201,7 @@ export const Header: React.FC = () => {
                                     {"THREADA".split("").map((char, index) => (
                                         <motion.span
                                             key={index}
-                                            className="font-heading font-black text-[10vw] leading-none tracking-tighter mix-blend-multiply text-black inline-block"
+                                            className="font-logo text-[10vw] leading-none tracking-tighter mix-blend-multiply text-black inline-block"
                                             variants={{
                                                 hidden: {
                                                     y: 100,
