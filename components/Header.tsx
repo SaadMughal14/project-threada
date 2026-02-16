@@ -117,7 +117,7 @@ const TinyLogoAnimation = () => {
                 <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="font-logoza text-xl md:text-3xl leading-none inline-block text-black"
+                    className="font-logoza text-lg md:text-3xl leading-none inline-block text-black"
                 >
                     {letter}
                 </motion.span>
@@ -243,19 +243,21 @@ export const Header: React.FC = () => {
                         {getNavLinks()}
                     </div>
 
-                    {/* Center: Tiny Logo (Fade In Logic) */}
-                    <motion.div
-                        className="absolute left-1/2 top-1/2 transform -translate-x-1/2"
-                        style={{
-                            opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
-                            y: pathname !== '/' ? "-50%" : useTransform(tinyLogoY, y => `calc(-50% + ${y}px)`),
-                            pointerEvents: pathname !== '/' ? 'auto' : tinyLogoPointerEvents
-                        }}
-                    >
-                        <Link to="/" className="flex justify-center items-center">
-                            <TinyLogoAnimation />
-                        </Link>
-                    </motion.div>
+                    {/* Center: Tiny Logo (Robust Centering) */}
+                    <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                        <motion.div
+                            style={{
+                                opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
+                                y: pathname !== '/' ? 0 : tinyLogoY,
+                                pointerEvents: (pathname !== '/' ? 'auto' : tinyLogoPointerEvents) as any
+                            }}
+                            className="pointer-events-auto"
+                        >
+                            <Link to="/" className="flex justify-center items-center">
+                                <TinyLogoAnimation />
+                            </Link>
+                        </motion.div>
+                    </div>
 
                     {/* Right: Utilities */}
                     <div className="flex gap-3 md:gap-10 items-center">
