@@ -170,59 +170,33 @@ export const Header: React.FC = () => {
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
                                 {/* Use text for consistency if desired, or keep image. Using text for brand consistency */}
-                                <h1 className="font-logo text-4xl tracking-tighter mix-blend-multiply">THREADA</h1>
+                                <img
+                                    src="/logo1.png"
+                                    alt="Threada Logo Mobile"
+                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
+                                />
                             </div>
                         </div>
 
                         {/* DESKTOP LOGO (Visible only on md+) */}
-                        {/* 
-                            ANIMATION LOGIC:
-                            - Staggered entrance on load.
-                            - Only plays once (on mount).
-                            - Does not re-trigger on scroll hide/show because component stays mounted, just CSS hidden.
-                        */}
                         <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
                             <div className="w-full aspect-[100/22] flex justify-center items-center">
                                 <motion.div
-                                    className="flex overflow-hidden" // Flex container for letters
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={{
-                                        hidden: { opacity: 0 },
-                                        visible: {
-                                            opacity: 1,
-                                            transition: {
-                                                staggerChildren: 0.08, // 0.08s delay between letters
-                                                delayChildren: 0.2     // Small initial delay
-                                            }
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{
+                                        y: 0,
+                                        opacity: 1,
+                                        transition: {
+                                            duration: 0.8,
+                                            ease: [0.22, 1, 0.36, 1] // Custom refined ease (similar to easeOutExpo)
                                         }
                                     }}
                                 >
-                                    {"THREADA".split("").map((char, index) => (
-                                        <motion.span
-                                            key={index}
-                                            className="font-logo text-[10vw] leading-none tracking-tighter mix-blend-multiply text-black inline-block"
-                                            variants={{
-                                                hidden: {
-                                                    y: 100,
-                                                    opacity: 0,
-                                                    rotate: 5
-                                                },
-                                                visible: {
-                                                    y: 0,
-                                                    opacity: 1,
-                                                    rotate: 0,
-                                                    transition: {
-                                                        type: "spring",
-                                                        damping: 12,
-                                                        stiffness: 100,
-                                                    }
-                                                }
-                                            }}
-                                        >
-                                            {char}
-                                        </motion.span>
-                                    ))}
+                                    <img
+                                        src="/logo1.png"
+                                        alt="Threada Logo Desktop"
+                                        className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
+                                    />
                                 </motion.div>
                             </div>
                         </div>
