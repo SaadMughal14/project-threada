@@ -66,7 +66,7 @@ const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValu
             opacity: 1,
             transition: {
                 duration: 0.9,
-                ease: [0.16, 1, 0.3, 1],
+                ease: [0.16, 1, 0.3, 1] as const,
             },
         },
     };
