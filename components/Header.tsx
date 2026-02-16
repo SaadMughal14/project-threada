@@ -2,7 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -164,7 +164,11 @@ export const Header: React.FC = () => {
     // Pointer events helper to prevent clicking invisible tiny logo
     const [tinyLogoPointerEvents, setTinyLogoPointerEvents] = React.useState<'none' | 'auto'>('none');
 
-    React.useMotionValueEvent(scrollY, "change", (latest) => {
+    import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+
+    // ... (skipping unchanged lines)
+
+    useMotionValueEvent(scrollY, "change", (latest) => {
         setTinyLogoPointerEvents(latest > 100 ? 'auto' : 'none');
     });
 
