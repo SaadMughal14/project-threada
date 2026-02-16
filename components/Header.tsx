@@ -2,7 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, MotionValue } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -25,19 +25,89 @@ const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: 
     );
 };
 
+const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValue<number>; mouseY: MotionValue<number> }) => {
+    const ref = React.useRef<HTMLSpanElement>(null);
+
+    // Independent 3D Transforms
+    // We want each letter to rotate based on how far the mouse is from IT, not the center of the word.
+    // However, for a cohesive effect that doesn't look too chaotic, we can use the global mouse position
+    // but dampen/offset it slightly based on index, OR just use the global tracking for a unified "look at" effect.
+    // The user asked for "independent", so let's make them behave like individual physical objects.
+
+    // Calculate distance/angle logic could be complex, but let's start with a highly responsive
+    // separate spring for each letter to give it that "loose" independent feel.
+
+    // We'll use the parent's mouse values but apply individual transforms
+    const x = useTransform(mouseX, (val) => val);
+    const y = useTransform(mouseY, (val) => val);
+
+    const rotateX = useTransform(y, [-0.5, 0.5], [25, -25]); // Increased range for drama
+    const rotateY = useTransform(x, [-0.5, 0.5], [-25, 25]);
+
+    // Each letter gets its own spring physics, maybe slightly randomized or staggered could be cool,
+    // but standard spring is cleaner for now.
+    const smoothRotateX = useSpring(rotateX, { damping: 15, stiffness: 150, mass: 0.8 });
+    const smoothRotateY = useSpring(rotateY, { damping: 15, stiffness: 150, mass: 0.8 });
+
+    // Parallax translation for "4D" depth
+    const moveX = useTransform(x, [-0.5, 0.5], [-20, 20]);
+    const moveY = useTransform(y, [-0.5, 0.5], [-20, 20]);
+
+    const variants = {
+        hidden: {
+            opacity: 0,
+            rotateX: 90,
+            y: 100,
+            z: -500,
+            filter: "blur(15px)",
+        },
+        visible: {
+            opacity: 1,
+            rotateX: 0,
+            y: 0,
+            z: 0,
+            filter: "blur(0px)",
+            transition: {
+                type: "spring",
+                damping: 18,
+                stiffness: 80,
+            },
+        },
+    };
+
+    return (
+        <motion.span
+            ref={ref}
+            variants={variants}
+            style={{
+                rotateX: smoothRotateX,
+                rotateY: smoothRotateY,
+                x: moveX,
+                y: moveY,
+                transformStyle: "preserve-3d",
+            }}
+            className="font-logoza text-[21vw] md:text-[16.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
+        >
+            {letter}
+        </motion.span>
+    );
+};
+
 const LogoAnimation = () => {
     const title = "THREADA";
     const letters = title.split("");
 
-    // 4D / Interactive Logic
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const { clientX, clientY, currentTarget } = e;
         const { left, top, width, height } = currentTarget.getBoundingClientRect();
+
+        // Calculate normalized position -0.5 to 0.5
         const x = (clientX - left) / width - 0.5;
         const y = (clientY - top) / height - 0.5;
+
         mouseX.set(x);
         mouseY.set(y);
     };
@@ -47,75 +117,37 @@ const LogoAnimation = () => {
         mouseY.set(0);
     };
 
-    const rotateX = useTransform(mouseY, [-0.5, 0.5], [15, -15]); // Tilt up/down
-    const rotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]); // Tilt left/right
-
-    // Smooth out the movement
-    const smoothRotateX = useSpring(rotateX, { damping: 20, stiffness: 100 });
-    const smoothRotateY = useSpring(rotateY, { damping: 20, stiffness: 100 });
-
     const containerVariants = {
         hidden: {},
         visible: {
             transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2, // Wait a bit for layout
-            },
-        },
-    };
-
-    const letterVariants = {
-        hidden: {
-            opacity: 0,
-            rotateX: 90,
-            y: 50,
-            filter: "blur(10px)",
-        },
-        visible: {
-            opacity: 1,
-            rotateX: 0,
-            y: 0,
-            filter: "blur(0px)",
-            transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 80,
+                staggerChildren: 0.05,
+                delayChildren: 0.1,
             },
         },
     };
 
     return (
         <motion.div
-            className="flex justify-center items-center perspective-[1000px] cursor-default"
+            className="flex justify-center items-center perspective-[2000px] cursor-default py-4 md:py-8"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             style={{
-                perspective: 1000,
+                perspective: 2000,
                 transformStyle: "preserve-3d",
             }}
         >
-            <motion.div
-                className="flex"
-                style={{
-                    rotateX: smoothRotateX,
-                    rotateY: smoothRotateY,
-                    transformStyle: "preserve-3d",
-                }}
-            >
-                {letters.map((letter, index) => (
-                    <motion.span
-                        key={index}
-                        variants={letterVariants}
-                        className="font-logoza text-[24vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-bottom"
-                        style={{ backfaceVisibility: "hidden" }}
-                    >
-                        {letter}
-                    </motion.span>
-                ))}
-            </motion.div>
+            {letters.map((letter, index) => (
+                <Letter
+                    key={index}
+                    letter={letter}
+                    mouseX={mouseX}
+                    mouseY={mouseY}
+                />
+            ))}
         </motion.div>
     );
 };
