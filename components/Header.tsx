@@ -2,7 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { motion, useMotionValue, useSpring, useTransform, MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -25,38 +25,20 @@ const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: 
     );
 };
 
-const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValue<number>; mouseY: MotionValue<number> }) => {
-    const ref = React.useRef<HTMLSpanElement>(null);
+const LogoAnimation = () => {
+    const title = "THREADA";
+    const letters = title.split("");
 
-    // Independent 3D Transforms
-    // We want each letter to rotate based on how far the mouse is from IT, not the center of the word.
-    // However, for a cohesive effect that doesn't look too chaotic, we can use the global mouse position
-    // but dampen/offset it slightly based on index, OR just use the global tracking for a unified "look at" effect.
-    // The user asked for "independent", so let's make them behave like individual physical objects.
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.05,
+            },
+        },
+    };
 
-    // Calculate distance/angle logic could be complex, but let's start with a highly responsive
-    // separate spring for each letter to give it that "loose" independent feel.
-
-    // We'll use the parent's mouse values but apply individual transforms
-    const x = useTransform(mouseX, (val) => val);
-    const y = useTransform(mouseY, (val) => val);
-
-    // AMPLIFIED 4D EFFECTS
-    const rotateX = useTransform(y, [-0.5, 0.5], [60, -60]); // Extreme tilt
-    const rotateY = useTransform(x, [-0.5, 0.5], [-50, 50]); // Extreme pan
-
-    // Each letter gets its own spring physics, maybe slightly randomized or staggered could be cool,
-    // but standard spring is cleaner for now.
-    const smoothRotateX = useSpring(rotateX, { damping: 12, stiffness: 120, mass: 1 });
-    const smoothRotateY = useSpring(rotateY, { damping: 12, stiffness: 120, mass: 1 });
-
-    // Parallax translation for "4D" depth - Loosened up
-    const moveX = useTransform(x, [-0.5, 0.5], [-40, 40]);
-    const moveY = useTransform(y, [-0.5, 0.5], [-40, 40]);
-    const moveZ = useTransform(y, [-0.5, 0.5], [-50, 50]); // Z-axis movement
-    const smoothMoveZ = useSpring(moveZ, { damping: 12, stiffness: 120 });
-
-    const variants = {
+    const letterVariants = {
         hidden: {
             y: 25,
             opacity: 0,
@@ -72,78 +54,20 @@ const Letter = ({ letter, mouseX, mouseY }: { letter: string; mouseX: MotionValu
     };
 
     return (
-        <motion.span
-            ref={ref}
-            variants={variants}
-            style={{
-                rotateX: smoothRotateX,
-                rotateY: smoothRotateY,
-                x: moveX,
-                y: moveY,
-                z: smoothMoveZ,
-                transformStyle: "preserve-3d",
-            }}
-            className="font-logoza text-[23vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
-        >
-            {letter}
-        </motion.span>
-    );
-};
-
-const LogoAnimation = () => {
-    const title = "THREADA";
-    const letters = title.split("");
-
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const { clientX, clientY, currentTarget } = e;
-        const { left, top, width, height } = currentTarget.getBoundingClientRect();
-
-        // Calculate normalized position -0.5 to 0.5
-        const x = (clientX - left) / width - 0.5;
-        const y = (clientY - top) / height - 0.5;
-
-        mouseX.set(x);
-        mouseY.set(y);
-    };
-
-    const handleMouseLeave = () => {
-        mouseX.set(0);
-        mouseY.set(0);
-    };
-
-    const containerVariants = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.05,
-            },
-        },
-    };
-
-    return (
-        // REMOVED PADDING HERE for tight fit
         <motion.div
-            className="flex justify-center items-center perspective-[2000px] cursor-default py-0"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
+            className="flex justify-center items-center cursor-default py-0"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            style={{
-                perspective: 2000,
-                transformStyle: "preserve-3d",
-            }}
         >
             {letters.map((letter, index) => (
-                <Letter
+                <motion.span
                     key={index}
-                    letter={letter}
-                    mouseX={mouseX}
-                    mouseY={mouseY}
-                />
+                    variants={letterVariants}
+                    className="font-logoza text-[23vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
+                >
+                    {letter}
+                </motion.span>
             ))}
         </motion.div>
     );
