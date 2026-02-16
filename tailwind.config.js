@@ -13,6 +13,7 @@ export default {
                 heading: ['Inter', 'sans-serif'],
                 body: ['"Source Sans Pro"', 'sans-serif'],
                 brand: ['Outfit', 'sans-serif'],
+                logoza: ['Logoza', 'sans-serif'],
             },
             colors: {
                 brand: {

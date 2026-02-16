@@ -2,6 +2,7 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
     const [animate, setAnimate] = React.useState(false);
@@ -23,6 +24,104 @@ const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: 
         </button>
     );
 };
+
+const LogoAnimation = () => {
+    const title = "THREADA";
+    const letters = title.split("");
+
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.08,
+            },
+        },
+    };
+
+    const letterVariants = {
+        hidden: {
+            y: 40,
+            opacity: 0,
+        },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                type: "spring" as const,
+                damping: 15,
+                stiffness: 100,
+            },
+        },
+    };
+
+    return (
+        <motion.div
+            className="flex overflow-hidden"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            {letters.map((letter, index) => (
+                <motion.span
+                    key={index}
+                    variants={letterVariants}
+                    className="font-logoza text-[12vw] md:text-[8vw] leading-none inline-block text-black"
+                >
+                    {letter}
+                </motion.span>
+            ))}
+        </motion.div>
+    );
+};
+
+const TinyLogoAnimation = () => {
+    const title = "THREADA";
+    const letters = title.split("");
+
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.05,
+            },
+        },
+    };
+
+    const letterVariants = {
+        hidden: {
+            y: 20,
+            opacity: 0,
+        },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                type: "spring" as const,
+                damping: 15,
+                stiffness: 100,
+            },
+        },
+    };
+
+    return (
+        <motion.div
+            className="flex overflow-hidden"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            {letters.map((letter, index) => (
+                <motion.span
+                    key={index}
+                    variants={letterVariants}
+                    className="font-logoza text-2xl md:text-3xl leading-none inline-block text-black"
+                >
+                    {letter}
+                </motion.span>
+            ))}
+        </motion.div>
+    )
+}
 
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
@@ -115,11 +214,7 @@ export const Header: React.FC = () => {
                         - If NOT on Home: ALWAYS visible (opacity-100)
                     */}
                     <Link to="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ease-in-out ${pathname !== '/' || isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-                        <img
-                            src="/logo1.png"
-                            alt="Threada Tiny"
-                            className="h-9 md:h-10 w-auto object-contain brightness-0"
-                        />
+                        <TinyLogoAnimation />
                     </Link>
 
                     {/* Right: Utilities */}
@@ -168,22 +263,14 @@ export const Header: React.FC = () => {
                         {/* MOBILE LOGO (Visible only on mobile) */}
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
-                                <img
-                                    src="/logo1.png"
-                                    alt="Threada Logo Mobile"
-                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                                />
+                                <LogoAnimation />
                             </div>
                         </div>
 
                         {/* DESKTOP LOGO (Visible only on md+) */}
                         <div className={`hidden md:block w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-[300px] opacity-100'}`}>
                             <div className="w-full aspect-[100/22] flex justify-center items-center">
-                                <img
-                                    src="/logo1.png"
-                                    alt="Threada Logo Desktop"
-                                    className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
-                                />
+                                <LogoAnimation />
                             </div>
                         </div>
                     </>

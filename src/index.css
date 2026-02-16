@@ -16,6 +16,14 @@
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Source Sans Pro', sans-serif;
     --font-brand: 'Outfit', sans-serif;
+    --font-logoza: 'Logoza', sans-serif;
+  }
+
+  @font-face {
+    font-family: 'Logoza';
+    src: url('/fonts/logoza.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
   }
 
   html {
