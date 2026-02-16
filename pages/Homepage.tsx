@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
-import { motion, useScroll, useTransform } from 'framer-motion';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
@@ -12,15 +11,8 @@ export const Homepage = () => {
     const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace('/', '.');
     const yearStr = today.getFullYear();
 
-    const { scrollY } = useScroll();
-    // Pin the hero section for the first 300px of scroll (matching the header transition)
-    const heroY = useTransform(scrollY, [0, 300], [0, 300]);
-
     return (
-        <motion.main
-            className="max-w-[1400px] mx-auto px-4 md:px-12 pb-20"
-            style={{ y: heroY }}
-        >
+        <main className="max-w-[1400px] mx-auto px-4 md:px-12 pb-20">
 
             {/* Editorial Hero: Text Top / Image Bottom */}
             <section className="mb-20">
@@ -104,6 +96,6 @@ export const Homepage = () => {
             {/* Fashion Category - Asymmetrical Grid with Editorial Numbering */}
             <FashionCategoryGrid />
 
-        </motion.main>
+        </main>
     );
 };
