@@ -2,6 +2,27 @@ import React from 'react';
 import { useCartStore } from '../src/store/cartStore';
 import { Link, useLocation } from 'react-router-dom';
 
+const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
+    const [animate, setAnimate] = React.useState(false);
+
+    React.useEffect(() => {
+        if (itemCount > 0) {
+            setAnimate(true);
+            const timer = setTimeout(() => setAnimate(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [itemCount]);
+
+    return (
+        <button
+            onClick={toggleCart}
+            className={`transition-all duration-300 ${animate ? 'text-black scale-110 font-black' : 'hover:text-gray-500'}`}
+        >
+            Cart ({itemCount})
+        </button>
+    );
+};
+
 export const Header: React.FC = () => {
     const { getItemCount, toggleCart } = useCartStore();
     const itemCount = getItemCount();
@@ -115,7 +136,7 @@ export const Header: React.FC = () => {
                             </div>
                         </div>
 
-                        <button onClick={toggleCart} className="hover:text-gray-500 transition-colors">Cart ({itemCount})</button>
+                        <CartButton itemCount={itemCount} toggleCart={toggleCart} />
                     </div>
                 </div>
 

@@ -23,7 +23,7 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full h-[60vh] md:h-[80vh] overflow-hidden relative group border-b-4 border-black">
+                <div className="w-full h-[60vh] md:h-[80vh] overflow-hidden relative group border-b-[1.5px] border-black">
                     <img
                         src="/hero.png"
                         className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
@@ -34,7 +34,7 @@ export const Homepage = () => {
 
             {/* Best Seller Section */}
             <section className="mb-24">
-                <div className="border-t-4 border-black mb-6"></div> {/* Heavy Line */}
+                <div className="border-t-[1.5px] border-black mb-6"></div> {/* Refined Line */}
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Best Seller</h2>
                     <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-2">
@@ -51,12 +51,13 @@ export const Homepage = () => {
                                 name: product.name,
                                 price: parseInt(product.price.replace(/[^0-9]/g, '')),
                                 image: product.image,
-                                category: product.category
+                                category: product.category,
+                                images: [product.image] // Pass single image as array for now, verifying backend data structure is important though
                             }}
                         />
                     ))}
                 </div>
-                <div className="border-b-4 border-black mt-16"></div> {/* Heavy Line */}
+                <div className="border-b-[1.5px] border-black mt-16"></div> {/* Refined Line */}
             </section>
 
             {/* Latest Arrivals Section */}
@@ -88,7 +89,7 @@ export const Homepage = () => {
 
             {/* Fashion Category - Asymmetrical Grid */}
             <section className="mb-24">
-                <div className="border-t-4 border-black mb-6"></div>
+                <div className="border-t-[1.5px] border-black mb-6"></div>
                 <div className="flex justify-between items-center mb-10">
                     <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Fashion Category</h2>
                     <div className="text-xs font-bold uppercase border border-gray-300 px-4 py-2 rounded-full cursor-pointer hover:border-black transition-colors flex items-center gap-2">

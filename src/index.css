@@ -50,6 +50,8 @@
   a,
   .font-body {
     @apply font-body font-light tracking-tight;
+    line-height: 1.6;
+    letter-spacing: 0.01em; 
   }
 
   .font-bold {

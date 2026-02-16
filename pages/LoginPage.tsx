@@ -15,8 +15,7 @@ export const LoginPage: React.FC = () => {
 
                 {/* Quote or Brand text on image */}
                 <div className="absolute bottom-12 left-12 text-white">
-                    <h2 className="font-heading font-black text-4xl uppercase leading-none mb-2">Join the <br /> Movement</h2>
-                    <p className="font-mono text-xs opacity-80 tracking-widest">SCULPTED BY HEAT</p>
+                    {/* Legacy Text Removed */}
                 </div>
             </div>
 

@@ -57,10 +57,18 @@ export const Footer: React.FC = () => {
                     <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Contact Us</h4>
                     <p className="text-xs mb-6 text-gray-400">hello@threada.com</p>
 
-                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Get the App</h4>
-                    <button className="bg-white text-black px-4 py-2 text-xs font-bold uppercase w-full max-w-[150px] hover:bg-gray-200 transition-colors">
-                        Download App
-                    </button>
+                    <h4 className="text-sm font-bold uppercase mb-4 text-gray-500">Newsletter</h4>
+                    <p className="text-[10px] text-gray-400 mb-4 tracking-wider">SUBSCRIBE FOR EARLY ACCESS TO COLLECTIONS.</p>
+                    <form className="flex border-b border-white/20 pb-2" onSubmit={(e) => e.preventDefault()}>
+                        <input
+                            type="email"
+                            placeholder="EMAIL ADDRESS"
+                            className="bg-transparent border-none text-xs text-white placeholder-gray-600 focus:outline-none w-full uppercase"
+                        />
+                        <button type="submit" className="text-gray-400 hover:text-white transition-colors">
+                            →
+                        </button>
+                    </form>
                 </div>
             </div>
 

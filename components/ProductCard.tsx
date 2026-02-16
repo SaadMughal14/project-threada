@@ -9,6 +9,7 @@ interface Product {
     price: number;
     image: string;
     hoverImage?: string; // Optional hover state
+    images?: string[]; // Optional array of images
     category: string;
 }
 
@@ -17,6 +18,18 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+    // Determine the secondary image source (if available)
+    // If product has a specific hoverImage, use it.
+    // If product has an images array and length > 1, use the second one.
+    // Otherwise fallback to null (no hover effect).
+
+    // NOTE: Types need to be loose here if the incoming data structure varies, 
+    // but ideally we stick to the interface. 
+    // Checking if 'images' exists on the product object even if not in the strict interface above 
+    // to handle potential backend data variations.
+    const secondaryImage = product.hoverImage ||
+        (product.images && product.images.length > 1 ? product.images[1] : null);
+
     return (
         <Link to={`/products/${product.id}`} className="block group cursor-pointer relative">
             <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3">
@@ -24,15 +37,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <img
                     src={cloudinaryLoader({ src: product.image, width: 600 })}
                     alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${secondaryImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
                 />
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                {/* Secondary Image (Hover State) */}
+                {secondaryImage && (
+                    <img
+                        src={cloudinaryLoader({ src: secondaryImage, width: 600 })}
+                        alt={`${product.name} hover`}
+                        className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100 hidden md:block"
+                    />
+                )}
 
-                {/* Quick Add Button - Appears on Hover */}
-                <div className="absolute inset-x-4 bottom-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <button className="w-full bg-white text-black py-3 text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
+                {/* Hover Overlay - Only show if no secondary image, or maybe subtle darkening? 
+                    Decision: Keep it clean. If we swap images, we usually don't need a heavy overlay 
+                    unless text needs to pop. The original request asked for seamless crossfade. 
+                */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500 pointer-events-none" />
+
+                {/* Quick Add Button - Appears on Hover (Desktop only) */}
+                <div className="hidden md:block absolute inset-x-4 bottom-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                    <button className="w-full bg-white text-black py-3 text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors border border-transparent hover:border-black">
                         Quick Add
                     </button>
                 </div>
