@@ -116,7 +116,7 @@ export const Header: React.FC = () => {
                     */}
                     <Link to="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ease-in-out ${pathname !== '/' || isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                         <img
-                            src="/logo1.png"
+                            src="/logo-new.png"
                             alt="Threada Tiny"
                             className="h-9 md:h-10 w-auto object-contain brightness-0"
                         />
@@ -169,7 +169,7 @@ export const Header: React.FC = () => {
                         <div className={`block md:hidden w-full overflow-hidden transition-all duration-500 ease-in-out ${isScrolled ? 'max-h-0 opacity-0 py-0' : 'max-h-[200px] opacity-100 py-4'}`}>
                             <div className="w-full h-[18vw] flex justify-center items-center">
                                 <img
-                                    src="/logo1.png"
+                                    src="/logo-new.png"
                                     alt="Threada Logo Mobile"
                                     className="w-full h-full object-cover object-center mix-blend-multiply grayscale contrast-200"
                                 />
