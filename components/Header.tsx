@@ -25,58 +25,6 @@ const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: 
     );
 };
 
-const LogoAnimation = () => {
-    const title = "THREADA";
-    const letters = title.split("");
-
-    const containerVariants = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.1, // Slower bleed
-            },
-        },
-    };
-
-    const letterVariants = {
-        hidden: {
-            y: 10,
-            opacity: 0,
-            scale: 1.1,
-            filter: "blur(8px)",
-        },
-        visible: {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            transition: {
-                duration: 1.4,
-                ease: [0.22, 1, 0.36, 1] as const,
-            },
-        },
-    };
-
-    return (
-        <motion.div
-            className="flex justify-center items-center cursor-default py-0"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-        >
-            {letters.map((letter, index) => (
-                <motion.span
-                    key={index}
-                    variants={letterVariants}
-                    className="font-logoza text-[18vw] md:text-[17.5vw] leading-[0.78] inline-block text-black scale-x-125 origin-center will-change-transform"
-                >
-                    {letter}
-                </motion.span>
-            ))}
-        </motion.div>
-    );
-};
-
 const TinyLogoAnimation = () => {
     const title = "THREADA";
     const letters = title.split("");
@@ -140,33 +88,30 @@ export const Header: React.FC = () => {
     // Scroll-linked animations for "Orgasmic" smoothness
 
     // Header Background & Height
-    // Fade in white background and blur
-    const headerBgOpacity = useTransform(scrollY, [0, 50], [0, 0.95]);
-    const headerBackdropBlur = useTransform(scrollY, [0, 50], ["blur(0px)", "blur(12px)"]);
+    // On Homepage, we stay transparent longer to reveal hero
+    const isHome = pathname === '/';
+    const bgStart = isHome ? 200 : 0;
+    const bgEnd = isHome ? 350 : 50;
+
+    const headerBgOpacity = useTransform(scrollY, [bgStart, bgEnd], [0, 0.95]);
+    const headerBackdropBlur = useTransform(scrollY, [bgStart, bgEnd], ["blur(0px)", "blur(12px)"]);
     const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]); // Fade out initial heavy border
-    const headerShadowOpacity = useTransform(scrollY, [40, 60], [0, 0.1]);
+    const headerShadowOpacity = useTransform(scrollY, [bgEnd - 20, bgEnd + 20], [0, 0.1]);
 
     // Padding transition (Large to Compact)
     const headerPaddingY = useTransform(scrollY, [0, 100], [12, 0]); // px-3 to px-0 approx logic (rem mapped to px)
 
-    // Big Logo Transitions (Fade out & Collapse)
-    const bigLogoOpacity = useTransform(scrollY, [0, 150], [1, 0]);
-    const bigLogoScale = useTransform(scrollY, [0, 150], [1, 0.8]);
-    const bigLogoY = useTransform(scrollY, [0, 150], [0, -50]);
-    // Max Height collapse: Sync with opacity to pull layout up seamlessly
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 200], ["50vh", "0vh"]);
-
     // Tiny Logo Transitions (Fade in & Slide Up)
-    // Starts appearing as big logo is mostly gone
-    const tinyLogoOpacity = useTransform(scrollY, [100, 200], [0, 1]);
-    const tinyLogoY = useTransform(scrollY, [100, 200], [12, 0]); // Reduced travel to keep it "inside margins"
+    // Starts appearing as user scrolls down
+    const tinyLogoOpacity = useTransform(scrollY, [150, 250], [0, 1]);
+    const tinyLogoY = useTransform(scrollY, [150, 250], [12, 0]); // Reduced travel to keep it "inside margins"
 
     // Pointer events helper to prevent clicking invisible tiny logo
 
     const [tinyLogoPointerEvents, setTinyLogoPointerEvents] = React.useState<'none' | 'auto'>('none');
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        setTinyLogoPointerEvents(latest > 100 ? 'auto' : 'none');
+        setTinyLogoPointerEvents(latest > 150 ? 'auto' : 'none');
     });
 
     const getNavLinks = () => {
@@ -291,27 +236,6 @@ export const Header: React.FC = () => {
                         <CartButton itemCount={itemCount} toggleCart={toggleCart} />
                     </div>
                 </div>
-
-                {/* 
-                    COLLAPSIBLE HERO LOGO
-                    Only on Home Page
-                */}
-                {pathname === '/' && (
-                    <motion.div
-                        className="w-full overflow-hidden"
-                        style={{
-                            maxHeight: bigLogoMaxHeight,
-                            opacity: bigLogoOpacity,
-                            scale: bigLogoScale,
-                            y: bigLogoY,
-                            transformOrigin: "top center"
-                        }}
-                    >
-                        <div className="w-full flex justify-center items-center py-4">
-                            <LogoAnimation />
-                        </div>
-                    </motion.div>
-                )}
             </motion.div>
         </motion.header>
     );
