@@ -2,39 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
+
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { LogoAnimation } from '../components/LogoAnimation';
 
 export const Homepage = () => {
     const today = new Date();
     const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace('/', '.');
     const yearStr = today.getFullYear();
 
-    const { scrollY } = useScroll();
-
-    // Scroll-linked animations for the Big Logo
-    const bigLogoOpacity = useTransform(scrollY, [0, 100], [1, 0]);
-    const bigLogoScale = useTransform(scrollY, [0, 100], [1, 0.8]);
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 150], ["45vh", "0vh"]);
-
     return (
         <main className="max-w-[1400px] mx-auto px-4 md:px-12 pb-20">
-            {/* Big Hero Logo: Now part of the page flow */}
-            <motion.div
-                className="w-full flex justify-center items-center overflow-hidden"
-                style={{
-                    opacity: bigLogoOpacity,
-                    scale: bigLogoScale,
-                    maxHeight: bigLogoMaxHeight,
-                    transformOrigin: "center center"
-                }}
-            >
-                <div className="py-20">
-                    <LogoAnimation />
-                </div>
-            </motion.div>
 
             {/* Editorial Hero: Text Top / Image Bottom */}
             <section className="mb-20">
