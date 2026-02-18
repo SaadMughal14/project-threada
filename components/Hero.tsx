@@ -21,7 +21,7 @@ function Model() {
     });
   }, [scene]);
 
-  return <primitive object={scene} scale={1.3} position={[0, -1, 0]} />;
+  return <primitive object={scene} scale={1.0} position={[0, -1, 0]} />;
 }
 
 useGLTF.preload('/base.glb');
@@ -35,20 +35,37 @@ const LoadingFallback = () => (
 );
 
 const Hero: React.FC = () => {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace('/', '.');
+  const yearStr = today.getFullYear();
+
   return (
     <section className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center bg-[#F5F0EB]">
+      {/* --- EDITORIAL CONTENT (Top Layer) --- */}
+      <div className="absolute top-[100px] md:top-[120px] left-0 right-0 px-4 md:px-12 flex justify-between items-start z-20 pointer-events-none mix-blend-difference text-[#1C1C1C]">
+        <p className="w-1/3 text-xs md:text-sm font-light leading-tight tracking-tight opacity-80">
+          In the whole <br />
+          summer show, this <br />
+          is the designer's <br />
+          best look yet.
+        </p>
+        <p className="text-xs md:text-sm font-bold uppercase text-right leading-tight tracking-tight">
+          {dateStr} <br /> {yearStr}
+        </p>
+      </div>
+
       {/* --- BACKGROUND TEXT LAYER (Z-0) --- */}
-      <div className="absolute inset-0 flex justify-between items-center px-4 md:px-10 pointer-events-none z-0">
+      <div className="absolute inset-0 flex justify-between items-center px-4 md:px-20 pointer-events-none z-0">
         {/* Left Block */}
         <div className="flex flex-col justify-center h-full">
-          <span className="text-[12vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
+          <span className="text-[10vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter opacity-10">
             AVANT
           </span>
         </div>
 
         {/* Right Block */}
         <div className="flex flex-col justify-center h-full text-right">
-          <span className="text-[12vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
+          <span className="text-[10vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter opacity-10">
             GARDE
           </span>
         </div>
