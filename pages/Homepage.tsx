@@ -3,21 +3,14 @@ import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
 
-function ResponsiveHero() {
+function HeroModel() {
     const { scene } = useGLTF('/base.glb');
-    const { viewport } = useThree();
-
-    // Responsive positioning: 
-    // Desktop (viewport.width > 5): x=1.8 (far right)
-    // Mobile: x=0.3 (slightly right, keeps model in view)
-    const isDesktop = viewport.width > 5;
-    const positionScale = isDesktop ? 1.8 : 0.3;
 
     useEffect(() => {
         const material = new THREE.MeshStandardMaterial({
@@ -34,21 +27,7 @@ function ResponsiveHero() {
         });
     }, [scene]);
 
-    // Update OrbitControls target to match the model's position
-    return (
-        <>
-            <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                autoRotate
-                autoRotateSpeed={1.5}
-                minPolarAngle={Math.PI / 3}
-                maxPolarAngle={Math.PI / 1.8}
-                target={[positionScale, 0, 0]}
-            />
-            <primitive object={scene} scale={1} position={[positionScale, -1, 0]} />
-        </>
-    );
+    return <primitive object={scene} scale={1} position={[1.5, -1, 0]} />;
 }
 useGLTF.preload('/base.glb');
 
@@ -74,7 +53,7 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#b8b2aa]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
                     {/* Interaction hint */}
                     <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
@@ -83,39 +62,50 @@ export const Homepage = () => {
                         </span>
                     </div>
 
-                    <Suspense fallback={
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#b8b2aa]">
-                            <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
-                                [ LOADING ASSET ]
-                            </span>
-                        </div>
-                    }>
-                        <Canvas
-                            className="absolute inset-0"
-                            camera={{ position: [2, 1.2, 3.5], fov: 35 }}
-                            dpr={[1, 2]}
-                            shadows
-                            gl={{ antialias: true }}
-                        >
-                            <ambientLight intensity={0.5} />
-                            <directionalLight
-                                position={[4, 6, 4]}
-                                intensity={1.5}
-                                castShadow
-                                shadow-mapSize={[2048, 2048]}
-                            />
-                            <directionalLight
-                                position={[-4, 3, -2]}
-                                intensity={0.4}
-                                color="#c8d4e0"
-                            />
+                    <div className="absolute inset-0">
+                        <Suspense fallback={
+                            <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
+                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
+                                    [ LOADING ASSET ]
+                                </span>
+                            </div>
+                        }>
+                            <Canvas
+                                className="absolute inset-0"
+                                camera={{ position: [5, 2, 5], fov: 30 }}
+                                dpr={[1, 2]}
+                                shadows
+                                gl={{ antialias: true }}
+                            >
+                                <ambientLight intensity={0.5} />
+                                <directionalLight
+                                    position={[4, 6, 4]}
+                                    intensity={1.5}
+                                    castShadow
+                                    shadow-mapSize={[2048, 2048]}
+                                />
+                                <directionalLight
+                                    position={[-4, 3, -2]}
+                                    intensity={0.4}
+                                    color="#c8d4e0"
+                                />
 
-                            {/* Studio environment as the actual visible background */}
-                            <Environment preset="studio" background />
+                                {/* Studio environment as the actual visible background */}
+                                <Environment preset="studio" background />
 
-                            <ResponsiveHero />
-                        </Canvas>
-                    </Suspense>
+                                <OrbitControls
+                                    enableZoom={false}
+                                    enablePan={false}
+                                    autoRotate
+                                    autoRotateSpeed={1.5}
+                                    minPolarAngle={Math.PI / 3}
+                                    maxPolarAngle={Math.PI / 1.8}
+                                    target={[1.5, 0, 0]}
+                                />
+                                <HeroModel />
+                            </Canvas>
+                        </Suspense>
+                    </div>
                 </div>
             </section>
 
