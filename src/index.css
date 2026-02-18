@@ -85,3 +85,8 @@
 .mix-blend-exclusion {
   mix-blend-mode: exclusion;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
