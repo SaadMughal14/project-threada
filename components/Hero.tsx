@@ -1,10 +1,27 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
+import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, Float, PresentationControls } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
 
 function Model() {
   const { scene } = useGLTF('/base.glb');
-  return <primitive object={scene} scale={1.6} position={[0, -1, 0]} />;
+
+  useEffect(() => {
+    const material = new THREE.MeshStandardMaterial({
+      color: '#111111',
+      roughness: 0.85,
+      metalness: 0.15,
+    });
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.material = material;
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+
+  return <primitive object={scene} scale={1.3} position={[0, -1, 0]} />;
 }
 
 useGLTF.preload('/base.glb');
@@ -63,21 +80,15 @@ const Hero: React.FC = () => {
             <Environment preset="studio" />
 
             {/* Interactive Model */}
-            <PresentationControls
-              global
-              rotation={[0, 0, 0]}
-              polar={[-0.2, 0.2]}
-              azimuth={[-0.5, 0.5]}
-              snap={true}
-            >
-              <Float
-                speed={2}
-                rotationIntensity={0.5}
-                floatIntensity={0.5}
-              >
-                <Model />
-              </Float>
-            </PresentationControls>
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              autoRotate
+              autoRotateSpeed={2}
+              minPolarAngle={Math.PI / 3}
+              maxPolarAngle={Math.PI / 1.8}
+            />
+            <Model />
           </Canvas>
         </Suspense>
       </div>
