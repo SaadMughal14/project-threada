@@ -137,33 +137,32 @@ export const Header: React.FC = () => {
 
     const { scrollY } = useScroll();
 
-    // Scroll-linked animations for "Orgasmic" smoothness
+    // Scroll-linked animations — fast snap to prevent mid-scroll jank
 
     // Header Background & Height
-    const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]); // Fade out initial heavy border
-    const headerShadowOpacity = useTransform(scrollY, [40, 60], [0, 0.1]);
+    const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]);
+    const headerShadowOpacity = useTransform(scrollY, [30, 50], [0, 0.1]);
 
     // Padding transition (Large to Compact)
-    const headerPaddingY = useTransform(scrollY, [0, 100], [12, 0]);
+    const headerPaddingY = useTransform(scrollY, [0, 50], [12, 0]);
 
-    // Big Logo Transitions (Fade out & Collapse)
-    const bigLogoOpacity = useTransform(scrollY, [0, 150], [1, 0]);
-    const bigLogoScale = useTransform(scrollY, [0, 150], [1, 0.8]);
-    const bigLogoY = useTransform(scrollY, [0, 150], [0, -50]);
-    // Max Height collapse: Sync with opacity to pull layout up seamlessly
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 200], ["50vh", "0vh"]);
+    // Big Logo Transitions — opacity snaps fast, but height collapses smoothly
+    const bigLogoOpacity = useTransform(scrollY, [0, 40], [1, 0]);
+    const bigLogoScale = useTransform(scrollY, [0, 50], [1, 0.85]);
+    const bigLogoY = useTransform(scrollY, [0, 50], [0, -30]);
+    // Max Height collapse — slower than fade so hero slides up smoothly, not jerks
+    const bigLogoMaxHeight = useTransform(scrollY, [0, 150], ["50vh", "0vh"]);
 
-    // Tiny Logo Transitions (Fade in & Slide Up)
-    // Starts appearing as big logo is mostly gone
-    const tinyLogoOpacity = useTransform(scrollY, [100, 200], [0, 1]);
-    const tinyLogoY = useTransform(scrollY, [100, 200], [12, 0]);
+    // Tiny Logo — starts appearing WHILE big logo is still fading (tight crossfade)
+    const tinyLogoOpacity = useTransform(scrollY, [25, 55], [0, 1]);
+    const tinyLogoY = useTransform(scrollY, [25, 55], [8, 0]);
 
     // Pointer events helper to prevent clicking invisible tiny logo
 
     const [tinyLogoPointerEvents, setTinyLogoPointerEvents] = React.useState<'none' | 'auto'>('none');
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        setTinyLogoPointerEvents(latest > 100 ? 'auto' : 'none');
+        setTinyLogoPointerEvents(latest > 40 ? 'auto' : 'none');
     });
 
     const getNavLinks = () => {
