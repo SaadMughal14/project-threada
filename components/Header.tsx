@@ -284,23 +284,24 @@ export const Header: React.FC = () => {
                 Only on Home Page
             */}
             {pathname === '/' && (
-                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
-                    <motion.div
-                        className="w-full overflow-hidden"
-                        style={{
-                            maxHeight: bigLogoMaxHeight,
-                            opacity: bigLogoOpacity,
-                            scale: bigLogoScale,
-                            y: bigLogoY,
-                            transformOrigin: "top center"
-                        }}
-                    >
+                <motion.div
+                    className="w-full overflow-hidden"
+                    style={{
+                        maxHeight: bigLogoMaxHeight,
+                        opacity: bigLogoOpacity,
+                        scale: bigLogoScale,
+                        y: bigLogoY,
+                        transformOrigin: "top center"
+                    }}
+                >
+                    <div className="max-w-[1400px] mx-auto px-4 md:px-12">
                         <div className="w-full flex flex-col justify-center items-center py-4">
                             <LogoAnimation />
-                            <div className="w-full h-[1.5px] bg-black mt-4" />
                         </div>
-                    </motion.div>
-                </div>
+                    </div>
+                    {/* Full width edge-to-edge line */}
+                    <div className="w-full h-[3px] bg-black mt-2" />
+                </motion.div>
             )}
         </motion.header>
     );

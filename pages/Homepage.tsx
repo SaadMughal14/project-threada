@@ -55,14 +55,22 @@ export const Homepage = () => {
 
                 <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
+                    {/* SANDWICH LAYER 1: Background Text */}
+                    <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
+                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-[#1C1C1C] opacity-20 tracking-tighter leading-none whitespace-nowrap">
+                            AVANT GARDE
+                        </h1>
+                    </div>
+
                     {/* Interaction hint */}
-                    <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
+                    <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-30 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
                         <span className="text-[7px] md:text-[9px] uppercase tracking-[0.4em] text-white/60 font-bold select-none">
                             ↻ Drag to Explore
                         </span>
                     </div>
 
-                    <div className="absolute inset-0">
+                    {/* LAYER 2: 3D Canvas */}
+                    <div className="absolute inset-0 z-10">
                         <Suspense fallback={
                             <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
                                 <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
@@ -105,6 +113,13 @@ export const Homepage = () => {
                                 <HeroModel />
                             </Canvas>
                         </Suspense>
+                    </div>
+
+                    {/* SANDWICH LAYER 3: Foreground Glassy Text */}
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden mix-blend-overlay">
+                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-white/10 tracking-tighter leading-none whitespace-nowrap blur-[1px]">
+                            AVANT GARDE
+                        </h1>
                     </div>
                 </div>
             </section>
