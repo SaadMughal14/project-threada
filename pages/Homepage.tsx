@@ -53,7 +53,7 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[radial-gradient(circle_at_center,_#f5f0eb_0%,_#d0ccc6_100%)]">
 
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
