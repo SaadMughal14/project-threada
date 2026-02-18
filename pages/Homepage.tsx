@@ -27,7 +27,7 @@ function HeroModel() {
         });
     }, [scene]);
 
-    return <primitive object={scene} scale={1} position={[1.8, -1, 0]} />;
+    return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
 }
 useGLTF.preload('/base.glb');
 
@@ -60,48 +60,50 @@ export const Homepage = () => {
                         </span>
                     </div>
 
-                    <Suspense fallback={
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
-                            <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
-                                [ LOADING ASSET ]
-                            </span>
-                        </div>
-                    }>
-                        <Canvas
-                            className="absolute inset-0"
-                            camera={{ position: [3.8, 1.2, 3], fov: 35 }}
-                            dpr={[1, 2]}
-                            shadows
-                            gl={{ antialias: true }}
-                        >
-                            <ambientLight intensity={0.5} />
-                            <directionalLight
-                                position={[4, 6, 4]}
-                                intensity={1.5}
-                                castShadow
-                                shadow-mapSize={[2048, 2048]}
-                            />
-                            <directionalLight
-                                position={[-4, 3, -2]}
-                                intensity={0.4}
-                                color="#c8d4e0"
-                            />
+                    <div className="absolute inset-0 md:left-auto md:w-[60%] md:right-0">
+                        <Suspense fallback={
+                            <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
+                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
+                                    [ LOADING ASSET ]
+                                </span>
+                            </div>
+                        }>
+                            <Canvas
+                                className="absolute inset-0"
+                                camera={{ position: [2, 1.2, 3.5], fov: 35 }}
+                                dpr={[1, 2]}
+                                shadows
+                                gl={{ antialias: true }}
+                            >
+                                <ambientLight intensity={0.5} />
+                                <directionalLight
+                                    position={[4, 6, 4]}
+                                    intensity={1.5}
+                                    castShadow
+                                    shadow-mapSize={[2048, 2048]}
+                                />
+                                <directionalLight
+                                    position={[-4, 3, -2]}
+                                    intensity={0.4}
+                                    color="#c8d4e0"
+                                />
 
-                            {/* Studio environment as the actual visible background */}
-                            <Environment preset="studio" background />
+                                {/* Studio environment as the actual visible background */}
+                                <Environment preset="studio" background />
 
-                            <OrbitControls
-                                enableZoom={false}
-                                enablePan={false}
-                                autoRotate
-                                autoRotateSpeed={1.5}
-                                minPolarAngle={Math.PI / 3}
-                                maxPolarAngle={Math.PI / 1.8}
-                                target={[1.8, 0, 0]}
-                            />
-                            <HeroModel />
-                        </Canvas>
-                    </Suspense>
+                                <OrbitControls
+                                    enableZoom={false}
+                                    enablePan={false}
+                                    autoRotate
+                                    autoRotateSpeed={1.5}
+                                    minPolarAngle={Math.PI / 3}
+                                    maxPolarAngle={Math.PI / 1.8}
+                                    target={[0, 0, 0]}
+                                />
+                                <HeroModel />
+                            </Canvas>
+                        </Suspense>
+                    </div>
                 </div>
             </section>
 
