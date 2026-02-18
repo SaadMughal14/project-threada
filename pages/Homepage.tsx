@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, Float, PresentationControls } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
@@ -79,18 +79,15 @@ export const Homepage = () => {
                             />
                             <Environment preset="studio" environmentIntensity={0.5} />
 
-                            <PresentationControls
-                                global
-                                rotation={[0, 0, 0]}
-                                polar={[-0.1, 0.2]}
-                                azimuth={[-0.5, 0.5]}
-                                config={{ mass: 2, tension: 400 }}
-                                snap={{ mass: 4, tension: 300 }}
-                            >
-                                <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-                                    <HeroModel />
-                                </Float>
-                            </PresentationControls>
+                            <OrbitControls
+                                enableZoom={false}
+                                enablePan={false}
+                                autoRotate
+                                autoRotateSpeed={1.5}
+                                minPolarAngle={Math.PI / 3}
+                                maxPolarAngle={Math.PI / 1.8}
+                            />
+                            <HeroModel />
                         </Canvas>
                     </Suspense>
                 </div>
