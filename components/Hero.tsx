@@ -6,7 +6,7 @@ import { useGSAP } from '@gsap/react';
 
 function Model() {
   const { scene } = useGLTF('/base.glb');
-  return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+  return <primitive object={scene} scale={1.3} position={[0, -1, 0]} />;
 }
 
 useGLTF.preload('/base.glb');
@@ -21,6 +21,19 @@ const LoadingFallback = () => (
 
 const Hero: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
+  const [scrollOpacity, setScrollOpacity] = React.useState(1);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Fade out quickly: 0 to 100px scroll reduces opacity from 1 to 0
+      const newOpacity = Math.max(0, 1 - scrollY / 50);
+      setScrollOpacity(newOpacity);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -116,6 +129,12 @@ const Hero: React.FC = () => {
             THREADA
           </h1>
         </div>
+
+        {/* Magazine Line Separator */}
+        <div
+          className="w-full h-[1px] bg-[#1C1C1C] my-4 md:my-6 transition-opacity duration-300 ease-out origin-center transform scale-x-90 md:scale-x-75"
+          style={{ opacity: scrollOpacity }}
+        />
 
         <div className="studio-details flex flex-col items-center mt-4 md:mt-10 text-center space-y-4 md:space-y-8">
           <div className="flex items-center gap-3 md:gap-10 opacity-60 md:opacity-60 w-full justify-center px-4">
