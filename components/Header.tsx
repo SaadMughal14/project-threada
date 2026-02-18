@@ -140,33 +140,30 @@ export const Header: React.FC = () => {
     // Scroll-linked animations for "Orgasmic" smoothness
 
     // Header Background & Height
-    // Fade in white background and blur
-    const headerBgOpacity = useTransform(scrollY, [0, 30], [0, 1]);
-    const headerBackdropBlur = useTransform(scrollY, [0, 30], ["blur(0px)", "blur(12px)"]);
     const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]); // Fade out initial heavy border
-    const headerShadowOpacity = useTransform(scrollY, [30, 50], [0, 0.1]);
+    const headerShadowOpacity = useTransform(scrollY, [40, 60], [0, 0.1]);
 
     // Padding transition (Large to Compact)
-    const headerPaddingY = useTransform(scrollY, [0, 80], [12, 0]);
+    const headerPaddingY = useTransform(scrollY, [0, 100], [12, 0]);
 
     // Big Logo Transitions (Fade out & Collapse)
-    const bigLogoOpacity = useTransform(scrollY, [0, 60], [1, 0]);
-    const bigLogoScale = useTransform(scrollY, [0, 60], [1, 0.8]);
-    const bigLogoY = useTransform(scrollY, [0, 60], [0, -50]);
+    const bigLogoOpacity = useTransform(scrollY, [0, 150], [1, 0]);
+    const bigLogoScale = useTransform(scrollY, [0, 150], [1, 0.8]);
+    const bigLogoY = useTransform(scrollY, [0, 150], [0, -50]);
     // Max Height collapse: Sync with opacity to pull layout up seamlessly
-    const bigLogoMaxHeight = useTransform(scrollY, [0, 80], ["50vh", "0vh"]);
+    const bigLogoMaxHeight = useTransform(scrollY, [0, 200], ["50vh", "0vh"]);
 
     // Tiny Logo Transitions (Fade in & Slide Up)
     // Starts appearing as big logo is mostly gone
-    const tinyLogoOpacity = useTransform(scrollY, [50, 80], [0, 1]);
-    const tinyLogoY = useTransform(scrollY, [50, 80], [12, 0]);
+    const tinyLogoOpacity = useTransform(scrollY, [100, 200], [0, 1]);
+    const tinyLogoY = useTransform(scrollY, [100, 200], [12, 0]);
 
     // Pointer events helper to prevent clicking invisible tiny logo
 
     const [tinyLogoPointerEvents, setTinyLogoPointerEvents] = React.useState<'none' | 'auto'>('none');
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        setTinyLogoPointerEvents(latest > 50 ? 'auto' : 'none');
+        setTinyLogoPointerEvents(latest > 100 ? 'auto' : 'none');
     });
 
     const getNavLinks = () => {
