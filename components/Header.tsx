@@ -150,6 +150,7 @@ export const Header: React.FC = () => {
     const bigLogoOpacity = useTransform(scrollY, [0, 40], [1, 0]);
     const bigLogoScale = useTransform(scrollY, [0, 50], [1, 0.85]);
     const bigLogoY = useTransform(scrollY, [0, 50], [0, -30]);
+    const bigLogoMarginBottom = useTransform(scrollY, [0, 100], ["4rem", "0rem"]);
     // Max Height collapse — slower than fade so hero slides up smoothly, not jerks
     const bigLogoMaxHeight = useTransform(scrollY, [0, 150], ["50vh", "0vh"]);
 
@@ -292,6 +293,7 @@ export const Header: React.FC = () => {
                             opacity: bigLogoOpacity,
                             scale: bigLogoScale,
                             y: bigLogoY,
+                            marginBottom: bigLogoMarginBottom,
                             transformOrigin: "top center"
                         }}
                     >
