@@ -27,7 +27,7 @@ function HeroModel() {
         });
     }, [scene]);
 
-    return <primitive object={scene} scale={1} position={[1.5, -1, 0]} />;
+    return <primitive object={scene} scale={1.3} position={[1.5, -1, 0]} />;
 }
 useGLTF.preload('/base.glb');
 

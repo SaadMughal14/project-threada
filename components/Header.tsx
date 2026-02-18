@@ -295,8 +295,9 @@ export const Header: React.FC = () => {
                             transformOrigin: "top center"
                         }}
                     >
-                        <div className="w-full flex justify-center items-center py-4">
+                        <div className="w-full flex flex-col justify-center items-center py-4">
                             <LogoAnimation />
+                            <div className="w-full h-[1.5px] bg-black mt-4" />
                         </div>
                     </motion.div>
                 </div>
