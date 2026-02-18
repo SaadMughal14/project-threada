@@ -218,7 +218,7 @@ export const Header: React.FC = () => {
 
                 {/* Navbar Top Row — solid bg so links are always readable */}
                 <motion.div
-                    className="flex flex-row justify-between items-center py-4 md:py-5 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative bg-white"
+                    className="flex flex-row justify-between items-center py-4 md:py-5 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative bg-white/85 backdrop-blur-xl"
                     style={{
                         boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
                     }}
