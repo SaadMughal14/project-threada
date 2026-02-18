@@ -1,75 +1,28 @@
-import React, { Suspense, useEffect, useMemo } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, OrbitControls, ContactShadows } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
 
-/* ── 3D Studio Backdrop (infinity curve + floor) ── */
-function StudioBackdrop() {
-    const geometry = useMemo(() => {
-        const shape = new THREE.Shape();
-        // Floor runs forward, then curves up into the back wall
-        shape.moveTo(-6, -2);
-        shape.lineTo(-6, 0);
-        shape.quadraticCurveTo(-6, 4, -6, 4);
-        shape.lineTo(6, 4);
-        shape.quadraticCurveTo(6, 4, 6, 0);
-        shape.lineTo(6, -2);
-        shape.lineTo(-6, -2);
-
-        const extrudeSettings = { depth: 12, bevelEnabled: false };
-        return new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    }, []);
-
-    return (
-        <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 6]} receiveShadow>
-            <meshStandardMaterial color="#d6d0c8" roughness={0.95} metalness={0} />
-        </mesh>
-    );
-}
-
-/* ── Hero 3D Model with forced dual-tone materials ── */
 function HeroModel() {
     const { scene } = useGLTF('/base.glb');
 
     useEffect(() => {
-        // Jet black — main body
-        const primaryMaterial = new THREE.MeshStandardMaterial({
-            color: '#0d0d0d',
+        const material = new THREE.MeshStandardMaterial({
+            color: '#111111',
             roughness: 0.85,
-            metalness: 0.12,
+            metalness: 0.15,
         });
-        // Visible steel blue — accent panels (strong contrast)
-        const accentMaterial = new THREE.MeshStandardMaterial({
-            color: '#4a6178',
-            roughness: 0.6,
-            metalness: 0.3,
-        });
-        // Dark chrome — hardware / zippers / buckles
-        const hardwareMaterial = new THREE.MeshStandardMaterial({
-            color: '#2a2a2a',
-            roughness: 0.2,
-            metalness: 0.95,
-        });
-
-        let meshIndex = 0;
         scene.traverse((child: any) => {
             if (child.isMesh) {
-                if (meshIndex % 3 === 0) {
-                    child.material = accentMaterial;
-                } else if (meshIndex % 5 === 0) {
-                    child.material = hardwareMaterial;
-                } else {
-                    child.material = primaryMaterial;
-                }
+                child.material = material;
                 child.castShadow = true;
                 child.receiveShadow = true;
-                meshIndex++;
             }
         });
     }, [scene]);
@@ -98,9 +51,9 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#cec8c0]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
-                    {/* Interaction hint — visible, brutalist */}
+                    {/* Interaction hint */}
                     <div className="absolute bottom-5 md:bottom-7 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
                         <span className="text-[9px] md:text-[11px] uppercase tracking-[0.5em] text-black/50 font-bold select-none">
                             ↻ Drag to Explore
@@ -108,7 +61,7 @@ export const Homepage = () => {
                     </div>
 
                     <Suspense fallback={
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#cec8c0]">
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
                             <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
                                 [ LOADING ASSET ]
                             </span>
@@ -121,39 +74,21 @@ export const Homepage = () => {
                             shadows
                             gl={{ antialias: true }}
                         >
-                            {/* Lighting — calibrated for dark garment on light studio */}
                             <ambientLight intensity={0.5} />
                             <directionalLight
                                 position={[4, 6, 4]}
                                 intensity={1.5}
                                 castShadow
                                 shadow-mapSize={[2048, 2048]}
-                                shadow-bias={-0.001}
                             />
                             <directionalLight
                                 position={[-4, 3, -2]}
                                 intensity={0.4}
                                 color="#c8d4e0"
                             />
-                            <spotLight
-                                position={[0, 8, 0]}
-                                intensity={0.6}
-                                angle={0.6}
-                                penumbra={1}
-                                castShadow={false}
-                            />
 
-                            <Environment preset="studio" environmentIntensity={0.6} />
-
-                            {/* 3D Studio Backdrop */}
-                            <StudioBackdrop />
-                            <ContactShadows
-                                position={[0, -1.49, 0]}
-                                opacity={0.35}
-                                scale={10}
-                                blur={2.5}
-                                far={4}
-                            />
+                            {/* Studio environment as the actual visible background */}
+                            <Environment preset="studio" background />
 
                             <OrbitControls
                                 enableZoom={false}
