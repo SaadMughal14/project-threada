@@ -4,42 +4,60 @@ import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, OrbitControls, Float, Torus, Icosahedron } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls, Text } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
 
-function FloatingShapes() {
+function HeroText() {
     return (
         <group>
-            {/* Metallic Ring */}
-            <Float speed={2} rotationIntensity={1.5} floatIntensity={1.5}>
-                <Torus args={[0.8, 0.05, 16, 100]} position={[-2, 1, -2]} rotation={[0, Math.PI / 4, 0]}>
-                    <meshStandardMaterial color="#444" roughness={0.2} metalness={0.9} />
-                </Torus>
-            </Float>
+            {/* Background AVANT */}
+            <Text
+                position={[-1.5, 0.5, -2]} // Behind model, shifted left to show 'T'
+                fontSize={3}
+                fontWeight="900"
+                letterSpacing={-0.05}
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+            >
+                AVANT
+                <meshPhysicalMaterial
+                    transmission={1}
+                    roughness={0.2}
+                    thickness={3} // Thicker glass for background
+                    ior={1.5}
+                    clearcoat={1}
+                    attenuationColor="#ffffff"
+                    attenuationDistance={1}
+                    opacity={0.5} // Slight fade
+                    transparent
+                />
+            </Text>
 
-            {/* Glassy Gem */}
-            <Float speed={1.5} rotationIntensity={2} floatIntensity={1} floatingRange={[-0.5, 0.5]}>
-                <Icosahedron args={[0.6, 0]} position={[2.5, 0, -3]} rotation={[Math.PI / 3, 0, 0]}>
-                    <meshPhysicalMaterial
-                        color="#ffffff"
-                        roughness={0.1}
-                        metalness={0.1}
-                        transmission={0.5}
-                        thickness={1}
-                        transparent
-                        opacity={0.6}
-                    />
-                </Icosahedron>
-            </Float>
-
-            {/* Smaller Dark Ring */}
-            <Float speed={3} rotationIntensity={3} floatIntensity={0.5}>
-                <Torus args={[0.4, 0.02, 16, 50]} position={[1, 2, -3]} rotation={[0, 0, Math.PI / 2]}>
-                    <meshStandardMaterial color="#222" roughness={0.4} metalness={0.8} />
-                </Torus>
-            </Float>
+            {/* Foreground GARDE */}
+            <Text
+                position={[0, 0.5, 2]} // In front of model
+                fontSize={3}
+                fontWeight="900"
+                letterSpacing={-0.05}
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+            >
+                GARDE
+                <meshPhysicalMaterial
+                    transmission={1}
+                    roughness={0} // Crystal clear
+                    thickness={1}
+                    ior={1.5}
+                    clearcoat={1}
+                    attenuationColor="#ffffff"
+                    attenuationDistance={1}
+                    transparent
+                />
+            </Text>
         </group>
     );
 }
@@ -90,22 +108,6 @@ export const Homepage = () => {
 
                 <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_50%,_#2C2C2C_0%,_#000000_100%)]">
 
-                    {/* SANDWICH LAYER 1: Background Text */}
-                    <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-                        <h1
-                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
-                            style={{
-                                WebkitTextStroke: '1px rgba(255,255,255,0.3)',
-                                color: 'transparent',
-                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text'
-                            }}
-                        >
-                            AVANT <span className="opacity-0">GARDE</span>
-                        </h1>
-                    </div>
-
                     {/* Interaction hint */}
                     <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-30 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
                         <span className="text-[7px] md:text-[9px] uppercase tracking-[0.4em] text-white/60 font-bold select-none">
@@ -116,8 +118,8 @@ export const Homepage = () => {
                     {/* LAYER 2: 3D Canvas */}
                     <div className="absolute inset-0 z-10">
                         <Suspense fallback={
-                            <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
-                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
+                            <div className="absolute inset-0 flex items-center justify-center bg-[#111]">
+                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-white/40 animate-pulse">
                                     [ LOADING ASSET ]
                                 </span>
                             </div>
@@ -127,23 +129,23 @@ export const Homepage = () => {
                                 camera={{ position: [5, 2, 5], fov: 30 }}
                                 dpr={[1, 2]}
                                 shadows
-                                gl={{ antialias: true }}
+                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
                             >
                                 <ambientLight intensity={0.5} />
                                 <directionalLight
                                     position={[4, 6, 4]}
-                                    intensity={1.5}
+                                    intensity={2}
                                     castShadow
                                     shadow-mapSize={[2048, 2048]}
                                 />
                                 <directionalLight
                                     position={[-4, 3, -2]}
-                                    intensity={0.4}
+                                    intensity={1}
                                     color="#c8d4e0"
                                 />
 
-                                {/* Studio environment as the actual visible background */}
-                                <Environment preset="studio" />
+                                {/* Realistic Environment for Glass Reflections */}
+                                <Environment preset="city" />
 
                                 <OrbitControls
                                     enableZoom={false}
@@ -152,28 +154,12 @@ export const Homepage = () => {
                                     autoRotateSpeed={1.5}
                                     minPolarAngle={Math.PI / 3}
                                     maxPolarAngle={Math.PI / 1.8}
-                                    target={[1.5, 0, 0]}
+                                    target={[0, 0, 0]} // Centered target
                                 />
                                 <HeroModel />
-                                <FloatingShapes />
+                                <HeroText />
                             </Canvas>
                         </Suspense>
-                    </div>
-
-                    {/* SANDWICH LAYER 3: Foreground Glassy Text */}
-                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden">
-                        <h1
-                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
-                            style={{
-                                WebkitTextStroke: '1.5px rgba(255,255,255,0.6)',
-                                color: 'transparent',
-                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text'
-                            }}
-                        >
-                            <span className="opacity-0">AVANT</span> GARDE
-                        </h1>
                     </div>
                 </div>
             </section>
