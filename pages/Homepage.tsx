@@ -64,8 +64,10 @@ export const Homepage = () => {
             <section className="mb-20">
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
                     <p className="w-1/3 text-xs md:text-base font-light leading-tight tracking-tight">
-                        In the whole summer show, this <br />
-                        is the designer's best look yet.
+                        In the whole <br />
+                        summer show, this <br />
+                        is the designer's <br />
+                        best look yet.
                     </p>
                     <p className="text-xs md:text-base font-bold uppercase text-right leading-tight tracking-tight">
                         {dateStr} <br /> {yearStr}
