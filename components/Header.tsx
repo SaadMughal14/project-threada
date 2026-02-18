@@ -284,7 +284,7 @@ export const Header: React.FC = () => {
                 Only on Home Page
             */}
             {pathname === '/' && (
-                <div className="max-w-[1400px] mx-auto px-4 md:px-12 bg-white">
+                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
                     <motion.div
                         className="w-full overflow-hidden"
                         style={{

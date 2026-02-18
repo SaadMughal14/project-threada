@@ -42,7 +42,7 @@ export const Homepage = () => {
             {/* Editorial Hero: Text Top / 3D Canvas Bottom */}
             <section className="mb-20">
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
-                    <p className="w-1/2 md:w-1/3 text-xs md:text-base font-light leading-tight tracking-tight whitespace-nowrap">
+                    <p className="w-1/3 text-xs md:text-base font-light leading-tight tracking-tight">
                         In the whole summer show, this <br />
                         is the designer's best look yet.
                     </p>
@@ -69,7 +69,7 @@ export const Homepage = () => {
                     }>
                         <Canvas
                             className="absolute inset-0"
-                            camera={{ position: [3.5, 1.2, 3], fov: 35 }}
+                            camera={{ position: [3.8, 1.2, 3], fov: 35 }}
                             dpr={[1, 2]}
                             shadows
                             gl={{ antialias: true }}
