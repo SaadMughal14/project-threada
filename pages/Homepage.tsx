@@ -61,7 +61,10 @@ export const Homepage = () => {
                             className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap opacity-40"
                             style={{
                                 WebkitTextStroke: '1px rgba(255,255,255,0.3)',
-                                color: 'transparent'
+                                color: 'transparent',
+                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text'
                             }}
                         >
                             AVANT <span className="opacity-0">GARDE</span>
