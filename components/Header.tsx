@@ -205,92 +205,86 @@ export const Header: React.FC = () => {
         <motion.header
             className="sticky top-0 w-full z-50"
         >
-            {/* Main Container */}
+            {/* Full-width glass nav bar — edge to edge */}
             <motion.div
-                className="max-w-[1400px] mx-auto px-4 md:px-12"
+                className="w-full bg-white/85 backdrop-blur-xl border-b border-black"
                 style={{
-                    borderBottomWidth: '4px',
-                    borderBottomColor: 'black',
-                    borderBottomStyle: 'solid',
-                    borderColor: useTransform(headerBorderOpacity, opacity => `rgba(0, 0, 0, ${opacity})`)
+                    boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
                 }}
             >
-
-                {/* Navbar Top Row — solid bg so links are always readable */}
-                <motion.div
-                    className="flex flex-row justify-between items-center py-4 md:py-5 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative bg-white/85 backdrop-blur-xl"
-                    style={{
-                        boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
-                    }}
-                >
-                    {/* Left: Collections & Back Arrow */}
-                    <div className="flex gap-3 md:gap-10 items-center">
-                        {pathname !== '/' && (
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="hover:text-gray-500 transition-colors"
-                                aria-label="Go Back"
-                            >
-                                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                            </button>
-                        )}
-                        {getNavLinks()}
-                    </div>
-
-                    {/* Center: Tiny Logo (Robust Centering) */}
-                    <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-                        <motion.div
-                            style={{
-                                opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
-                                y: pathname !== '/' ? 0 : tinyLogoY,
-                                pointerEvents: (pathname !== '/' ? 'auto' : tinyLogoPointerEvents) as any
-                            }}
-                            className="pointer-events-auto"
-                        >
-                            <Link to="/" className="flex justify-center items-center">
-                                <TinyLogoAnimation />
-                            </Link>
-                        </motion.div>
-                    </div>
-
-                    {/* Right: Utilities */}
-                    <div className="flex gap-3 md:gap-10 items-center">
-                        <Link to="/login" className="hover:text-gray-500 transition-colors font-bold">Account</Link>
-
-                        {/* Search Dropdown Trigger */}
-                        <div className="relative group">
-                            <button
-                                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                className="hover:text-gray-500 transition-colors flex items-center gap-2"
-                            >
-                                Search
-                            </button>
-
-                            {/* Search Dropdown Overlay */}
-                            <div className={`absolute right-0 top-full mt-4 w-[300px] bg-white shadow-xl border border-gray-100 p-4 transition-all duration-300 origin-top-right ${isSearchOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
-                                <div className="flex items-center border-b-2 border-black pb-2">
-                                    <input
-                                        type="text"
-                                        placeholder="SEARCH PRODUCTS..."
-                                        className="w-full text-sm font-bold uppercase placeholder-gray-400 focus:outline-none"
-                                        autoFocus={isSearchOpen}
-                                    />
-                                    <button className="text-gray-400 hover:text-black">
-                                        Confirm
-                                    </button>
-                                </div>
-                            </div>
+                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
+                    <div className="flex flex-row justify-between items-center py-4 md:py-5 text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative">
+                        {/* Left: Collections & Back Arrow */}
+                        <div className="flex gap-3 md:gap-10 items-center">
+                            {pathname !== '/' && (
+                                <button
+                                    onClick={() => navigate(-1)}
+                                    className="hover:text-gray-500 transition-colors"
+                                    aria-label="Go Back"
+                                >
+                                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                                </button>
+                            )}
+                            {getNavLinks()}
                         </div>
 
-                        <CartButton itemCount={itemCount} toggleCart={toggleCart} />
-                    </div>
-                </motion.div>
+                        {/* Center: Tiny Logo (Robust Centering) */}
+                        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                            <motion.div
+                                style={{
+                                    opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
+                                    y: pathname !== '/' ? 0 : tinyLogoY,
+                                    pointerEvents: (pathname !== '/' ? 'auto' : tinyLogoPointerEvents) as any
+                                }}
+                                className="pointer-events-auto"
+                            >
+                                <Link to="/" className="flex justify-center items-center">
+                                    <TinyLogoAnimation />
+                                </Link>
+                            </motion.div>
+                        </div>
 
-                {/* 
-                    COLLAPSIBLE HERO LOGO
-                    Only on Home Page
-                */}
-                {pathname === '/' && (
+                        {/* Right: Utilities */}
+                        <div className="flex gap-3 md:gap-10 items-center">
+                            <Link to="/login" className="hover:text-gray-500 transition-colors font-bold">Account</Link>
+
+                            {/* Search Dropdown Trigger */}
+                            <div className="relative group">
+                                <button
+                                    onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                    className="hover:text-gray-500 transition-colors flex items-center gap-2"
+                                >
+                                    Search
+                                </button>
+
+                                {/* Search Dropdown Overlay */}
+                                <div className={`absolute right-0 top-full mt-4 w-[300px] bg-white shadow-xl border border-gray-100 p-4 transition-all duration-300 origin-top-right ${isSearchOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
+                                    <div className="flex items-center border-b-2 border-black pb-2">
+                                        <input
+                                            type="text"
+                                            placeholder="SEARCH PRODUCTS..."
+                                            className="w-full text-sm font-bold uppercase placeholder-gray-400 focus:outline-none"
+                                            autoFocus={isSearchOpen}
+                                        />
+                                        <button className="text-gray-400 hover:text-black">
+                                            Confirm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <CartButton itemCount={itemCount} toggleCart={toggleCart} />
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* 
+                COLLAPSIBLE HERO LOGO
+                Only on Home Page
+            */}
+            {pathname === '/' && (
+                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
                     <motion.div
                         className="w-full overflow-hidden"
                         style={{
@@ -305,8 +299,8 @@ export const Header: React.FC = () => {
                             <LogoAnimation />
                         </div>
                     </motion.div>
-                )}
-            </motion.div>
+                </div>
+            )}
         </motion.header>
     );
 };
