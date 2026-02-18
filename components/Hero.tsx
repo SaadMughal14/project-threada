@@ -4,7 +4,7 @@ import { useGLTF, Environment, Float, PresentationControls } from '@react-three/
 
 function Model() {
   const { scene } = useGLTF('/base.glb');
-  return <primitive object={scene} scale={2} position={[0, -1, 0]} />;
+  return <primitive object={scene} scale={1.6} position={[0, -1, 0]} />;
 }
 
 useGLTF.preload('/base.glb');
@@ -24,14 +24,14 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0 flex justify-between items-center px-4 md:px-10 pointer-events-none z-0">
         {/* Left Block */}
         <div className="flex flex-col justify-center h-full">
-          <span className="text-[15vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
+          <span className="text-[12vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
             AVANT
           </span>
         </div>
 
         {/* Right Block */}
         <div className="flex flex-col justify-center h-full text-right">
-          <span className="text-[15vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
+          <span className="text-[12vw] leading-none font-black text-[#1C1C1C] uppercase tracking-tighter">
             GARDE
           </span>
         </div>
@@ -68,8 +68,7 @@ const Hero: React.FC = () => {
               rotation={[0, 0, 0]}
               polar={[-0.2, 0.2]}
               azimuth={[-0.5, 0.5]}
-              config={{ mass: 2, tension: 400 }}
-              snap={{ mass: 4, tension: 300 }}
+              snap={true}
             >
               <Float
                 speed={2}
