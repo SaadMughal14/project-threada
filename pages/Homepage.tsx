@@ -4,10 +4,45 @@ import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls, Float, Torus, Icosahedron } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
+
+function FloatingShapes() {
+    return (
+        <group>
+            {/* Metallic Ring */}
+            <Float speed={2} rotationIntensity={1.5} floatIntensity={1.5}>
+                <Torus args={[0.8, 0.05, 16, 100]} position={[-2, 1, -2]} rotation={[0, Math.PI / 4, 0]}>
+                    <meshStandardMaterial color="#444" roughness={0.2} metalness={0.9} />
+                </Torus>
+            </Float>
+
+            {/* Glassy Gem */}
+            <Float speed={1.5} rotationIntensity={2} floatIntensity={1} floatingRange={[-0.5, 0.5]}>
+                <Icosahedron args={[0.6, 0]} position={[2.5, 0, -3]} rotation={[Math.PI / 3, 0, 0]}>
+                    <meshPhysicalMaterial
+                        color="#ffffff"
+                        roughness={0.1}
+                        metalness={0.1}
+                        transmission={0.5}
+                        thickness={1}
+                        transparent
+                        opacity={0.6}
+                    />
+                </Icosahedron>
+            </Float>
+
+            {/* Smaller Dark Ring */}
+            <Float speed={3} rotationIntensity={3} floatIntensity={0.5}>
+                <Torus args={[0.4, 0.02, 16, 50]} position={[1, 2, -3]} rotation={[0, 0, Math.PI / 2]}>
+                    <meshStandardMaterial color="#222" roughness={0.4} metalness={0.8} />
+                </Torus>
+            </Float>
+        </group>
+    );
+}
 
 function HeroModel() {
     const { scene } = useGLTF('/base.glb');
@@ -58,7 +93,7 @@ export const Homepage = () => {
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
                         <h1
-                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap opacity-40"
+                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
                             style={{
                                 WebkitTextStroke: '1px rgba(255,255,255,0.3)',
                                 color: 'transparent',
@@ -120,6 +155,7 @@ export const Homepage = () => {
                                     target={[1.5, 0, 0]}
                                 />
                                 <HeroModel />
+                                <FloatingShapes />
                             </Canvas>
                         </Suspense>
                     </div>
