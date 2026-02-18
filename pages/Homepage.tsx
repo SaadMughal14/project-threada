@@ -42,7 +42,7 @@ export const Homepage = () => {
             {/* Editorial Hero: Text Top / 3D Canvas Bottom */}
             <section className="mb-20">
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
-                    <p className="w-1/2 md:w-1/3 text-[11px] md:text-base font-light leading-tight tracking-tight">
+                    <p className="w-1/2 md:w-1/3 text-xs md:text-base font-light leading-tight tracking-tight whitespace-nowrap">
                         In the whole summer show, this <br />
                         is the designer's best look yet.
                     </p>
@@ -51,7 +51,7 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6] z-30">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
                     {/* Interaction hint */}
                     <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
