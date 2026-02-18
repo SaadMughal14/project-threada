@@ -53,7 +53,7 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[radial-gradient(circle_at_center,_#f5f0eb_0%,_#d0ccc6_100%)]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
@@ -83,7 +83,7 @@ export const Homepage = () => {
                                 camera={{ position: [5, 2, 5], fov: 30 }}
                                 dpr={[1, 2]}
                                 shadows
-                                gl={{ antialias: true, alpha: true }}
+                                gl={{ antialias: true }}
                             >
                                 <ambientLight intensity={0.5} />
                                 <directionalLight
