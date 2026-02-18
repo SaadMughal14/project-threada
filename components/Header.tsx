@@ -140,13 +140,11 @@ export const Header: React.FC = () => {
     // Scroll-linked animations — fast snap to prevent mid-scroll jank
 
     // Header Background & Height
-    const headerBgOpacity = useTransform(scrollY, [0, 50], [0, 0.95]);
-    const headerBackdropBlur = useTransform(scrollY, [0, 50], ["blur(0px)", "blur(12px)"]);
     const headerBorderOpacity = useTransform(scrollY, [0, 10], [1, 0]);
-    const headerShadowOpacity = useTransform(scrollY, [40, 60], [0, 0.1]);
+    const headerShadowOpacity = useTransform(scrollY, [30, 50], [0, 0.1]);
 
     // Padding transition (Large to Compact)
-    const headerPaddingY = useTransform(scrollY, [0, 100], [16, 6]);
+    const headerPaddingY = useTransform(scrollY, [0, 50], [12, 0]);
 
     // Big Logo Transitions — opacity snaps fast, but height collapses smoothly
     const bigLogoOpacity = useTransform(scrollY, [0, 40], [1, 0]);
@@ -206,11 +204,6 @@ export const Header: React.FC = () => {
     return (
         <motion.header
             className="sticky top-0 w-full z-50"
-            style={{
-                backgroundColor: useTransform(headerBgOpacity, opacity => `rgba(255, 255, 255, ${opacity})`),
-                backdropFilter: headerBackdropBlur,
-                WebkitBackdropFilter: headerBackdropBlur,
-            }}
         >
             {/* Main Container */}
             <motion.div
@@ -223,12 +216,10 @@ export const Header: React.FC = () => {
                 }}
             >
 
-                {/* Navbar Top Row */}
+                {/* Navbar Top Row — solid bg so links are always readable */}
                 <motion.div
-                    className="flex flex-row justify-between items-center py-4 md:py-5 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative"
+                    className="flex flex-row justify-between items-center py-4 md:py-5 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative bg-white"
                     style={{
-                        paddingTop: headerPaddingY,
-                        paddingBottom: headerPaddingY,
                         boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
                     }}
                 >
