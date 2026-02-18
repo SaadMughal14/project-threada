@@ -27,7 +27,7 @@ function HeroModel() {
         });
     }, [scene]);
 
-    return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+    return <primitive object={scene} scale={1} position={[1.2, -1, 0]} />;
 }
 useGLTF.preload('/base.glb');
 
@@ -54,8 +54,8 @@ export const Homepage = () => {
                 <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#e0dcd6]">
 
                     {/* Interaction hint */}
-                    <div className="absolute bottom-5 md:bottom-7 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
-                        <span className="text-[9px] md:text-[11px] uppercase tracking-[0.5em] text-black/50 font-bold select-none">
+                    <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-20 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
+                        <span className="text-[7px] md:text-[9px] uppercase tracking-[0.4em] text-white/60 font-bold select-none">
                             ↻ Drag to Explore
                         </span>
                     </div>
@@ -69,7 +69,7 @@ export const Homepage = () => {
                     }>
                         <Canvas
                             className="absolute inset-0"
-                            camera={{ position: [0, 0.5, 4], fov: 35 }}
+                            camera={{ position: [3, 1.5, 3.5], fov: 35 }}
                             dpr={[1, 2]}
                             shadows
                             gl={{ antialias: true }}
@@ -97,6 +97,7 @@ export const Homepage = () => {
                                 autoRotateSpeed={1.5}
                                 minPolarAngle={Math.PI / 3}
                                 maxPolarAngle={Math.PI / 1.8}
+                                target={[1.2, 0, 0]}
                             />
                             <HeroModel />
                         </Canvas>
