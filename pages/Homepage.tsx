@@ -99,7 +99,7 @@ export const Homepage = () => {
                                 />
 
                                 {/* Studio environment as the actual visible background */}
-                                <Environment preset="studio" background />
+                                <Environment preset="studio" />
 
                                 <OrbitControls
                                     enableZoom={false}
