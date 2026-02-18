@@ -4,63 +4,10 @@ import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, OrbitControls, Text } from '@react-three/drei';
+import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
-
-function HeroText() {
-    return (
-        <group>
-            {/* Background AVANT */}
-            <Text
-                position={[-1.5, 0.5, -2]} // Behind model, shifted left to show 'T'
-                fontSize={3}
-                fontWeight="900"
-                letterSpacing={-0.05}
-                color="white"
-                anchorX="center"
-                anchorY="middle"
-            >
-                AVANT
-                <meshPhysicalMaterial
-                    transmission={1}
-                    roughness={0.2}
-                    thickness={3} // Thicker glass for background
-                    ior={1.5}
-                    clearcoat={1}
-                    attenuationColor="#ffffff"
-                    attenuationDistance={1}
-                    opacity={0.5} // Slight fade
-                    transparent
-                />
-            </Text>
-
-            {/* Foreground GARDE */}
-            <Text
-                position={[0, 0.5, 2]} // In front of model
-                fontSize={3}
-                fontWeight="900"
-                letterSpacing={-0.05}
-                color="white"
-                anchorX="center"
-                anchorY="middle"
-            >
-                GARDE
-                <meshPhysicalMaterial
-                    transmission={1}
-                    roughness={0} // Crystal clear
-                    thickness={1}
-                    ior={1.5}
-                    clearcoat={1}
-                    attenuationColor="#ffffff"
-                    attenuationDistance={1}
-                    transparent
-                />
-            </Text>
-        </group>
-    );
-}
 
 function HeroModel() {
     const { scene } = useGLTF('/base.glb');
@@ -106,7 +53,23 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_50%,_#2C2C2C_0%,_#000000_100%)]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_50%,_#303030_0%,_#0a0a0a_100%)]">
+
+                    {/* SANDWICH LAYER 1: Background Text */}
+                    <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden -ml-[4vw]">
+                        <h1
+                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
+                            style={{
+                                WebkitTextStroke: '1px rgba(255,255,255,0.3)',
+                                color: 'transparent',
+                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text'
+                            }}
+                        >
+                            AVANT <span className="opacity-0">GARDE</span>
+                        </h1>
+                    </div>
 
                     {/* Interaction hint */}
                     <div className="absolute bottom-3 md:bottom-4 right-4 md:right-8 z-30 pointer-events-none flex items-center gap-2 opacity-0 animate-[fadeIn_1.5s_1.5s_forwards]">
@@ -118,8 +81,8 @@ export const Homepage = () => {
                     {/* LAYER 2: 3D Canvas */}
                     <div className="absolute inset-0 z-10">
                         <Suspense fallback={
-                            <div className="absolute inset-0 flex items-center justify-center bg-[#111]">
-                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-white/40 animate-pulse">
+                            <div className="absolute inset-0 flex items-center justify-center bg-[#e0dcd6]">
+                                <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
                                     [ LOADING ASSET ]
                                 </span>
                             </div>
@@ -129,23 +92,23 @@ export const Homepage = () => {
                                 camera={{ position: [5, 2, 5], fov: 30 }}
                                 dpr={[1, 2]}
                                 shadows
-                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
+                                gl={{ antialias: true }}
                             >
                                 <ambientLight intensity={0.5} />
                                 <directionalLight
                                     position={[4, 6, 4]}
-                                    intensity={2}
+                                    intensity={1.5}
                                     castShadow
                                     shadow-mapSize={[2048, 2048]}
                                 />
                                 <directionalLight
                                     position={[-4, 3, -2]}
-                                    intensity={1}
+                                    intensity={0.4}
                                     color="#c8d4e0"
                                 />
 
-                                {/* Realistic Environment for Glass Reflections */}
-                                <Environment preset="city" />
+                                {/* Studio environment as the actual visible background */}
+                                <Environment preset="studio" />
 
                                 <OrbitControls
                                     enableZoom={false}
@@ -154,12 +117,27 @@ export const Homepage = () => {
                                     autoRotateSpeed={1.5}
                                     minPolarAngle={Math.PI / 3}
                                     maxPolarAngle={Math.PI / 1.8}
-                                    target={[0, 0, 0]} // Centered target
+                                    target={[1.5, 0, 0]}
                                 />
                                 <HeroModel />
-                                <HeroText />
                             </Canvas>
                         </Suspense>
+                    </div>
+
+                    {/* SANDWICH LAYER 3: Foreground Glassy Text */}
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden -ml-[4vw]">
+                        <h1
+                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
+                            style={{
+                                WebkitTextStroke: '1.5px rgba(255,255,255,0.6)',
+                                color: 'transparent',
+                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text'
+                            }}
+                        >
+                            <span className="opacity-0">AVANT</span> GARDE
+                        </h1>
                     </div>
                 </div>
             </section>
