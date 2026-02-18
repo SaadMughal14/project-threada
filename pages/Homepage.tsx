@@ -57,7 +57,7 @@ export const Homepage = () => {
 
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-[#1C1C1C] opacity-20 tracking-tighter leading-none whitespace-nowrap">
+                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-[#1C1C1C] opacity-80 tracking-tighter leading-none whitespace-nowrap">
                             AVANT GARDE
                         </h1>
                     </div>
@@ -116,8 +116,17 @@ export const Homepage = () => {
                     </div>
 
                     {/* SANDWICH LAYER 3: Foreground Glassy Text */}
-                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden mix-blend-overlay">
-                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-white/10 tracking-tighter leading-none whitespace-nowrap blur-[1px]">
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden">
+                        <h1
+                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
+                            style={{
+                                WebkitTextStroke: '1.5px rgba(255,255,255,0.6)',
+                                color: 'transparent',
+                                backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.1))',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text'
+                            }}
+                        >
                             AVANT GARDE
                         </h1>
                     </div>
