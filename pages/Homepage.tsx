@@ -53,11 +53,17 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[radial-gradient(circle_at_50%_50%,_#ffffff_10%,_#c0b8b0_100%)]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_50%,_#2C2C2C_0%,_#000000_100%)]">
 
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-                        <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-[#1C1C1C] opacity-80 tracking-tighter leading-none whitespace-nowrap">
+                        <h1
+                            className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap opacity-40"
+                            style={{
+                                WebkitTextStroke: '1px rgba(255,255,255,0.3)',
+                                color: 'transparent'
+                            }}
+                        >
                             AVANT <span className="opacity-0">GARDE</span>
                         </h1>
                     </div>
