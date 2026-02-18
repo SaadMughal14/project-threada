@@ -203,12 +203,7 @@ export const Header: React.FC = () => {
 
     return (
         <motion.header
-            className="sticky top-0 w-full z-50 bg-white"
-            style={{
-                paddingTop: headerPaddingY,
-                paddingBottom: headerPaddingY,
-                boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
-            }}
+            className="sticky top-0 w-full z-50"
         >
             {/* Main Container */}
             <motion.div
@@ -221,8 +216,15 @@ export const Header: React.FC = () => {
                 }}
             >
 
-                {/* Navbar Top Row */}
-                <div className="flex flex-row justify-between items-center py-3 md:py-4 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative">
+                {/* Navbar Top Row — solid bg so links are always readable */}
+                <motion.div
+                    className="flex flex-row justify-between items-center py-3 md:py-4 border-b border-black text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative bg-white"
+                    style={{
+                        paddingTop: headerPaddingY,
+                        paddingBottom: headerPaddingY,
+                        boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
+                    }}
+                >
                     {/* Left: Collections & Back Arrow */}
                     <div className="flex gap-3 md:gap-10 items-center">
                         {pathname !== '/' && (
@@ -284,7 +286,7 @@ export const Header: React.FC = () => {
 
                         <CartButton itemCount={itemCount} toggleCart={toggleCart} />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* 
                     COLLAPSIBLE HERO LOGO
