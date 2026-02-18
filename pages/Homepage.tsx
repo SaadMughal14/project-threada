@@ -58,7 +58,7 @@ export const Homepage = () => {
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
                         <h1 className="text-[14vw] md:text-[12vw] font-black uppercase text-[#1C1C1C] opacity-80 tracking-tighter leading-none whitespace-nowrap">
-                            AVANT GARDE
+                            AVANT <span className="opacity-0">GARDE</span>
                         </h1>
                     </div>
 
@@ -127,7 +127,7 @@ export const Homepage = () => {
                                 WebkitBackgroundClip: 'text'
                             }}
                         >
-                            AVANT GARDE
+                            <span className="opacity-0">AVANT</span> GARDE
                         </h1>
                     </div>
                 </div>
