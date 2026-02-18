@@ -1,41 +1,26 @@
-import React, { useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, Environment, Float, PresentationControls } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-const CookieSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
-    <circle cx="50" cy="50" r="45" fill="#D97B8D" />
-    <circle cx="30" cy="30" r="6" fill="#4A3728" />
-    <circle cx="70" cy="35" r="7" fill="#4A3728" />
-    <circle cx="45" cy="70" r="8" fill="#4A3728" />
-    <circle cx="75" cy="75" r="5" fill="#4A3728" />
-    <circle cx="20" cy="60" r="4" fill="#4A3728" />
-  </svg>
-);
+function Model() {
+  const { scene } = useGLTF('/base.glb');
+  return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+}
 
-const BrownieSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
-    <rect x="15" y="15" width="70" height="70" rx="8" fill="#3D2B1F" />
-    <rect x="25" y="25" width="20" height="20" rx="4" fill="#2B1B10" opacity="0.6" />
-    <rect x="55" y="60" width="15" height="15" rx="3" fill="#2B1B10" opacity="0.6" />
-    <circle cx="30" cy="65" r="3" fill="#D97B8D" opacity="0.4" />
-    <circle cx="70" cy="30" r="2" fill="#D97B8D" opacity="0.4" />
-  </svg>
-);
+useGLTF.preload('/base.glb');
 
-const CakeSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
-    <path d="M20 70 L80 70 L80 85 Q50 90 20 85 Z" fill="#4A0E0E" />
-    <path d="M20 50 L80 50 L80 70 L20 70 Z" fill="#D97B8D" />
-    <path d="M20 30 L80 30 L80 50 L20 50 Z" fill="#FDFCFB" opacity="0.9" />
-    <path d="M20 30 Q50 20 80 30 L50 15 Z" fill="#4A0E0E" />
-  </svg>
+const LoadingFallback = () => (
+  <div className="absolute inset-0 flex items-center justify-center z-10">
+    <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
+      [ LOADING ASSET ]
+    </span>
+  </div>
 );
 
 const Hero: React.FC = () => {
   const container = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const driftLayerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -51,113 +36,88 @@ const Hero: React.FC = () => {
         y: 15,
         duration: 1,
         ease: "power2.out"
-      }, "-=1");
-
-    // Desktop-only animations
-    if (window.innerWidth >= 768) {
-      const driftElements = gsap.utils.toArray('.drift-item');
-      driftElements.forEach((el: any, i) => {
-        const xMove = (Math.random() - 0.5) * 150;
-        const yMove = (Math.random() - 0.5) * 150;
-        const rotationAmount = (Math.random() - 0.5) * 360;
-
-        gsap.to(el, {
-          x: xMove,
-          y: yMove,
-          rotation: rotationAmount,
-          duration: 10 + (Math.random() * 15),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-
-        gsap.to(el, {
-          y: "+=20",
-          duration: 2 + (Math.random() * 2),
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
-        });
-      });
-
-      const handleMouseMove = (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        const x = (clientX / window.innerWidth - 0.5) * 40;
-        const y = (clientY / window.innerHeight - 0.5) * 40;
-        if (driftLayerRef.current) {
-          gsap.to(driftLayerRef.current, { x, y, duration: 2.5, ease: "power2.out" });
-        }
-      };
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
-    }
+      }, "-=1")
+      .from(".hero-canvas-wrapper", {
+        opacity: 0,
+        scale: 0.96,
+        duration: 1.6,
+        ease: "power3.out"
+      }, "-=1.2");
   }, { scope: container });
 
   return (
-    <section ref={container} className="h-[75dvh] md:h-[90dvh] w-full flex items-end md:items-center justify-center relative bg-[#F2DCE0] overflow-hidden">
+    <section
+      ref={container}
+      className="w-full flex flex-col relative bg-[#F5F0EB] overflow-hidden"
+    >
+      {/* --- 3D CANVAS BACKGROUND --- */}
+      <div className="hero-canvas-wrapper relative w-full aspect-[16/9] md:aspect-[21/9]">
+        {/* Gradient overlays for blending */}
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-[#F5F0EB] via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-[#F5F0EB]/30 via-transparent to-transparent" />
 
-      {/* --- DESKTOP VIEW (Video + SVGs) --- */}
-      <div className="hidden md:block absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F2DCE0]/40 via-transparent to-[#F2DCE0]/90 z-10"></div>
-        <video
-          ref={videoRef}
-          autoPlay muted loop playsInline
-          className="w-full h-full object-cover scale-105 opacity-[0.35] will-change-transform grayscale"
-        >
-          <source src="https://player.vimeo.com/external/494248848.sd.mp4?s=91480c5e648f572111756570c91550c82270923e&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
-        </video>
-      </div>
-
-      <div ref={driftLayerRef} className="hidden md:block absolute inset-0 z-10 pointer-events-none overflow-hidden">
-        {[...Array(24)].map((_, i) => {
-          const type = i % 3;
-          return (
-            <div
-              key={i}
-              className="drift-item absolute will-change-transform"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${15 + (Math.random() * 40)}px`,
-                opacity: 0.08 + (Math.random() * 0.1),
-                filter: Math.random() > 0.7 ? 'blur(1px)' : 'none',
-                transform: `scale(${0.5 + Math.random()})`
-              }}
-            >
-              {type === 0 ? <CookieSVG /> : type === 1 ? <BrownieSVG /> : <CakeSVG />}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* --- MOBILE VIEW (GIF) --- */}
-      <div className="block md:hidden absolute inset-0 z-0 overflow-hidden bg-[#F2DCE0]">
-        {/* Navbar background match area */}
-        <div className="absolute top-0 left-0 w-full h-[52px] bg-[#F2DCE0] z-20"></div>
-
-        {/* Texture Overlay */}
-        <div className="absolute inset-0 z-10 opacity-20 pointer-events-none mix-blend-overlay"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
-        ></div>
-
-        <img
-          src="/hero.gif"
-          alt="Hero Animation"
-          className="w-full h-full object-cover object-top"
+        {/* Noise texture overlay */}
+        <div
+          className="absolute inset-0 z-10 opacity-[0.04] pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F2DCE0]/0 via-transparent to-[#F2DCE0]/30 pointer-events-none"></div>
+
+        <Suspense fallback={<LoadingFallback />}>
+          <Canvas
+            className="absolute inset-0 z-0"
+            camera={{ position: [0, 0.5, 4], fov: 35 }}
+            dpr={[1, 2]}
+            gl={{ antialias: true, alpha: true }}
+            style={{ background: 'transparent' }}
+          >
+            {/* Cinematic Lighting */}
+            <ambientLight intensity={0.2} />
+            <directionalLight
+              position={[5, 8, 3]}
+              intensity={1.2}
+              castShadow
+              shadow-mapSize={[1024, 1024]}
+            />
+            <directionalLight
+              position={[-3, 2, -2]}
+              intensity={0.3}
+              color="#e8d5c4"
+            />
+
+            <Environment preset="studio" environmentIntensity={0.5} />
+
+            {/* Interactive Model */}
+            <PresentationControls
+              global
+              rotation={[0, 0, 0]}
+              polar={[-0.1, 0.2]}
+              azimuth={[-0.5, 0.5]}
+              config={{ mass: 2, tension: 400 }}
+              snap={{ mass: 4, tension: 300 }}
+            >
+              <Float
+                speed={1.5}
+                rotationIntensity={0.2}
+                floatIntensity={0.5}
+              >
+                <Model />
+              </Float>
+            </PresentationControls>
+          </Canvas>
+        </Suspense>
       </div>
 
-      {/* --- CONTENT (Shared but positioned) --- */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 pb-20 md:pb-0 short-hero-padding">
+      {/* --- CONTENT OVERLAY --- */}
+      <div className="relative z-20 flex flex-col items-center w-full max-w-full px-4 md:px-8 -mt-20 md:-mt-32 pb-12 md:pb-20">
         <div className="overflow-hidden w-full flex justify-center">
-          <h1 className="hero-title font-display text-hero font-black text-[#1C1C1C] uppercase select-none will-change-transform mix-blend-multiply">
+          <h1 className="hero-title font-display text-hero font-black text-[#1C1C1C] uppercase select-none will-change-transform">
             THREADA
           </h1>
         </div>
 
         <div className="studio-details flex flex-col items-center mt-4 md:mt-10 text-center space-y-4 md:space-y-8">
-          {/* Mobile: Space reserved in GIF negative space / Desktop: Standard Layout */}
           <div className="flex items-center gap-3 md:gap-10 opacity-60 md:opacity-60 w-full justify-center px-4">
             <span className="font-black uppercase text-[10px] md:text-[14px] tracking-[0.6em] md:tracking-[1em] whitespace-nowrap text-[#1C1C1C]">ESTABLISHED 2026</span>
           </div>
@@ -166,8 +126,8 @@ const Hero: React.FC = () => {
             <p className="font-black text-[#1C1C1C] uppercase text-[12px] md:text-3xl tracking-[0.2em] md:tracking-[0.3em] leading-tight max-w-2xl mx-auto">
               Defined by You.
             </p>
-            <p className="hidden md:block text-[#D97B8D] opacity-60 uppercase text-[7px] md:text-[10px] font-black tracking-[0.4em] italic">
-              SCULPTED BY HEAT • ARTISANAL QUALITY
+            <p className="hidden md:block text-[#8B7355] opacity-60 uppercase text-[7px] md:text-[10px] font-black tracking-[0.4em] italic">
+              LUXURY FASHION • BRUTALIST CRAFT
             </p>
           </div>
         </div>
