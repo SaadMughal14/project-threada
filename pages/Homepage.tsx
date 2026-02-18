@@ -83,7 +83,7 @@ export const Homepage = () => {
                                 camera={{ position: [5, 2, 5], fov: 30 }}
                                 dpr={[1, 2]}
                                 shadows
-                                gl={{ antialias: true }}
+                                gl={{ antialias: true, alpha: true }}
                             >
                                 <ambientLight intensity={0.5} />
                                 <directionalLight
@@ -99,7 +99,7 @@ export const Homepage = () => {
                                 />
 
                                 {/* Studio environment as the actual visible background */}
-                                <Environment preset="studio" background />
+                                <Environment preset="studio" />
 
                                 <OrbitControls
                                     enableZoom={false}
