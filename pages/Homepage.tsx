@@ -53,7 +53,9 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_50%,_#303030_0%,_#0a0a0a_100%)]">
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_40%,_#3a3a3a_0%,_#0a0a0a_70%,_#000000_100%)]">
+                    {/* Noise Overlay for Premium Texture */}
+                    <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNuKSIvPjwvc3ZnPg==')]"></div>
 
                     {/* SANDWICH LAYER 1: Background Text */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden -ml-[4vw]">
