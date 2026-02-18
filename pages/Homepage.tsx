@@ -1,4 +1,5 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
+import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
@@ -10,6 +11,22 @@ import { LifestyleQuote } from '../components/LifestyleQuote';
 
 function HeroModel() {
     const { scene } = useGLTF('/base.glb');
+
+    useEffect(() => {
+        const luxuryMaterial = new THREE.MeshStandardMaterial({
+            color: '#111111',
+            roughness: 0.85,
+            metalness: 0.15,
+        });
+        scene.traverse((child: any) => {
+            if (child.isMesh) {
+                child.material = luxuryMaterial;
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }, [scene]);
+
     return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
 }
 useGLTF.preload('/base.glb');
@@ -49,7 +66,7 @@ export const Homepage = () => {
                             gl={{ antialias: true, alpha: true }}
                             style={{ background: 'transparent' }}
                         >
-                            <ambientLight intensity={0.2} />
+                            <ambientLight intensity={0.4} />
                             <directionalLight
                                 position={[5, 8, 3]}
                                 intensity={1.2}
