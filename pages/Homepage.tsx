@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, Environment, Float, PresentationControls } from '@react-three/drei';
 
 import { FashionCategoryGrid } from '../components/FashionCategoryGrid';
 import { LifestyleQuote } from '../components/LifestyleQuote';
+
+function HeroModel() {
+    const { scene } = useGLTF('/base.glb');
+    return <primitive object={scene} scale={1} position={[0, -1, 0]} />;
+}
+useGLTF.preload('/base.glb');
 
 export const Homepage = () => {
     const today = new Date();
@@ -14,7 +22,7 @@ export const Homepage = () => {
     return (
         <main className="max-w-[1400px] mx-auto px-4 md:px-12 pb-20">
 
-            {/* Editorial Hero: Text Top / Image Bottom */}
+            {/* Editorial Hero: Text Top / 3D Canvas Bottom */}
             <section className="mb-20">
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
                     <p className="w-1/3 text-xs md:text-base font-light leading-tight tracking-tight">
@@ -26,12 +34,48 @@ export const Homepage = () => {
                     </p>
                 </div>
 
-                <div className="w-full h-[60vh] md:h-[80vh] overflow-hidden relative group border-b-[1.5px] border-black">
-                    <img
-                        src="/hero.png"
-                        className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
-                        alt="Hero Campaign"
-                    />
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-black bg-[#F5F0EB]">
+                    <Suspense fallback={
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="font-mono text-[11px] md:text-sm tracking-[0.5em] uppercase text-[#1C1C1C]/40 animate-pulse">
+                                [ LOADING ASSET ]
+                            </span>
+                        </div>
+                    }>
+                        <Canvas
+                            className="absolute inset-0"
+                            camera={{ position: [0, 0.5, 4], fov: 35 }}
+                            dpr={[1, 2]}
+                            gl={{ antialias: true, alpha: true }}
+                            style={{ background: 'transparent' }}
+                        >
+                            <ambientLight intensity={0.2} />
+                            <directionalLight
+                                position={[5, 8, 3]}
+                                intensity={1.2}
+                                castShadow
+                            />
+                            <directionalLight
+                                position={[-3, 2, -2]}
+                                intensity={0.3}
+                                color="#e8d5c4"
+                            />
+                            <Environment preset="studio" environmentIntensity={0.5} />
+
+                            <PresentationControls
+                                global
+                                rotation={[0, 0, 0]}
+                                polar={[-0.1, 0.2]}
+                                azimuth={[-0.5, 0.5]}
+                                config={{ mass: 2, tension: 400 }}
+                                snap={{ mass: 4, tension: 300 }}
+                            >
+                                <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+                                    <HeroModel />
+                                </Float>
+                            </PresentationControls>
+                        </Canvas>
+                    </Suspense>
                 </div>
             </section>
 
