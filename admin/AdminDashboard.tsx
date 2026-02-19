@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminProducts } from '../hooks/useProducts';
 
-const CATEGORIES = ['Cookies', 'Brownies', 'Cakes', 'Coffee & Tea', 'Sides'];
+const CATEGORIES = ['Tops', 'Bottoms', 'Outerwear', 'Accessories', 'Footwear'];
 
 const AdminDashboard: React.FC = () => {
     const { products, loading } = useAdminProducts();
@@ -22,7 +22,7 @@ const AdminDashboard: React.FC = () => {
             {/* Header */}
             <div className="mb-6 lg:mb-8">
                 <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">Dashboard</h1>
-                <p className="text-white/40 text-sm font-medium mt-1">Manage your Gravity products</p>
+                <p className="text-white/40 text-sm font-medium mt-1">Manage your Threada products</p>
             </div>
 
             {loading ? (
@@ -89,7 +89,7 @@ const AdminDashboard: React.FC = () => {
                     {/* Empty State */}
                     {stats.total === 0 && (
                         <div className="mt-6 lg:mt-8 bg-[#D97B8D]/10 border border-[#D97B8D]/30 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-center">
-                            <div className="text-4xl lg:text-5xl mb-3 lg:mb-4">🍪</div>
+                            <div className="text-4xl lg:text-5xl mb-3 lg:mb-4">🧥</div>
                             <h3 className="text-lg lg:text-xl font-black text-white uppercase tracking-tight mb-2">No Products Yet</h3>
                             <p className="text-white/50 text-sm mb-4 lg:mb-6">
                                 Add your first product to get started.

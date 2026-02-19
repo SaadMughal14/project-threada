@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminProducts } from '../hooks/useProducts';
 
-const CATEGORIES = ['All', 'Cookies', 'Brownies', 'Cakes', 'Coffee & Tea', 'Sides'];
+const CATEGORIES = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Accessories', 'Footwear'];
 
 const ProductList: React.FC = () => {
     // Cast to include updateDisplayOrder which we added to the implementation
@@ -126,7 +126,7 @@ const ProductList: React.FC = () => {
                 </div>
             ) : filteredProducts.length === 0 ? (
                 <div className="bg-[#0a0a0a] border border-white/5 rounded-xl lg:rounded-2xl p-8 lg:p-12 text-center">
-                    <div className="text-4xl lg:text-5xl mb-3 lg:mb-4">🍪</div>
+                    <div className="text-4xl lg:text-5xl mb-3 lg:mb-4">🧥</div>
                     <h3 className="text-lg lg:text-xl font-black text-white uppercase tracking-tight mb-2">No Products</h3>
                     <p className="text-white/50 text-sm mb-4 lg:mb-6">
                         {filter === 'All'
@@ -165,7 +165,7 @@ const ProductList: React.FC = () => {
                                         />
                                     ) : (
                                         <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-2xl">
-                                            🍪
+                                            👔
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
@@ -270,7 +270,7 @@ const ProductList: React.FC = () => {
                                                     />
                                                 ) : (
                                                     <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xl">
-                                                        🍪
+                                                        👔
                                                     </div>
                                                 )}
                                                 <div>

@@ -155,8 +155,9 @@ export const PRODUCTS: FashionProduct[] = [
   }
 ];
 
-brandPrimary: '#D97B8D', // Still keeping for now as requested accent
+export const COLORS = {
+  brandPrimary: '#D97B8D', // Still keeping for now as requested accent
   brandLight: '#F2DCE0',
-    deepBasil: '#1C1C1C',
-      creamVanilla: '#FDFCFB',
+  deepBasil: '#1C1C1C',
+  creamVanilla: '#FDFCFB',
 };
