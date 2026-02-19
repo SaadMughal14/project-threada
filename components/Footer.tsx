@@ -11,28 +11,28 @@ export const Footer: React.FC = () => {
     };
 
     return (
-        <footer className="bg-black text-white pt-20 pb-8 px-4 md:px-6 mt-20 relative z-40">
+        <footer className="bg-black text-white pt-16 pb-8 px-4 md:px-12 mt-20 relative z-40">
             {modalInfo && <InfoModal title={modalInfo.title} content={modalInfo.content} onClose={() => setModalInfo(null)} />}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 border-b border-white/20 pb-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-16 border-b border-white/20 pb-12">
                 {/* Brand */}
                 <div>
-                    <img src="/logo1.png" alt="Threada Logo" className="h-16 w-auto mb-10 invert brightness-0" />
-                    <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                    <img src="/logo1.png" alt="Threada Logo" className="h-12 w-auto mb-6 invert brightness-0" />
+                    <p className="text-xs text-gray-400 leading-relaxed mb-6 font-light">
                         128 Market St. 20193 <br /> San Fransisco California
                     </p>
                     <div className="flex gap-6 text-gray-400">
-                        <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
-                        <Twitter className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
-                        <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
-                        <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition-colors" />
+                        <Facebook className="w-4 h-4 cursor-pointer hover:text-white transition-colors" />
+                        <Twitter className="w-4 h-4 cursor-pointer hover:text-white transition-colors" />
+                        <Linkedin className="w-4 h-4 cursor-pointer hover:text-white transition-colors" />
+                        <Instagram className="w-4 h-4 cursor-pointer hover:text-white transition-colors" />
                     </div>
                 </div>
 
                 {/* Management */}
                 <div>
-                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Management</h4>
-                    <ul className="space-y-3 text-xs text-gray-300">
+                    <h4 className="text-xs font-bold uppercase tracking-widest mb-6 text-white">Management</h4>
+                    <ul className="space-y-4 text-xs text-gray-400 font-light">
                         <li onClick={() => openModal('Features', 'Explore our cutting-edge features designed for modern living.')} className="hover:text-white transition-colors cursor-pointer">Features</li>
                         <li onClick={() => openModal('Blog', 'Read our latest stories, style guides, and design philosophy.')} className="hover:text-white transition-colors cursor-pointer">Blog</li>
                         <li onClick={() => openModal('Careers', 'Join our team. We are looking for creative minds.')} className="hover:text-white transition-colors cursor-pointer">Careers</li>
@@ -40,9 +40,9 @@ export const Footer: React.FC = () => {
                     </ul>
                 </div>
 
-                {/* Minimalist */}
+                {/* Collections */}
                 <div>
-                    <h4 className="text-sm font-bold uppercase mb-4 text-white">Minimalist</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-widest mb-6 text-white">Collections</h4>
                     <ul className="space-y-3 text-xs text-gray-300">
                         <Link to="/category/classic" className="block hover:text-white transition-colors">Classic</Link>
                         <Link to="/category/retro" className="block hover:text-white transition-colors">Retro</Link>

@@ -34,7 +34,7 @@
   }
 
   body {
-    font-family: 'Satoshi', sans-serif;
+    font-family: 'Inter', sans-serif;
     @apply bg-white text-black antialiased;
   }
 
