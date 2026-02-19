@@ -242,40 +242,40 @@ export const ProductDetail: React.FC = () => {
                 </div>
 
                 {/* Scrollable Content Column */}
-                <div className="p-24 flex flex-col justify-center min-h-screen">
+                <div className="p-12 lg:p-20 flex flex-col justify-center min-h-screen">
                     <div className="max-w-xl w-full mx-auto animate-fade-in-up">
-                        <div className="flex justify-between items-start mb-8">
-                            <span className="font-body text-xs font-bold tracking-[0.3em] text-black/40 uppercase block">
+                        <div className="flex justify-between items-start mb-4">
+                            <span className="font-body text-[10px] font-bold tracking-[0.3em] text-black/40 uppercase block">
                                 {product.category} / 001
                             </span>
                             <div className="flex items-center gap-1">
                                 {[1, 2, 3, 4, 5].map(i => (
                                     <Star key={i} size={10} className="fill-black text-black" />
                                 ))}
-                                <span className="text-[10px] font-bold tracking-widest ml-2 bg-black/5 px-2 py-1 uppercase">4.9 Star Rating</span>
+                                <span className="text-[10px] font-bold tracking-widest ml-2 bg-black/5 px-2 py-0.5 uppercase">4.9 Star Rating</span>
                             </div>
                         </div>
 
-                        <h1 className="font-heading text-7xl mb-8 leading-[0.85] tracking-tight">
+                        <h1 className="font-heading text-5xl lg:text-6xl mb-4 leading-[0.9] tracking-tight">
                             {product.name}
                         </h1>
 
-                        <div className="font-body text-3xl font-light mb-12 flex items-baseline gap-6 border-b border-black/5 pb-8">
+                        <div className="font-body text-2xl font-light mb-6 flex items-baseline gap-4 border-b border-black/5 pb-4">
                             <span>${currentPrice}</span>
-                            <span className="text-xl text-black/20 line-through decoration-1">${originalPrice}</span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-black/40 self-center ml-auto">Free Shipping</span>
+                            <span className="text-lg text-black/20 line-through decoration-1">${originalPrice}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-black/40 self-center ml-auto">Free Shipping</span>
                         </div>
 
-                        <p className="font-body text-lg leading-relaxed text-gray-600 mb-16 max-w-md">
-                            {product.description} Constructed from premium heavyweight fabric for durability and drape. A staple for any minimalistic wardrobe, designed to age beautifully.
+                        <p className="font-body text-sm leading-relaxed text-gray-600 mb-8 max-w-md">
+                            {product.description} Constructed from premium heavyweight fabric for durability.
                         </p>
 
-                        {/* Selectors - Editorial Style */}
-                        <div className="space-y-12 mb-16">
+                        {/* Selectors - Editorial Style (Compact) */}
+                        <div className="space-y-6 mb-8">
                             {/* Size Selector */}
                             <div>
-                                <div className="flex justify-between items-baseline mb-6 border-b border-black/10 pb-2">
-                                    <span className="text-sm font-black uppercase tracking-[0.2em] text-black">Size</span>
+                                <div className="flex justify-between items-baseline mb-2 border-b border-black/10 pb-1">
+                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-black">Size</span>
                                     <button className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors">Size Guide</button>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -283,14 +283,14 @@ export const ProductDetail: React.FC = () => {
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
-                                            className={`text-lg font-bold uppercase tracking-widest transition-all relative py-2 ${selectedSize === size
+                                            className={`text-sm font-bold uppercase tracking-widest transition-all relative py-1 ${selectedSize === size
                                                 ? 'text-black scale-110'
                                                 : 'text-black/20 hover:text-black/60'
                                                 }`}
                                         >
                                             {size}
                                             {selectedSize === size && (
-                                                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black" />
+                                                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-black" />
                                             )}
                                         </button>
                                     ))}
@@ -299,19 +299,19 @@ export const ProductDetail: React.FC = () => {
 
                             {/* Color Selector */}
                             <div>
-                                <span className="text-sm font-black uppercase tracking-[0.2em] mb-6 block text-black border-b border-black/10 pb-2">
-                                    Color <span className="text-black/40 font-medium ml-4 normal-case tracking-normal text-xs">{selectedColor || 'Select a shade'}</span>
+                                <span className="text-xs font-black uppercase tracking-[0.2em] mb-3 block text-black border-b border-black/10 pb-1">
+                                    Color <span className="text-black/40 font-medium ml-2 normal-case tracking-normal text-[10px]">{selectedColor || 'Select a shade'}</span>
                                 </span>
-                                <div className="flex gap-6">
+                                <div className="flex gap-3">
                                     {colors.map(color => (
                                         <button
                                             key={color}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`group relative w-16 h-20 transition-all duration-300 ${selectedColor === color ? 'opacity-100 scale-105' : 'opacity-40 hover:opacity-100'}`}
+                                            className={`group relative w-12 h-14 transition-all duration-300 ${selectedColor === color ? 'opacity-100 scale-105' : 'opacity-40 hover:opacity-100'}`}
                                         >
                                             <div className="w-full h-full border border-black/10 shadow-sm" style={{ backgroundColor: color.toLowerCase() }} />
                                             {selectedColor === color && (
-                                                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-black rounded-full" />
+                                                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-black rounded-full" />
                                             )}
                                         </button>
                                     ))}
@@ -320,23 +320,23 @@ export const ProductDetail: React.FC = () => {
                         </div>
 
                         {/* Desktop Actions */}
-                        <div className="flex items-stretch gap-6 mb-16">
+                        <div className="flex items-stretch gap-4 mb-8">
                             {/* Quantity */}
-                            <div className="flex items-center border border-black/10 px-6 gap-6">
-                                <button onClick={() => handleQuantityChange(-1)} className="hover:text-black/50 transition-colors"><Minus size={18} /></button>
-                                <span className="font-heading text-xl w-4 text-center">{quantity}</span>
-                                <button onClick={() => handleQuantityChange(1)} className="hover:text-black/50 transition-colors"><Plus size={18} /></button>
+                            <div className="flex items-center border border-black/10 px-4 gap-4">
+                                <button onClick={() => handleQuantityChange(-1)} className="hover:text-black/50 transition-colors"><Minus size={14} /></button>
+                                <span className="font-heading text-lg w-3 text-center">{quantity}</span>
+                                <button onClick={() => handleQuantityChange(1)} className="hover:text-black/50 transition-colors"><Plus size={14} /></button>
                             </div>
 
                             {/* Add Button */}
                             <button
                                 onClick={handleAddToCart}
                                 disabled={!selectedSize || !selectedColor}
-                                className={`flex-1 group py-6 bg-black text-white font-heading text-lg uppercase tracking-[0.25em] hover:bg-black/90 transition-all flex items-center justify-between px-10 ${!selectedSize || !selectedColor ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                className={`flex-1 group py-4 bg-black text-white font-heading text-base uppercase tracking-[0.25em] hover:bg-black/90 transition-all flex items-center justify-between px-8 ${!selectedSize || !selectedColor ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                             >
-                                <span className="group-hover:translate-x-2 transition-transform duration-300">{selectedSize && selectedColor ? 'Add to Bag' : 'Select Options'}</span>
+                                <span className="group-hover:translate-x-1 transition-transform duration-300">{selectedSize && selectedColor ? 'Add to Bag' : 'Select Options'}</span>
                                 {selectedSize && selectedColor && (
-                                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-1 group-hover:translate-y-0 text-sm font-body tracking-wider">${currentPrice * quantity}</span>
+                                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-1 group-hover:translate-y-0 text-xs font-body tracking-wider">${currentPrice * quantity}</span>
                                 )}
                             </button>
                         </div>
