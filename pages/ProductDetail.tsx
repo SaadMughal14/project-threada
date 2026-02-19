@@ -230,7 +230,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
             </div>
 
-            {/* DESKTOP LAYOUT (Original) */}
+            {/* DESKTOP LAYOUT (Editorially Refined) */}
             <div className="hidden lg:grid min-h-screen grid-cols-2 bg-[var(--cream-vanilla)]">
                 {/* Sticky Image Column */}
                 <div className="h-screen sticky top-0 bg-[#E5E5E5] relative overflow-hidden">
@@ -243,43 +243,55 @@ export const ProductDetail: React.FC = () => {
 
                 {/* Scrollable Content Column */}
                 <div className="p-24 flex flex-col justify-center min-h-screen">
-                    <div className="max-w-lg w-full mx-auto animate-fade-in-up">
-                        <span className="font-body text-xs font-bold tracking-[0.3em] text-gray-400 uppercase mb-6 block">
-                            {product.category} / 001
-                        </span>
+                    <div className="max-w-xl w-full mx-auto animate-fade-in-up">
+                        <div className="flex justify-between items-start mb-8">
+                            <span className="font-body text-xs font-bold tracking-[0.3em] text-black/40 uppercase block">
+                                {product.category} / 001
+                            </span>
+                            <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <Star key={i} size={10} className="fill-black text-black" />
+                                ))}
+                                <span className="text-[10px] font-bold tracking-widest ml-2 bg-black/5 px-2 py-1 uppercase">4.9 Star Rating</span>
+                            </div>
+                        </div>
 
-                        <h1 className="font-heading text-7xl mb-6 leading-[0.9]">
+                        <h1 className="font-heading text-7xl mb-8 leading-[0.85] tracking-tight">
                             {product.name}
                         </h1>
 
-                        <div className="font-body text-2xl font-light mb-10 flex items-center gap-4">
-                            <span>{product.price}</span>
-                            <span className="text-xs uppercase bg-black text-white px-2 py-1 tracking-widest rounded-sm">In Stock</span>
+                        <div className="font-body text-3xl font-light mb-12 flex items-baseline gap-6 border-b border-black/5 pb-8">
+                            <span>${currentPrice}</span>
+                            <span className="text-xl text-black/20 line-through decoration-1">${originalPrice}</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-black/40 self-center ml-auto">Free Shipping</span>
                         </div>
 
-                        <p className="font-body text-base leading-relaxed text-gray-600 mb-12">
-                            {product.description} Constructed from premium heavyweight fabric for durability and drape. A staple for any minimalistic wardrobe.
+                        <p className="font-body text-lg leading-relaxed text-gray-600 mb-16 max-w-md">
+                            {product.description} Constructed from premium heavyweight fabric for durability and drape. A staple for any minimalistic wardrobe, designed to age beautifully.
                         </p>
 
-                        {/* Selectors */}
-                        <div className="space-y-8 mb-12">
+                        {/* Selectors - Editorial Style */}
+                        <div className="space-y-12 mb-16">
                             {/* Size Selector */}
                             <div>
-                                <div className="flex justify-between mb-4">
-                                    <span className="text-xs font-bold uppercase tracking-[0.2em]">Select Size</span>
-                                    <span className="text-xs underline text-gray-400 cursor-pointer">Size Guide</span>
+                                <div className="flex justify-between items-baseline mb-6 border-b border-black/10 pb-2">
+                                    <span className="text-sm font-black uppercase tracking-[0.2em] text-black">Size</span>
+                                    <button className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors">Size Guide</button>
                                 </div>
-                                <div className="grid grid-cols-5 gap-3">
+                                <div className="flex items-center justify-between">
                                     {sizes.map(size => (
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
-                                            className={`h-12 border border-gray-300 flex items-center justify-center text-xs font-bold uppercase transition-all duration-200 ${selectedSize === size
-                                                ? 'bg-black text-white border-black transform scale-105'
-                                                : 'hover:border-black text-gray-500'
+                                            className={`text-lg font-bold uppercase tracking-widest transition-all relative py-2 ${selectedSize === size
+                                                ? 'text-black scale-110'
+                                                : 'text-black/20 hover:text-black/60'
                                                 }`}
                                         >
                                             {size}
+                                            {selectedSize === size && (
+                                                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black" />
+                                            )}
                                         </button>
                                     ))}
                                 </div>
@@ -287,43 +299,57 @@ export const ProductDetail: React.FC = () => {
 
                             {/* Color Selector */}
                             <div>
-                                <span className="text-xs font-bold uppercase tracking-[0.2em] mb-4 block">Select Color</span>
-                                <div className="flex gap-4">
+                                <span className="text-sm font-black uppercase tracking-[0.2em] mb-6 block text-black border-b border-black/10 pb-2">
+                                    Color <span className="text-black/40 font-medium ml-4 normal-case tracking-normal text-xs">{selectedColor || 'Select a shade'}</span>
+                                </span>
+                                <div className="flex gap-6">
                                     {colors.map(color => (
                                         <button
                                             key={color}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`w-10 h-10 rounded-full border border-gray-200 relative flex items-center justify-center transition-transform ${selectedColor === color ? 'ring-2 ring-black ring-offset-4 scale-110' : 'hover:scale-110'
-                                                }`}
-                                            style={{ backgroundColor: color.toLowerCase() }}
-                                            title={color}
-                                        />
+                                            className={`group relative w-16 h-20 transition-all duration-300 ${selectedColor === color ? 'opacity-100 scale-105' : 'opacity-40 hover:opacity-100'}`}
+                                        >
+                                            <div className="w-full h-full border border-black/10 shadow-sm" style={{ backgroundColor: color.toLowerCase() }} />
+                                            {selectedColor === color && (
+                                                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-black rounded-full" />
+                                            )}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Action */}
-                        <button
-                            onClick={handleAddToCart}
-                            disabled={!selectedSize || !selectedColor}
-                            className={`w-full py-5 font-body font-bold uppercase tracking-[0.3em] transition-all duration-300 ${selectedSize && selectedColor
-                                ? 'bg-black text-white hover:bg-gray-900 cursor-pointer'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                }`}
-                        >
-                            {selectedSize && selectedColor ? 'Add to Bag' : 'Select Options'}
-                        </button>
+                        {/* Desktop Actions */}
+                        <div className="flex items-stretch gap-6 mb-16">
+                            {/* Quantity */}
+                            <div className="flex items-center border border-black/10 px-6 gap-6">
+                                <button onClick={() => handleQuantityChange(-1)} className="hover:text-black/50 transition-colors"><Minus size={18} /></button>
+                                <span className="font-heading text-xl w-4 text-center">{quantity}</span>
+                                <button onClick={() => handleQuantityChange(1)} className="hover:text-black/50 transition-colors"><Plus size={18} /></button>
+                            </div>
+
+                            {/* Add Button */}
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={!selectedSize || !selectedColor}
+                                className={`flex-1 group py-6 bg-black text-white font-heading text-lg uppercase tracking-[0.25em] hover:bg-black/90 transition-all flex items-center justify-between px-10 ${!selectedSize || !selectedColor ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                            >
+                                <span className="group-hover:translate-x-2 transition-transform duration-300">{selectedSize && selectedColor ? 'Add to Bag' : 'Select Options'}</span>
+                                {selectedSize && selectedColor && (
+                                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-1 group-hover:translate-y-0 text-sm font-body tracking-wider">${currentPrice * quantity}</span>
+                                )}
+                            </button>
+                        </div>
 
                         {/* Footer / FAQ */}
-                        <div className="mt-16 border-t border-gray-200 pt-8 space-y-4">
-                            <div className="flex justify-between group cursor-pointer">
-                                <span className="text-xs font-bold uppercase tracking-widest">Details & Care</span>
-                                <span>+</span>
+                        <div className="border-t border-black/10 pt-8 space-y-6">
+                            <div className="flex justify-between items-center group cursor-pointer hover:pl-2 transition-all duration-300">
+                                <span className="text-xs font-black uppercase tracking-[0.2em]">Details & Care</span>
+                                <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
                             </div>
-                            <div className="flex justify-between group cursor-pointer">
-                                <span className="text-xs font-bold uppercase tracking-widest">Shipping & Returns</span>
-                                <span>+</span>
+                            <div className="flex justify-between items-center group cursor-pointer hover:pl-2 transition-all duration-300">
+                                <span className="text-xs font-black uppercase tracking-[0.2em]">Shipping & Returns</span>
+                                <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
                             </div>
                         </div>
                     </div>
