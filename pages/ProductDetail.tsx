@@ -62,15 +62,6 @@ export const ProductDetail: React.FC = () => {
         <>
             {/* MOBILE LAYOUT (Premium Design - Brand Theme) */}
             <div className="lg:hidden min-h-screen bg-[var(--cream-vanilla)] pb-32 font-sans">
-                {/* Navigation Overlay */}
-                <div className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
-                    <Link to="/" className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform border border-black/5">
-                        <ChevronLeft size={24} />
-                    </Link>
-                    <button className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform border border-black/5">
-                        <Heart size={24} className="text-black hover:text-red-500 transition-colors" />
-                    </button>
-                </div>
 
                 {/* Main Image Card (Sharp Edges) */}
                 <div className="mx-4 mt-4 h-[55vh] bg-[#E5E5E5] relative overflow-hidden border border-black/5">
@@ -80,20 +71,30 @@ export const ProductDetail: React.FC = () => {
                         className="w-full h-full object-cover"
                     />
 
-                    {/* Floating Thumbnails Stack (Sharp) */}
+                    {/* Floating Thumbnails Stack (Sharp) - Real Variants */}
                     <div className="absolute top-6 right-6 flex flex-col gap-3">
-                        {[product.image, product.image, product.image].map((img, idx) => (
-                            <div key={idx} className="w-14 h-14 bg-white/40 p-1 backdrop-blur-md shadow-sm overflow-hidden border border-white/50">
-                                <img
-                                    src={cloudinaryLoader({ src: img, width: 200 })}
-                                    alt="thumbnail"
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
+                        {colors.slice(0, 3).map((color, idx) => (
+                            <button
+                                key={color}
+                                onClick={() => setSelectedColor(color)}
+                                className={`w-14 h-14 bg-white/40 p-1 backdrop-blur-md shadow-sm overflow-hidden border transition-all ${selectedColor === color ? 'border-black' : 'border-white/50'}`}
+                            >
+                                <div className="w-full h-full relative">
+                                    <img
+                                        src={cloudinaryLoader({ src: product.image, width: 200 })}
+                                        alt={color}
+                                        className="w-full h-full object-cover opacity-80"
+                                    />
+                                    {/* Color Tint Overlay to simulate variant */}
+                                    <div className="absolute inset-0 mix-blend-multiply" style={{ backgroundColor: color.toLowerCase(), opacity: 0.3 }} />
+                                </div>
+                            </button>
                         ))}
-                        <div className="w-14 h-14 bg-black/90 backdrop-blur-md text-white flex items-center justify-center text-xs font-bold border border-white/10 shadow-sm">
-                            9+
-                        </div>
+                        {colors.length > 3 && (
+                            <div className="w-14 h-14 bg-black/90 backdrop-blur-md text-white flex items-center justify-center text-xs font-bold border border-white/10 shadow-sm">
+                                +{colors.length - 3}
+                            </div>
+                        )}
                     </div>
                 </div>
 
