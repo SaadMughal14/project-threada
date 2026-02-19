@@ -104,25 +104,28 @@ const App: React.FC = () => {
       {/* Cart Drawer */}
       <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isOpen ? 'visible' : 'invisible'}`}>
         <div onClick={toggleCart} className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0'}`} />
-        <div className={`absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+
+        {/* TEXTURE UPDATE: Changed bg-white to bg-[#FAFAFA] */}
+        <div className={`absolute top-0 right-0 h-full w-full max-w-md bg-[#FAFAFA] shadow-2xl transform transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+
           {/* Header */}
-          <div className="p-6 md:p-8 flex justify-between items-center border-b border-gray-100 flex-shrink-0">
+          <div className="p-6 md:p-8 flex justify-between items-center border-b border-gray-200/60 flex-shrink-0 bg-white/50 backdrop-blur-sm">
             <h2 className="font-heading text-2xl md:text-3xl">Cart ({items.length})</h2>
-            <button onClick={toggleCart} className="w-8 h-8 flex items-center justify-center text-xl hover:rotate-90 transition-transform">×</button>
+            <button onClick={toggleCart} className="w-8 h-8 flex items-center justify-center text-xl hover:rotate-90 transition-transform text-black/60 hover:text-black">×</button>
           </div>
 
           {/* Cart Items */}
           <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6" data-lenis-prevent>
             {items.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-gray-400 font-light text-lg mb-2">Your bag is empty.</p>
-                <p className="text-gray-300 text-xs uppercase tracking-widest">Add items to get started</p>
+                <p className="text-gray-500 font-medium text-lg mb-2">Your bag is empty.</p>
+                <p className="text-gray-400 text-xs uppercase tracking-widest">Add items to get started</p>
               </div>
             )}
             {items.map(item => (
-              <div key={item.id} className="flex gap-4 md:gap-6">
+              <div key={item.id} className="flex gap-4 md:gap-6 group">
                 {/* Product Image */}
-                <div className="w-20 h-24 md:w-24 md:h-28 bg-[#F4F4F4] flex-shrink-0 overflow-hidden">
+                <div className="w-20 h-24 md:w-24 md:h-28 bg-white flex-shrink-0 overflow-hidden shadow-sm border border-black/5">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
 
@@ -134,33 +137,33 @@ const App: React.FC = () => {
                       {/* Remove Button */}
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0 text-lg leading-none"
+                        className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 text-lg leading-none opacity-0 group-hover:opacity-100 duration-200"
                         title="Remove item"
                       >
                         ×
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-1.5 py-0.5 text-black rounded-sm">Size: {item.size}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-1.5 py-0.5 text-black rounded-sm">Color: {item.color}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-white border border-black/5 px-2 py-1 text-black/70 rounded-sm">Size: {item.size}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-white border border-black/5 px-2 py-1 text-black/70 rounded-sm">Color: {item.color}</span>
                     </div>
                   </div>
 
                   <div className="flex justify-between items-center mt-3">
                     {/* Quantity Controls */}
-                    <div className="flex items-center border border-gray-200">
+                    <div className="flex items-center border border-black/10 bg-white">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center text-sm hover:bg-gray-100 transition-colors"
+                        className="w-7 h-7 flex items-center justify-center text-sm hover:bg-gray-50 transition-colors text-black/60"
                       >
                         −
                       </button>
-                      <span className="w-8 h-8 flex items-center justify-center text-xs font-bold border-x border-gray-200">
+                      <span className="w-8 h-7 flex items-center justify-center text-xs font-bold border-x border-black/10">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center text-sm hover:bg-gray-100 transition-colors"
+                        className="w-7 h-7 flex items-center justify-center text-sm hover:bg-gray-50 transition-colors text-black/60"
                       >
                         +
                       </button>
@@ -173,10 +176,10 @@ const App: React.FC = () => {
               </div>
             ))}
 
-            {/* Order Notes */}
+            {/* Order Notes (Darker Labels) */}
             {items.length > 0 && (
-              <div className="pt-4 border-t border-gray-100">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block mb-2">
+              <div className="pt-6 border-t border-black/5">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/60 block mb-3">
                   Order Notes
                 </label>
                 <textarea
@@ -184,25 +187,25 @@ const App: React.FC = () => {
                   onChange={(e) => setOrderNotes(e.target.value)}
                   placeholder="Special requests, gift wrapping, delivery instructions..."
                   rows={3}
-                  className="w-full border border-gray-200 p-3 text-sm font-light resize-none focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+                  className="w-full bg-white border border-black/10 p-3 text-sm font-medium resize-none focus:outline-none focus:border-black transition-colors placeholder:text-gray-400"
                 />
               </div>
             )}
 
-            {/* Clear Cart Link with Confirmation */}
+            {/* Clear Cart (Darker Link) */}
             {items.length > 0 && (
               <div className="mt-8 flex justify-center pb-2">
                 {!showClearConfirm ? (
                   <button
                     onClick={() => setShowClearConfirm(true)}
-                    className="text-[10px] font-bold uppercase tracking-widest text-gray-300 hover:text-red-500 transition-colors border-b border-transparent hover:border-red-500"
+                    className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-red-600 transition-colors border-b border-transparent hover:border-red-600 pb-0.5"
                   >
                     Clear Bag
                   </button>
                 ) : (
-                  <div className="flex items-center gap-3 bg-red-50 px-3 py-1.5 rounded animate-fade-in">
+                  <div className="flex items-center gap-3 bg-white border border-red-100 shadow-sm px-4 py-2 rounded-md animate-fade-in">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-red-800">Clear all?</span>
-                    <div className="flex gap-3 border-l border-red-200 pl-3">
+                    <div className="flex gap-3 border-l border-red-100 pl-3">
                       <button
                         onClick={() => { clearCart(); setShowClearConfirm(false); }}
                         className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-black transition-colors"
@@ -224,18 +227,18 @@ const App: React.FC = () => {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="p-6 md:p-8 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+            <div className="p-6 md:p-8 border-t border-black/5 bg-white flex-shrink-0">
               <div className="flex justify-between mb-4">
-                <span className="text-xs uppercase tracking-widest text-gray-400">Subtotal</span>
+                <span className="text-xs uppercase tracking-widest text-gray-500 font-bold">Subtotal</span>
                 <span className="font-heading text-2xl">${getCartTotal()}</span>
               </div>
               <button
                 onClick={() => { toggleCart(); setIsCheckoutOpen(true); }}
-                className="btn-primary w-full"
+                className="btn-primary w-full shadow-lg hover:shadow-xl transition-shadow"
               >
                 Checkout
               </button>
-              <p className="text-center text-[10px] text-gray-300 mt-3 uppercase tracking-widest">
+              <p className="text-center text-[10px] text-gray-400 mt-4 uppercase tracking-widest font-medium">
                 Shipping calculated at checkout
               </p>
             </div>
