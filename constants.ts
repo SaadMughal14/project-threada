@@ -122,7 +122,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$240",
     color: "#94A3B8",
     materials: ["Polyester Blend", "Permanent Pleat"],
-    image: "https://images.unsplash.com/photo-1583496661160-fb3186faa35b?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1551163943-3f6a29e3945a?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
 

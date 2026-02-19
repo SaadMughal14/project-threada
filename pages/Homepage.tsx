@@ -1,6 +1,8 @@
+
 import React, { Suspense, useEffect } from 'react';
 import * as THREE from 'three';
 import { Link } from 'react-router-dom';
+import { useCartStore } from '../src/store/cartStore';
 import { PIZZAS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
@@ -32,6 +34,28 @@ function HeroModel() {
 useGLTF.preload('/base.glb');
 
 export const Homepage = () => {
+    const { addItem, toggleCart } = useCartStore();
+
+    const handleQuickAdd = (e: React.MouseEvent, product: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const price = parseInt(product.price.toString().replace(/[^0-9]/g, ''));
+
+        addItem({
+            id: `${product.id}-quick`,
+            productId: product.id,
+            name: product.name,
+            price: price,
+            quantity: 1,
+            image: product.image,
+            size: 'M', // Default fallback
+            color: product.color || 'Standard',
+            maxStock: 99
+        });
+
+        toggleCart();
+    };
     const today = new Date();
     const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace('/', '.');
     const yearStr = today.getFullYear();
@@ -183,12 +207,18 @@ export const Homepage = () => {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {PIZZAS.slice(3, 7).map((product: any) => (
-                        <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block">
+                        <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block relative">
                             <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
                                 <img
                                     src={product.image}
                                     className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                                 />
+                                <button
+                                    onClick={(e) => handleQuickAdd(e, product)}
+                                    className="absolute bottom-4 right-4 bg-white text-black px-4 py-2 text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                >
+                                    Quick Add +
+                                </button>
                             </div>
                             <div className="flex justify-between items-center text-sm font-bold uppercase border-b border-gray-300 pb-3">
                                 <span>{product.name}</span>
