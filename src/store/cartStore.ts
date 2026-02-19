@@ -34,6 +34,7 @@ export const useCartStore = create<CartState>()(
             addItem: (newItem) => {
                 set((state) => {
                     const existingItemIndex = state.items.findIndex((item) => item.id === newItem.id);
+                    const shouldOpen = state.items.length === 0; // Only open if it was empty
 
                     if (existingItemIndex > -1) {
                         // Item exists, update quantity
@@ -49,10 +50,10 @@ export const useCartStore = create<CartState>()(
                             quantity: newQuantity,
                         };
 
-                        return { items: newItems, isOpen: true }; // Open cart on add
+                        return { items: newItems, isOpen: state.isOpen || shouldOpen };
                     } else {
                         // New item
-                        return { items: [...state.items, newItem], isOpen: true };
+                        return { items: [...state.items, newItem], isOpen: state.isOpen || shouldOpen };
                     }
                 });
             },

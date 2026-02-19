@@ -37,6 +37,7 @@ const App: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [orderNotes, setOrderNotes] = useState('');
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
@@ -139,9 +140,10 @@ const App: React.FC = () => {
                         ×
                       </button>
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-1 uppercase tracking-wider">
-                      {item.size} — {item.color}
-                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-1.5 py-0.5 text-black rounded-sm">Size: {item.size}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-1.5 py-0.5 text-black rounded-sm">Color: {item.color}</span>
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center mt-3">
@@ -184,6 +186,38 @@ const App: React.FC = () => {
                   rows={3}
                   className="w-full border border-gray-200 p-3 text-sm font-light resize-none focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
                 />
+              </div>
+            )}
+
+            {/* Clear Cart Link with Confirmation */}
+            {items.length > 0 && (
+              <div className="mt-8 flex justify-center pb-2">
+                {!showClearConfirm ? (
+                  <button
+                    onClick={() => setShowClearConfirm(true)}
+                    className="text-[10px] font-bold uppercase tracking-widest text-gray-300 hover:text-red-500 transition-colors border-b border-transparent hover:border-red-500"
+                  >
+                    Clear Bag
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-3 bg-red-50 px-3 py-1.5 rounded animate-fade-in">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-red-800">Clear all?</span>
+                    <div className="flex gap-3 border-l border-red-200 pl-3">
+                      <button
+                        onClick={() => { clearCart(); setShowClearConfirm(false); }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-black transition-colors"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setShowClearConfirm(false)}
+                        className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

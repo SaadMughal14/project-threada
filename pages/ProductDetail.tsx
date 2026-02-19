@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { gsap } from 'gsap';
 import { useParams, Link } from 'react-router-dom';
 import { useCartStore } from '../src/store/cartStore';
 import { cloudinaryLoader } from '../src/lib/cloudinaryLoader';
@@ -29,11 +30,98 @@ export const ProductDetail: React.FC = () => {
     const sizes = ['XS', 'S', 'M', 'L', 'XL'];
     const colors = ['Black', 'White', 'Slate', 'Sand'];
 
+    const imageRef = useRef<HTMLImageElement>(null);
+    const mobileImageRef = useRef<HTMLImageElement>(null);
+
+    const flyToCart = (startEl: HTMLElement | null) => {
+        if (!startEl) return;
+
+        const cartBtn = document.getElementById('cart-btn-desktop') || document.getElementById('cart-btn-mobile');
+        if (!cartBtn) return;
+
+        const startRect = startEl.getBoundingClientRect();
+        const endRect = cartBtn.getBoundingClientRect();
+
+        // Create the "Package" clone
+        const clone = startEl.cloneNode(true) as HTMLElement;
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(clone);
+        document.body.appendChild(wrapper);
+
+        // Initial Style for Wrapper (The "Package")
+        Object.assign(wrapper.style, {
+            position: 'fixed',
+            top: `${startRect.top}px`,
+            left: `${startRect.left}px`,
+            width: `${startRect.width}px`,
+            height: `${startRect.height}px`,
+            zIndex: 9999,
+            pointerEvents: 'none',
+            transformOrigin: 'center center',
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            backgroundColor: 'transparent',
+            borderRadius: '0px',
+            overflow: 'hidden' // contain the image
+        });
+
+        Object.assign(clone.style, {
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+        });
+
+        const tl = gsap.timeline({
+            onComplete: () => {
+                wrapper.remove();
+            }
+        });
+
+        // Phase 1: "Wrap" (Shrink & Style) - 0.3s
+        tl.to(wrapper, {
+            scale: 0.6,
+            borderRadius: '12px',
+            border: '4px solid white',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            duration: 0.3,
+            ease: "back.out(1.7)"
+        });
+
+        // Phase 2: "Throw" to Cart - 0.7s
+        // We use simultaneous tweens for X and Y to create an ARC.
+
+        const targetX = endRect.left - startRect.left + (endRect.width / 2) - (startRect.width / 2);
+        const targetY = endRect.top - startRect.top + (endRect.height / 2) - (startRect.height / 2);
+
+        tl.to(wrapper, {
+            x: targetX,
+            duration: 0.7,
+            ease: "power2.inOut" // Smooth horizontal
+        }, ">-0.1");
+
+        tl.to(wrapper, {
+            y: targetY,
+            duration: 0.7,
+            ease: "back.in(1.2)" // "Throw" curve visual
+        }, "<");
+
+        // Spin while flying
+        tl.to(wrapper, {
+            rotation: 360,
+            scale: 0.05, // Shrink to nothing at target
+            opacity: 0,
+            duration: 0.7,
+            ease: "power2.in"
+        }, "<");
+    };
+
     const handleAddToCart = () => {
         if (!selectedSize || !selectedColor) {
             alert('Please select a size and color.');
             return;
         }
+
+        const imgEl = window.innerWidth >= 1024 ? imageRef.current : mobileImageRef.current;
+        flyToCart(imgEl);
 
         addItem({
             id: `${product.id}-${selectedSize}-${selectedColor}`,
@@ -46,8 +134,7 @@ export const ProductDetail: React.FC = () => {
             color: selectedColor,
             maxStock: 99
         });
-
-        toggleCart(); // Open cart immediately for feedback
+        // Note: Smart Cart Logic in store handles auto-opening for first item now.
     };
 
     const handleQuantityChange = (delta: number) => {
@@ -66,6 +153,7 @@ export const ProductDetail: React.FC = () => {
                 {/* Main Image Card (Sharp Edges) */}
                 <div className="mx-4 mt-4 h-[55vh] bg-[#E5E5E5] relative overflow-hidden border border-black/5">
                     <img
+                        ref={mobileImageRef}
                         src={cloudinaryLoader({ src: product.image, width: 800 })}
                         alt={product.name}
                         className="w-full h-full object-cover"
@@ -141,16 +229,18 @@ export const ProductDetail: React.FC = () => {
                     <div className="space-y-8 mb-8">
                         <div>
                             <div className="flex justify-between items-center mb-4">
-                                <span className="text-xs font-black block text-black uppercase tracking-widest">Select Size</span>
+                                <span className="text-xs font-black block text-black uppercase tracking-widest">
+                                    Select Size {selectedSize && <span className="text-black/50 ml-2">— {selectedSize}</span>}
+                                </span>
                                 <span className="text-[10px] font-bold uppercase tracking-widest underline decoration-1 text-black/40 cursor-pointer hover:text-black">Size Guide</span>
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex flex-wrap gap-3">
                                 {sizes.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
-                                        className={`w-12 h-12 flex items-center justify-center text-xs font-bold transition-all border ${selectedSize === size
-                                            ? 'bg-black text-white border-black ring-1 ring-black ring-offset-2'
+                                        className={`w-14 h-14 flex items-center justify-center text-sm font-black transition-all border ${selectedSize === size
+                                            ? 'bg-black text-white border-black ring-1 ring-black ring-offset-2 scale-110 shadow-lg'
                                             : 'bg-white text-gray-500 border-gray-200 hover:border-black'
                                             }`}
                                     >
@@ -160,19 +250,25 @@ export const ProductDetail: React.FC = () => {
                             </div>
                         </div>
                         <div>
-                            <span className="text-xs font-black mb-4 block text-black uppercase tracking-widest">Select Color</span>
-                            <div className="flex gap-4">
+                            <span className="text-xs font-black mb-4 block text-black uppercase tracking-widest">
+                                Select Color {selectedColor && <span className="text-black/50 ml-2">— {selectedColor}</span>}
+                            </span>
+                            <div className="flex flex-wrap gap-4">
                                 {colors.map(color => (
                                     <button
                                         key={color}
                                         onClick={() => setSelectedColor(color)}
-                                        className={`w-12 h-12 border relative flex items-center justify-center transition-all ${selectedColor === color
-                                            ? 'border-black ring-1 ring-black ring-offset-2'
-                                            : 'border-gray-200 hover:border-black'
-                                            }`}
-                                        style={{ backgroundColor: color.toLowerCase() }}
+                                        className={`group relative w-12 h-12 flex items-center justify-center transition-all duration-300 ${selectedColor === color ? 'scale-110' : 'hover:scale-105'}`}
                                         title={color}
-                                    />
+                                    >
+                                        <div className={`absolute inset-0 border transition-all duration-300 ${selectedColor === color ? 'border-black opacity-100 scale-100 rotate-0' : 'border-gray-200 opacity-0 scale-75 rotate-45 group-hover:opacity-100 group-hover:scale-90 group-hover:rotate-0'}`} />
+                                        <div
+                                            className="w-8 h-8 relative shadow-sm transition-all duration-500"
+                                            style={{ backgroundColor: color.toLowerCase() }}
+                                        >
+                                            {color.toLowerCase() === 'white' && <div className="absolute inset-0 border border-black/10" />}
+                                        </div>
+                                    </button>
                                 ))}
                             </div>
                         </div>
@@ -235,6 +331,7 @@ export const ProductDetail: React.FC = () => {
                 {/* Sticky Image Column */}
                 <div className="h-screen sticky top-0 bg-[#E5E5E5] relative overflow-hidden flex items-center justify-center">
                     <img
+                        ref={imageRef}
                         src={cloudinaryLoader({ src: product.image, width: 1600 })}
                         alt={product.name}
                         className="w-full h-full object-contain p-12 mix-blend-multiply"
@@ -271,27 +368,26 @@ export const ProductDetail: React.FC = () => {
                         </p>
 
                         {/* Selectors - Editorial Style (Compact) */}
-                        <div className="space-y-6 mb-8">
+                        <div className="space-y-8 mb-8">
                             {/* Size Selector */}
                             <div>
-                                <div className="flex justify-between items-baseline mb-2 border-b border-black/10 pb-1">
-                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-black">Size</span>
+                                <div className="flex justify-between items-baseline mb-4 border-b border-black/10 pb-2">
+                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-black">
+                                        Size <span className="text-black/40 font-medium ml-2 normal-case tracking-normal md:text-xs">{selectedSize || 'Select size'}</span>
+                                    </span>
                                     <button className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors">Size Guide</button>
                                 </div>
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
                                     {sizes.map(size => (
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
-                                            className={`text-sm font-bold uppercase tracking-widest transition-all relative py-1 ${selectedSize === size
-                                                ? 'text-black scale-110'
-                                                : 'text-black/20 hover:text-black/60'
+                                            className={`text-sm font-bold uppercase tracking-widest transition-all relative py-2 px-4 border ${selectedSize === size
+                                                ? 'text-white bg-black border-black shadow-lg scale-110'
+                                                : 'text-black/40 border-black/10 hover:border-black hover:text-black'
                                                 }`}
                                         >
                                             {size}
-                                            {selectedSize === size && (
-                                                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-black" />
-                                            )}
                                         </button>
                                     ))}
                                 </div>
@@ -299,20 +395,34 @@ export const ProductDetail: React.FC = () => {
 
                             {/* Color Selector */}
                             <div>
-                                <span className="text-xs font-black uppercase tracking-[0.2em] mb-3 block text-black border-b border-black/10 pb-1">
-                                    Color <span className="text-black/40 font-medium ml-2 normal-case tracking-normal text-[10px]">{selectedColor || 'Select a shade'}</span>
+                                <span className="text-xs font-black uppercase tracking-[0.2em] mb-4 block text-black border-b border-black/10 pb-2">
+                                    Color <span className="text-black/40 font-medium ml-2 normal-case tracking-normal text-xs">{selectedColor || 'Select variant'}</span>
                                 </span>
-                                <div className="flex gap-3">
+                                <div className="flex gap-5">
                                     {colors.map(color => (
                                         <button
                                             key={color}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`group relative w-12 h-14 transition-all duration-300 ${selectedColor === color ? 'opacity-100 scale-105' : 'opacity-40 hover:opacity-100'}`}
+                                            className="group relative w-14 h-14 flex items-center justify-center outline-none focus:outline-none"
                                         >
-                                            <div className="w-full h-full border border-black/10 shadow-sm" style={{ backgroundColor: color.toLowerCase() }} />
-                                            {selectedColor === color && (
-                                                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-black rounded-full" />
-                                            )}
+                                            {/* Selection Ring */}
+                                            <div className={`absolute inset-0 border-[1px] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${selectedColor === color
+                                                ? 'border-black scale-100 opacity-100'
+                                                : 'border-black/20 scale-75 opacity-0 group-hover:opacity-100 group-hover:scale-90'}`}
+                                            />
+
+                                            {/* Color Swatch */}
+                                            <div
+                                                className={`w-10 h-10 relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-sm ${selectedColor === color ? 'scale-90' : 'scale-100 group-hover:scale-95'}`}
+                                                style={{ backgroundColor: color.toLowerCase() }}
+                                            >
+                                                {color.toLowerCase() === 'white' && <div className="absolute inset-0 border border-black/10" />}
+                                            </div>
+
+                                            {/* Floating Label (Tooltip) */}
+                                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest text-black opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none whitespace-nowrap">
+                                                {color}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>

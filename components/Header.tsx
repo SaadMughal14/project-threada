@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 
-const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: () => void }) => {
+const CartButton = ({ itemCount, toggleCart, id }: { itemCount: number; toggleCart: () => void; id?: string }) => {
     const [animate, setAnimate] = React.useState(false);
 
     React.useEffect(() => {
@@ -17,6 +17,7 @@ const CartButton = ({ itemCount, toggleCart }: { itemCount: number; toggleCart: 
 
     return (
         <button
+            id={id}
             onClick={toggleCart}
             className={`transition-all duration-300 ${animate ? 'text-black scale-110 font-black' : 'hover:text-gray-500'}`}
         >
@@ -238,7 +239,7 @@ export const Header: React.FC = () => {
 
                             {/* MOBILE RIGHT: Cart */}
                             <div className="md:hidden flex items-center gap-4 z-50 relative">
-                                <CartButton itemCount={itemCount} toggleCart={toggleCart} />
+                                <CartButton id="cart-btn-mobile" itemCount={itemCount} toggleCart={toggleCart} />
                             </div>
 
                             {/* DESKTOP RIGHT: Utilities */}
@@ -270,7 +271,7 @@ export const Header: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <CartButton itemCount={itemCount} toggleCart={toggleCart} />
+                                <CartButton id="cart-btn-desktop" itemCount={itemCount} toggleCart={toggleCart} />
                             </div>
                         </div>
                     </div>
