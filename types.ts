@@ -1,15 +1,24 @@
 
-export interface PizzaProduct {
+export interface FashionProduct {
   id: string;
   name: string;
   tagline: string;
   description: string;
   price: string;
   color: string;
-  ingredients: string[];
+  materials: string[];
   image: string;
-  size: string; // This might conflict with variant selection logic later, but keeping for now as base product info
-  // NEW: variants will handle true size logic
+  videoBackground: string;
+  category: 'Tops' | 'Bottoms' | 'Outerwear' | 'Accessories' | 'Footwear';
+  gender: 'Man' | 'Woman' | 'Kids' | 'Unisex';
+  variants?: ProductVariant[];
+  size?: string; // keeping for backward compatibility if needed by generic components
+}
+
+export interface SizeOption {
+  size: string;
+  price: number | string;
+  isAvailable: boolean;
 }
 
 export interface Ingredient {

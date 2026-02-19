@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCartStore } from '../src/store/cartStore';
 import { cloudinaryLoader } from '../src/lib/cloudinaryLoader';
-import { PIZZAS } from '../constants';
+import { PRODUCTS } from '../constants';
 
 export const ProductDetail: React.FC = () => {
     const { id } = useParams();
     const { addItem, toggleCart } = useCartStore();
 
     // Find product or fallback
-    const product = PIZZAS.find((p: any) => p.id === id);
+    const product = PRODUCTS.find((p: any) => p.id === id);
 
     if (!product) {
         return (
@@ -92,8 +92,8 @@ export const ProductDetail: React.FC = () => {
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
                                         className={`h-12 border border-gray-300 flex items-center justify-center text-xs font-bold uppercase transition-all duration-200 ${selectedSize === size
-                                                ? 'bg-black text-white border-black transform scale-105'
-                                                : 'hover:border-black text-gray-500'
+                                            ? 'bg-black text-white border-black transform scale-105'
+                                            : 'hover:border-black text-gray-500'
                                             }`}
                                     >
                                         {size}
@@ -125,8 +125,8 @@ export const ProductDetail: React.FC = () => {
                         onClick={handleAddToCart}
                         disabled={!selectedSize || !selectedColor}
                         className={`w-full py-5 font-body font-bold uppercase tracking-[0.3em] transition-all duration-300 ${selectedSize && selectedColor
-                                ? 'bg-black text-white hover:bg-gray-900 cursor-pointer'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-black text-white hover:bg-gray-900 cursor-pointer'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         {selectedSize && selectedColor ? 'Add to Bag' : 'Select Options'}

@@ -1,21 +1,8 @@
-import { ProductVariant } from './types';
+import { FashionProduct, ProductVariant } from './types';
 
 // ... (previous products)
 
-export interface FashionProduct {
-  id: string;
-  name: string;
-  tagline: string;
-  description: string;
-  price: string;
-  color: string;
-  materials: string[];
-  image: string;
-  videoBackground: string;
-  category: 'Tops' | 'Bottoms' | 'Outerwear' | 'Accessories' | 'Footwear';
-  gender: 'Man' | 'Woman' | 'Kids' | 'Unisex'; // New field
-  variants?: ProductVariant[];
-}
+// Products defined below
 
 export const PRODUCTS: FashionProduct[] = [
   // MAN
@@ -168,11 +155,8 @@ export const PRODUCTS: FashionProduct[] = [
   }
 ];
 
-export const PIZZAS = PRODUCTS as any; // Backward compatibility alias to prevent breaking imports temporarily
-
-export const COLORS = {
-  brandPrimary: '#D97B8D', // Still keeping for now as requested accent
+brandPrimary: '#D97B8D', // Still keeping for now as requested accent
   brandLight: '#F2DCE0',
-  deepBasil: '#1C1C1C',
-  creamVanilla: '#FDFCFB',
+    deepBasil: '#1C1C1C',
+      creamVanilla: '#FDFCFB',
 };

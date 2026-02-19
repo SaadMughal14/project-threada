@@ -1,31 +1,41 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, SupabaseProduct } from '../supabaseClient';
-import { PIZZAS, PizzaProductExtended, SizeOption } from '../constants';
+import { PRODUCTS } from '../constants';
+import { FashionProduct, SizeOption } from '../types';
+
+export interface ProductExtended extends FashionProduct {
+    sizeOptions?: SizeOption[];
+}
 
 interface UseProductsReturn {
-    products: PizzaProductExtended[];
+    products: ProductExtended[];
     loading: boolean;
     error: string | null;
     refetch: () => Promise<void>;
 }
 
 // Transform Supabase product to app product format
-const transformProduct = (product: SupabaseProduct): PizzaProductExtended => ({
+const transformProduct = (product: SupabaseProduct): ProductExtended => ({
     id: product.id,
     name: product.name,
     tagline: product.tagline || '',
     description: product.description || '',
     price: product.size_options[0]?.price || 'Rs. 0',
     color: product.color,
-    ingredients: product.ingredients || [],
+    materials: product.ingredients || [], // Mapping db ingredients to materials
     image: product.image_url || '',
     videoBackground: '',
-    category: product.category as PizzaProductExtended['category'],
-    sizeOptions: product.size_options as SizeOption[],
+    category: product.category as ProductExtended['category'],
+    sizeOptions: (product.size_options || []).map((opt: any) => ({
+        size: opt.name, // Map 'name' from DB to 'size' in app
+        price: opt.price,
+        isAvailable: true
+    })),
+    gender: 'Unisex', // Default for db products until column added
 });
 
 export const useProducts = (): UseProductsReturn => {
-    const [products, setProducts] = useState<PizzaProductExtended[]>(PIZZAS);
+    const [products, setProducts] = useState<ProductExtended[]>(PRODUCTS as ProductExtended[]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +52,7 @@ export const useProducts = (): UseProductsReturn => {
 
             if (fetchError) {
                 console.warn('Supabase fetch error, using mock data:', fetchError.message);
-                setProducts(PIZZAS);
+                setProducts(PRODUCTS as ProductExtended[]);
                 return;
             }
 
@@ -51,11 +61,11 @@ export const useProducts = (): UseProductsReturn => {
                 setProducts(transformedProducts);
             } else {
                 // No products in database, use mock data
-                setProducts(PIZZAS);
+                setProducts(PRODUCTS as ProductExtended[]);
             }
         } catch (err) {
             console.warn('Failed to fetch products, using mock data:', err);
-            setProducts(PIZZAS);
+            setProducts(PRODUCTS as ProductExtended[]);
             setError(err instanceof Error ? err.message : 'Unknown error');
         } finally {
             setLoading(false);

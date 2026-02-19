@@ -3,7 +3,7 @@ import React, { Suspense, useEffect } from 'react';
 import * as THREE from 'three';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../src/store/cartStore';
-import { PIZZAS } from '../constants';
+import { PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
@@ -179,7 +179,7 @@ export const Homepage = () => {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-                    {PIZZAS.slice(0, 3).map((product: any) => (
+                    {PRODUCTS.slice(0, 3).map((product: any) => (
                         <ProductCard
                             key={product.id}
                             product={{
@@ -206,7 +206,7 @@ export const Homepage = () => {
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                    {PIZZAS.slice(3, 7).map((product: any) => (
+                    {PRODUCTS.slice(3, 7).map((product: any) => (
                         <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block relative">
                             <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
                                 <img
