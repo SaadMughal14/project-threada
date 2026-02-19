@@ -10,7 +10,6 @@ import { ProductDetail } from './pages/ProductDetail';
 import CheckoutOverlay from './components/CheckoutOverlay';
 import OrderSuccessOverlay from './components/OrderSuccessOverlay';
 import { Footer } from './components/Footer';
-import { MobileBottomNav } from './components/MobileBottomNav';
 
 // Pages
 import { Homepage } from './pages/Homepage';
@@ -98,13 +97,7 @@ const App: React.FC = () => {
         <Route path="/fulfillment" element={<FulfillmentLayout />}>
           <Route path="dashboard" element={<FulfillmentDashboard />} />
         </Route>
-        <Route path="/fulfillment" element={<FulfillmentLayout />}>
-          <Route path="dashboard" element={<FulfillmentDashboard />} />
-        </Route>
       </Routes>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
 
       {/* Cart Drawer */}
       <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isOpen ? 'visible' : 'invisible'}`}>
