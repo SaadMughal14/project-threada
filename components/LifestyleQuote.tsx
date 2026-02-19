@@ -2,7 +2,7 @@ import React from 'react';
 
 export const LifestyleQuote = () => {
     return (
-        <section className="w-full relative py-32 md:py-48 mb-24 overflow-hidden">
+        <section className="w-full relative py-20 md:py-28 mb-24 overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full">
                 <img

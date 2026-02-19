@@ -54,7 +54,8 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Bulletproof scroll lock — position:fixed on body
+  // Scroll lock — position:fixed on body prevents background scroll.
+  // Cart drawer is position:fixed itself, so its overflow-y-auto still works.
   useEffect(() => {
     if (isOpen) {
       const scrollY = window.scrollY;
@@ -63,7 +64,6 @@ const App: React.FC = () => {
       document.body.style.left = '0';
       document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
-      lenisRef.current?.stop();
     } else {
       const scrollY = document.body.style.top;
       document.body.style.position = '';
@@ -72,7 +72,6 @@ const App: React.FC = () => {
       document.body.style.right = '';
       document.body.style.overflow = '';
       window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      lenisRef.current?.start();
     }
   }, [isOpen]);
 

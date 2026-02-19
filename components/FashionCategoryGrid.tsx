@@ -53,7 +53,7 @@ export const FashionCategoryGrid = () => {
             <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-8 mb-10 border-b border-gray-200 pb-10">
                 {/* Card 1 */}
                 <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[4/3] mb-3">
+                    <div className="overflow-hidden aspect-[3/2] mb-3">
                         <img
                             src="/cat-summer.png"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -71,7 +71,7 @@ export const FashionCategoryGrid = () => {
 
                 {/* Card 2 */}
                 <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[4/3] mb-3">
+                    <div className="overflow-hidden aspect-[3/2] mb-3">
                         <img
                             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -92,7 +92,7 @@ export const FashionCategoryGrid = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Card 3 */}
                 <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[4/3] mb-3">
+                    <div className="overflow-hidden aspect-[3/2] mb-3">
                         <img
                             src="/cat-street.png"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -110,7 +110,7 @@ export const FashionCategoryGrid = () => {
 
                 {/* Card 4 */}
                 <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[4/3] mb-3">
+                    <div className="overflow-hidden aspect-[3/2] mb-3">
                         <img
                             src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
