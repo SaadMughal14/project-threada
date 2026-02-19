@@ -177,11 +177,20 @@ export const ProductDetail: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Description Snippet */}
-                    <div className="mb-8">
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                            {product.description} Constructed from premium heavyweight fabric for durability and drape. <button className="text-black font-bold underline decoration-2 underline-offset-4">Read More</button>
-                        </p>
+                    {/* Content based on Tab */}
+                    <div className="mb-8 min-h-[80px]">
+                        {activeTab === 'details' ? (
+                            <p className="text-gray-500 text-sm leading-relaxed animate-fade-in">
+                                {product.description} Constructed from premium heavyweight fabric for durability and drape. <button className="text-black font-bold underline decoration-2 underline-offset-4">Read More</button>
+                            </p>
+                        ) : (
+                            <div className="animate-fade-in">
+                                <h3 className="text-sm font-bold mb-2 text-black">Materials & Composition</h3>
+                                <ul className="list-disc pl-4 text-sm text-gray-500 space-y-1">
+                                    {product.materials?.map((m: string) => <li key={m}>{m}</li>) || <li>Premium Cotton Blend</li>}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </div>
 
