@@ -219,25 +219,7 @@ const App: React.FC = () => {
       />
       <OrderSuccessOverlay isOpen={showSuccess} onClose={() => setShowSuccess(false)} order={lastOrder} />
 
-      {/* DEV: Temporary button to view Order Success Screen */}
-      <div
-        className="fixed bottom-4 left-4 z-[500] bg-red-600 text-white px-3 py-1.5 rounded-full cursor-pointer text-[10px] font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-colors"
-        onClick={() => {
-          setLastOrder({
-            id: 'DEMO-8822',
-            items: [
-              { id: '1', name: 'Obsidian Tee', quantity: 2, size: 'L', price: 4500 },
-              { id: '2', name: 'Tactical Cargo', quantity: 1, size: 'M', price: 8200 }
-            ],
-            total: 17200,
-            customer: { name: 'Demo User', phone: '0300-1234567', address: '123 Fashion Ave, Karachi' },
-            paymentMethod: 'cash'
-          });
-          setShowSuccess(true);
-        }}
-      >
-        DEV: View Success
-      </div>
+
     </div>
   );
 };
