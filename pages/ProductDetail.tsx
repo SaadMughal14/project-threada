@@ -183,8 +183,13 @@ export const ProductDetail: React.FC = () => {
                         ) : (
                             <div className="animate-fade-in">
                                 <h3 className="text-xs font-black mb-3 text-black uppercase tracking-widest">Materials & Composition</h3>
-                                <ul className="list-square pl-4 text-sm text-gray-600 space-y-2 font-medium">
-                                    {product.materials?.map((m: string) => <li key={m}>{m}</li>) || <li>Premium Cotton Blend</li>}
+                                <ul className="space-y-2 font-medium">
+                                    {(product.materials || ["Premium Cotton Blend"]).map((m: string) => (
+                                        <li key={m} className="flex items-start gap-3 text-sm text-gray-600">
+                                            <span className="w-1 h-1 bg-black mt-2 flex-shrink-0" />
+                                            <span className="leading-relaxed uppercase tracking-wide text-xs">{m}</span>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         )}
