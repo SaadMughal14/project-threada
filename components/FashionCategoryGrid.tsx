@@ -50,7 +50,7 @@ export const FashionCategoryGrid = () => {
             </div>
 
             {/* Row 1 */}
-            <div className="grid grid-cols-2 md:grid-cols-[1.6fr_1fr] gap-4 md:gap-8 mb-10 border-b border-gray-200 pb-10">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 mb-10 border-b border-gray-200 pb-10">
                 {/* Card 1 */}
                 <div className="relative group cursor-pointer">
                     <div className="overflow-hidden aspect-[3/2] mb-3">
