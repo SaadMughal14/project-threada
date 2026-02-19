@@ -60,38 +60,38 @@ export const ProductDetail: React.FC = () => {
 
     return (
         <>
-            {/* MOBILE LAYOUT (Premium Design) */}
+            {/* MOBILE LAYOUT (Premium Design - Brand Theme) */}
             <div className="lg:hidden min-h-screen bg-white pb-32 font-sans">
                 {/* Navigation Overlay */}
                 <div className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
-                    <Link to="/" className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform">
+                    <Link to="/" className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform border border-black/5">
                         <ChevronLeft size={24} />
                     </Link>
-                    <button className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform">
-                        <Heart size={24} className="text-red-500 fill-current" />
+                    <button className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform border border-black/5">
+                        <Heart size={24} className="text-black hover:text-red-500 transition-colors" />
                     </button>
                 </div>
 
-                {/* Main Image Card */}
-                <div className="mx-4 mt-4 h-[55vh] bg-gray-100 rounded-[40px] relative overflow-hidden shadow-2xl">
+                {/* Main Image Card (Sharp Edges) */}
+                <div className="mx-4 mt-4 h-[55vh] bg-[#F0F0F0] relative overflow-hidden border border-black/5">
                     <img
                         src={cloudinaryLoader({ src: product.image, width: 800 })}
                         alt={product.name}
                         className="w-full h-full object-cover"
                     />
 
-                    {/* Floating Thumbnails Stack */}
+                    {/* Floating Thumbnails Stack (Sharp) */}
                     <div className="absolute top-6 right-6 flex flex-col gap-3">
                         {[product.image, product.image, product.image].map((img, idx) => (
-                            <div key={idx} className="w-14 h-14 rounded-2xl bg-white/40 p-1 backdrop-blur-md shadow-lg overflow-hidden border border-white/50">
+                            <div key={idx} className="w-14 h-14 bg-white/40 p-1 backdrop-blur-md shadow-sm overflow-hidden border border-white/50">
                                 <img
                                     src={cloudinaryLoader({ src: img, width: 200 })}
                                     alt="thumbnail"
-                                    className="w-full h-full object-cover rounded-xl"
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
                         ))}
-                        <div className="w-14 h-14 rounded-2xl bg-black/80 backdrop-blur-md text-white flex items-center justify-center text-xs font-bold border border-white/10 shadow-lg">
+                        <div className="w-14 h-14 bg-black/90 backdrop-blur-md text-white flex items-center justify-center text-xs font-bold border border-white/10 shadow-sm">
                             9+
                         </div>
                     </div>
@@ -100,16 +100,16 @@ export const ProductDetail: React.FC = () => {
                 {/* Content Section */}
                 <div className="px-6 pt-8">
                     <div className="mb-4">
-                        <h1 className="text-3xl font-black leading-[1.1] mb-2 text-black">{product.name}</h1>
+                        <h1 className="text-3xl font-black leading-[1.1] mb-2 text-black uppercase tracking-tight">{product.name}</h1>
                     </div>
 
                     {/* Ratings Row */}
-                    <div className="flex items-center gap-4 text-xs font-bold mb-6 text-gray-500">
-                        <div className="flex items-center gap-1 bg-black text-white px-2.5 py-1 rounded-lg">
+                    <div className="flex items-center gap-4 text-xs font-bold mb-6 text-gray-500 uppercase tracking-widest">
+                        <div className="flex items-center gap-1 bg-black text-white px-2.5 py-1">
                             <Star size={12} fill="currentColor" /> 4.9
                         </div>
                         <span>1.5k+ Reviews</span>
-                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                        <span className="w-1 h-1 bg-gray-300"></span>
                         <span>2.4k+ Sold</span>
                     </div>
 
@@ -117,37 +117,37 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex items-end gap-3 mb-8">
                         <span className="text-3xl font-black text-black">${currentPrice}</span>
                         <span className="text-xl text-gray-400 line-through decoration-2 font-medium">${originalPrice}</span>
-                        <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full mb-1.5 ml-1">-50%</span>
+                        <span className="bg-black text-white text-[10px] font-bold px-3 py-1 mb-1.5 ml-1 uppercase tracking-wider">-50%</span>
                     </div>
 
-                    {/* Tabs */}
-                    <div className="bg-gray-100 p-1.5 rounded-full flex mb-10 relative">
+                    {/* Tabs (Boxy) */}
+                    <div className="bg-gray-100 p-1 flex mb-10 relative">
                         <button
                             onClick={() => setActiveTab('details')}
-                            className={`flex-1 py-3.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === 'details' ? 'bg-white shadow-md text-black' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'details' ? 'bg-white shadow-sm text-black border-black/5' : 'text-gray-400 hover:text-gray-600'}`}
                         >
                             Details
                         </button>
                         <button
                             onClick={() => setActiveTab('specs')}
-                            className={`flex-1 py-3.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === 'specs' ? 'bg-white shadow-md text-black' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'specs' ? 'bg-white shadow-sm text-black border-black/5' : 'text-gray-400 hover:text-gray-600'}`}
                         >
-                            Specifications
+                            Specs
                         </button>
                     </div>
 
-                    {/* Selectors */}
+                    {/* Selectors (Square/Sharp) */}
                     <div className="space-y-8 mb-8">
                         <div>
-                            <span className="text-sm font-bold mb-4 block text-black">Size</span>
-                            <div className="flex gap-4">
+                            <span className="text-xs font-black mb-4 block text-black uppercase tracking-widest">Select Size</span>
+                            <div className="flex gap-3">
                                 {sizes.map(size => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
-                                        className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all ${selectedSize === size
-                                            ? 'bg-black text-white shadow-lg transform scale-110'
-                                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                        className={`w-12 h-12 flex items-center justify-center text-xs font-bold transition-all border ${selectedSize === size
+                                            ? 'bg-black text-white border-black ring-1 ring-black ring-offset-2'
+                                            : 'bg-white text-gray-500 border-gray-200 hover:border-black'
                                             }`}
                                     >
                                         {size}
@@ -156,22 +156,19 @@ export const ProductDetail: React.FC = () => {
                             </div>
                         </div>
                         <div>
-                            <span className="text-sm font-bold mb-4 block text-black">Color</span>
+                            <span className="text-xs font-black mb-4 block text-black uppercase tracking-widest">Select Color</span>
                             <div className="flex gap-4">
                                 {colors.map(color => (
                                     <button
                                         key={color}
                                         onClick={() => setSelectedColor(color)}
-                                        className={`w-12 h-12 rounded-full border-2 relative flex items-center justify-center transition-all ${selectedColor === color
-                                            ? 'border-black transform scale-110'
-                                            : 'border-transparent hover:scale-105'
+                                        className={`w-12 h-12 border relative flex items-center justify-center transition-all ${selectedColor === color
+                                            ? 'border-black ring-1 ring-black ring-offset-2'
+                                            : 'border-gray-200 hover:border-black'
                                             }`}
-                                    >
-                                        <span
-                                            className="w-full h-full rounded-full border border-gray-200"
-                                            style={{ backgroundColor: color.toLowerCase() }}
-                                        />
-                                    </button>
+                                        style={{ backgroundColor: color.toLowerCase() }}
+                                        title={color}
+                                    />
                                 ))}
                             </div>
                         </div>
@@ -180,13 +177,13 @@ export const ProductDetail: React.FC = () => {
                     {/* Content based on Tab */}
                     <div className="mb-8 min-h-[80px]">
                         {activeTab === 'details' ? (
-                            <p className="text-gray-500 text-sm leading-relaxed animate-fade-in">
-                                {product.description} Constructed from premium heavyweight fabric for durability and drape. <button className="text-black font-bold underline decoration-2 underline-offset-4">Read More</button>
+                            <p className="text-gray-600 text-sm leading-relaxed animate-fade-in font-medium">
+                                {product.description} Constructed from premium heavyweight fabric for durability and drape. <button className="text-black font-black underline decoration-2 underline-offset-4 uppercase text-xs tracking-wide">Read More</button>
                             </p>
                         ) : (
                             <div className="animate-fade-in">
-                                <h3 className="text-sm font-bold mb-2 text-black">Materials & Composition</h3>
-                                <ul className="list-disc pl-4 text-sm text-gray-500 space-y-1">
+                                <h3 className="text-xs font-black mb-3 text-black uppercase tracking-widest">Materials & Composition</h3>
+                                <ul className="list-square pl-4 text-sm text-gray-600 space-y-2 font-medium">
                                     {product.materials?.map((m: string) => <li key={m}>{m}</li>) || <li>Premium Cotton Blend</li>}
                                 </ul>
                             </div>
@@ -194,32 +191,32 @@ export const ProductDetail: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Fixed Floating Bottom Bar */}
-                <div className="fixed bottom-6 left-4 right-4 bg-[#1C1C1C] rounded-[35px] p-2 pr-2 pl-8 flex items-center justify-between shadow-2xl z-40 border border-white/10">
-                    <div className="flex items-center gap-6 text-white font-medium">
+                {/* Fixed Floating Bottom Bar (Sharp) */}
+                <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] p-6 flex items-center justify-between shadow-2xl z-40 border-t border-white/10">
+                    <div className="flex items-center gap-6 text-white font-medium border border-white/20 px-4 py-3 bg-white/5">
                         <button
                             onClick={() => handleQuantityChange(-1)}
-                            className="w-8 h-8 flex items-center justify-center active:text-gray-300"
+                            className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
-                            <Minus size={20} />
+                            <Minus size={16} />
                         </button>
-                        <span className="w-6 text-center text-lg font-bold">{quantity}</span>
+                        <span className="w-6 text-center text-sm font-bold tracking-widest">{quantity}</span>
                         <button
                             onClick={() => handleQuantityChange(1)}
-                            className="w-8 h-8 flex items-center justify-center active:text-gray-300"
+                            className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
-                            <Plus size={20} />
+                            <Plus size={16} />
                         </button>
                     </div>
                     <button
                         onClick={handleAddToCart}
                         disabled={!selectedSize || !selectedColor}
-                        className={`px-8 py-4 rounded-[28px] font-bold uppercase text-xs tracking-widest transition-all ${selectedSize && selectedColor
-                            ? 'bg-white text-black hover:bg-gray-100'
-                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        className={`flex-1 ml-4 py-4 font-black uppercase text-xs tracking-[0.2em] transition-all border border-transparent ${selectedSize && selectedColor
+                            ? 'bg-white text-black hover:bg-gray-200'
+                            : 'bg-white/10 text-white/40 border-white/10 cursor-not-allowed'
                             }`}
                     >
-                        Add to Cart
+                        {selectedSize && selectedColor ? 'Add to Cart' : 'Select Options'}
                     </button>
                 </div>
             </div>
