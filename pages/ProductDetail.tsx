@@ -233,11 +233,11 @@ export const ProductDetail: React.FC = () => {
             {/* DESKTOP LAYOUT (Editorially Refined) */}
             <div className="hidden lg:grid min-h-screen grid-cols-2 bg-[var(--cream-vanilla)]">
                 {/* Sticky Image Column */}
-                <div className="h-screen sticky top-0 bg-[#E5E5E5] relative overflow-hidden">
+                <div className="h-screen sticky top-0 bg-[#E5E5E5] relative overflow-hidden flex items-center justify-center">
                     <img
                         src={cloudinaryLoader({ src: product.image, width: 1600 })}
                         alt={product.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain p-12 mix-blend-multiply"
                     />
                 </div>
 
