@@ -6,9 +6,9 @@ export const LifestyleQuote = () => {
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full">
                 <img
-                    src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=2070"
+                    src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=2070"
                     alt="Lifestyle Background"
-                    className="w-full h-full object-cover object-center grayscale opacity-60"
+                    className="w-full h-full object-cover object-center opacity-80"
                 />
                 {/* Dark Overlay */}
                 <div className="absolute inset-0 bg-black/40"></div>
