@@ -29,7 +29,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$120",
     color: "#1C1C1C",
     materials: ["100% Cotton", "Pre-shrunk", "Garment Dyed"],
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -42,7 +42,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$280",
     color: "#64748B",
     materials: ["Nylon Blend", "Water Resistant", "YKK Zippers"],
-    image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -55,7 +55,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$450",
     color: "#0F172A",
     materials: ["Gore-Tex", "Waterproof", "Windproof"],
-    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -68,7 +68,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$320",
     color: "#F8FAFC",
     materials: ["Knit Blend", "EVA Foam", "Rubber"],
-    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -81,7 +81,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$180",
     color: "#000000",
     materials: ["Full Grain Leather", "Suede Lining"],
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
 
@@ -96,7 +96,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$350",
     color: "#E2E8F0",
     materials: ["Mulberry Silk", "Bias Cut"],
-    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -109,7 +109,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$420",
     color: "#18181B",
     materials: ["Virgin Wool", "Silk Lining"],
-    image: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -122,7 +122,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$240",
     color: "#94A3B8",
     materials: ["Polyester Blend", "Permanent Pleat"],
-    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d44?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
 
@@ -137,7 +137,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$110",
     color: "#475569",
     materials: ["Nylon", "Cotton Ribbing"],
-    image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5a?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -150,7 +150,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$65",
     color: "#F1F5F9",
     materials: ["Organic Cotton", "Fleece Lined"],
-    image: "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -36,28 +36,39 @@ const App: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderNotes, setOrderNotes] = useState('');
+  const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
+    lenisRef.current = lenis;
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
   }, []);
 
-  // Lock body scroll when cart drawer is open
+  // Lock scroll when cart drawer is open — stop Lenis AND lock body
   useEffect(() => {
     if (isOpen) {
+      lenisRef.current?.stop();
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
+      lenisRef.current?.start();
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
+      lenisRef.current?.start();
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -107,7 +118,7 @@ const App: React.FC = () => {
               <div key={item.id} className="flex gap-4 md:gap-6">
                 {/* Product Image */}
                 <div className="w-20 h-24 md:w-24 md:h-28 bg-[#F4F4F4] flex-shrink-0 overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-contain p-2" />
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Item Details */}

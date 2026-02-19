@@ -187,7 +187,7 @@ export const Homepage = () => {
                             <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
                                 <img
                                     src={product.image}
-                                    className="w-full h-full object-contain p-4 mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
+                                    className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                                 />
                             </div>
                             <div className="flex justify-between items-center text-sm font-bold uppercase border-b border-gray-300 pb-3">
