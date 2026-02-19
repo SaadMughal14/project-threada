@@ -110,7 +110,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Cart Items */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6" data-lenis-prevent>
             {items.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <p className="text-gray-400 font-light text-lg mb-2">Your bag is empty.</p>
