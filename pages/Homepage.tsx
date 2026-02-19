@@ -183,7 +183,7 @@ export const Homepage = () => {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {PIZZAS.slice(3, 7).map((product: any) => (
-                        <Link to={`/product/${product.id}`} key={product.id} className="group cursor-pointer block">
+                        <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block">
                             <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
                                 <img
                                     src={product.image}
