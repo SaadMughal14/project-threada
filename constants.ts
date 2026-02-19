@@ -87,16 +87,16 @@ export const PRODUCTS: FashionProduct[] = [
 
   // WOMAN
   {
-    id: 'silk-slip',
-    name: "Ethereal Silk Slip",
+    id: 'merino-maxi',
+    name: "Merino Ribbed Maxi",
     category: 'Tops',
     gender: 'Woman',
-    tagline: "Fluid Elegance",
-    description: "100% Mulberry silk slip dress cut on the bias for a liquid drape.",
-    price: "$350",
-    color: "#E2E8F0",
-    materials: ["Mulberry Silk", "Bias Cut"],
-    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=800",
+    tagline: "Effortless Warmth",
+    description: "Full-length ribbed merino wool dress with a high neck and long sleeves.",
+    price: "$290",
+    color: "#334155",
+    materials: ["Merino Wool", "Sustainable"],
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
