@@ -43,10 +43,10 @@ export const Homepage = () => {
             <section className="mb-20">
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
                     <p className="w-1/3 text-xs md:text-base font-light leading-tight tracking-tight">
-                        In the whole <br />
-                        summer show, this <br />
-                        is the designer's <br />
-                        best look yet.
+                        Every thread tells <br />
+                        a story — this season, <br />
+                        the narrative is <br />
+                        unmistakably bold.
                     </p>
                     <p className="text-xs md:text-base font-bold uppercase text-right leading-tight tracking-tight">
                         {dateStr} <br /> {yearStr}
@@ -184,10 +184,10 @@ export const Homepage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {PIZZAS.slice(3, 5).map((product: any) => (
                         <div key={product.id} className="group cursor-pointer">
-                            <div className="bg-[#F4F4F4] mb-6 aspect-[4/3] overflow-hidden relative">
+                            <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
                                 <img
                                     src={product.image}
-                                    className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
+                                    className="w-full h-full object-contain p-4 mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                                 />
                             </div>
                             <div className="flex justify-between items-center text-sm font-bold uppercase border-b border-gray-300 pb-3">

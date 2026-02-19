@@ -32,12 +32,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <Link to={`/products/${product.id}`} className="block group cursor-pointer relative">
-            <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3">
+            <div className="relative aspect-square overflow-hidden bg-[#F4F4F4] mb-3">
                 {/* Main Image */}
                 <img
                     src={cloudinaryLoader({ src: product.image, width: 600 })}
                     alt={product.name}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${secondaryImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
+                    className={`absolute inset-0 w-full h-full object-contain p-4 transition-opacity duration-700 ease-in-out ${secondaryImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
                 />
 
                 {/* Secondary Image (Hover State) */}
@@ -45,7 +45,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     <img
                         src={cloudinaryLoader({ src: secondaryImage, width: 600 })}
                         alt={`${product.name} hover`}
-                        className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100 hidden md:block"
+                        className="absolute inset-0 w-full h-full object-contain p-4 opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100 hidden md:block"
                     />
                 )}
 
