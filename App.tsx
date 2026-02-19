@@ -77,6 +77,12 @@ const App: React.FC = () => {
     }
   }, [isOpen]);
 
+  // Scroll to top on route change
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <div className="bg-white min-h-screen text-black font-body selection:bg-black selection:text-white">
       <Routes>

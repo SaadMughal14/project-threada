@@ -297,26 +297,27 @@ export const ProductDetail: React.FC = () => {
                 </div>
 
                 {/* Fixed Floating Bottom Bar (Sharp) */}
-                <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] p-6 flex items-center justify-between shadow-2xl z-40 border-t border-white/10">
-                    <div className="flex items-center gap-6 text-white font-medium border border-white/20 px-4 py-3 bg-white/5">
+                {/* Fixed Floating Bottom Bar (Compact & Fixed) */}
+                <div className="fixed bottom-0 left-0 right-0 bg-black p-4 flex items-center justify-between shadow-2xl z-50 border-t border-white/10 pb-safe">
+                    <div className="flex items-center gap-4 text-white font-medium border border-white/20 px-3 py-2 bg-white/5 rounded-sm">
                         <button
                             onClick={() => handleQuantityChange(-1)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                            className="w-6 h-6 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
-                            <Minus size={16} />
+                            <Minus size={14} />
                         </button>
-                        <span className="w-6 text-center text-sm font-bold tracking-widest">{quantity}</span>
+                        <span className="w-5 text-center text-sm font-bold tracking-widest">{quantity}</span>
                         <button
                             onClick={() => handleQuantityChange(1)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                            className="w-6 h-6 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
-                            <Plus size={16} />
+                            <Plus size={14} />
                         </button>
                     </div>
                     <button
                         onClick={handleAddToCart}
                         disabled={!selectedSize || !selectedColor}
-                        className={`flex-1 ml-4 py-4 font-black uppercase text-xs tracking-[0.2em] transition-all border border-transparent ${selectedSize && selectedColor
+                        className={`flex-1 ml-3 py-3 font-black uppercase text-[10px] tracking-[0.2em] transition-all border border-transparent rounded-sm ${selectedSize && selectedColor
                             ? 'bg-white text-black hover:bg-gray-200'
                             : 'bg-white/10 text-white/40 border-white/10 cursor-not-allowed'
                             }`}
