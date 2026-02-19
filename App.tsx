@@ -234,9 +234,10 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => { toggleCart(); setIsCheckoutOpen(true); }}
-                className="btn-primary w-full shadow-lg hover:shadow-xl transition-shadow"
+                className="w-full bg-black text-white py-4 font-heading uppercase text-sm tracking-[0.2em] hover:bg-black/90 transition-all group flex items-center justify-between px-6"
               >
-                Checkout
+                <span>Checkout</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
               </button>
               <p className="text-center text-[10px] text-gray-400 mt-4 uppercase tracking-widest font-medium">
                 Shipping calculated at checkout

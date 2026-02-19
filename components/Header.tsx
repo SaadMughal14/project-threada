@@ -200,11 +200,11 @@ export const Header: React.FC = () => {
                     <div className="max-w-[1400px] mx-auto px-4 md:px-12">
                         <div className="flex flex-row justify-between items-center py-4 md:py-5 text-sm font-bold uppercase tracking-tight whitespace-nowrap relative">
 
-                            {/* MOBILE LEFT: Menu Button */}
-                            <div className="md:hidden z-50">
-                                <button onClick={() => setIsMobileMenuOpen(true)}>
-                                    <span className="font-heading text-lg">Menu</span>
-                                </button>
+                            {/* MOBILE LEFT: Nav Links (Restored) */}
+                            <div className="md:hidden z-50 flex gap-3 text-xs font-bold tracking-tight">
+                                <Link to="/category/man" className="hover:text-gray-500">Man</Link>
+                                <Link to="/category/woman" className="hover:text-gray-500">Woman</Link>
+                                <Link to="/category/kids" className="hover:text-gray-500">Kids</Link>
                             </div>
 
                             {/* DESKTOP LEFT: Collections & Back Arrow */}
