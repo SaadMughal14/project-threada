@@ -29,7 +29,7 @@ export const CategoryPage: React.FC = () => {
     const getCoverImage = () => {
         switch (normalizedCategory) {
             case 'man': return "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&q=80&w=2000";
-            case 'woman': return "https://images.unsplash.com/photo-1509319117193-51043f65dd71?auto=format&fit=crop&q=80&w=2000";
+            case 'woman': return "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=2000";
             case 'kids': return "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&q=80&w=2000";
             default: return "https://images.unsplash.com/photo-1490481651871-61848521577e?auto=format&fit=crop&q=80&w=2000";
         }

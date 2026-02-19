@@ -122,7 +122,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$240",
     color: "#94A3B8",
     materials: ["Polyester Blend", "Permanent Pleat"],
-    image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d44?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1583496661160-fb3186faa35b?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
 
@@ -137,7 +137,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$110",
     color: "#475569",
     materials: ["Nylon", "Cotton Ribbing"],
-    image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5a?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
