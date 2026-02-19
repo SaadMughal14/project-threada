@@ -42,7 +42,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$280",
     color: "#64748B",
     materials: ["Nylon Blend", "Water Resistant", "YKK Zippers"],
-    image: "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -68,7 +68,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$320",
     color: "#F8FAFC",
     materials: ["Knit Blend", "EVA Foam", "Rubber"],
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
