@@ -32,7 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <Link to={`/products/${product.id}`} className="block group cursor-pointer relative">
-            <div className="relative aspect-square overflow-hidden bg-[#F4F4F4] mb-3">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#F4F4F4] mb-3">
                 {/* Main Image */}
                 <img
                     src={cloudinaryLoader({ src: product.image, width: 600 })}

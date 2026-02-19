@@ -54,22 +54,26 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Lock scroll when cart drawer is open — stop Lenis AND lock body
+  // Bulletproof scroll lock — position:fixed on body
   useEffect(() => {
     if (isOpen) {
-      lenisRef.current?.stop();
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
+      lenisRef.current?.stop();
     } else {
-      lenisRef.current?.start();
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      lenisRef.current?.start();
     }
-    return () => {
-      lenisRef.current?.start();
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
   }, [isOpen]);
 
   return (
