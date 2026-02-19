@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { supabase } from '../supabaseClient';
 import { CartItem } from '../src/store/cartStore';
+import { X, ChevronRight, CreditCard, Banknote, Upload, Check, Copy } from 'lucide-react';
 
 interface CheckoutOverlayProps {
   isOpen: boolean;
@@ -12,35 +13,6 @@ interface CheckoutOverlayProps {
   onOrderSuccess: (orderData: any) => void;
   orderNotes: string; // Passed from App.tsx as kitchen instructions
 }
-
-const EasypaisaIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#1EB055" />
-    <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const JazzCashIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#ED1C24" />
-    <path d="M12 7V17M12 7L9 10M12 7L15 10M8 17H16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const NayaPayIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#8B2CF5" />
-    <path d="M12 6L7 11H17L12 6Z" fill="white" />
-    <path d="M7 13H17L12 18L7 13Z" fill="white" />
-  </svg>
-);
-
-const BankIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="6" fill="#1C1C1C" />
-    <path d="M4 20H20M5 10V17M19 10V17M12 10V17M3 10L12 4L21 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess, orderNotes }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,10 +26,10 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   const [formData, setFormData] = useState({ name: '', phone: '', address: '', deliveryNotes: '' });
 
   const PROVIDERS = [
-    { id: 'easypaisa', name: 'Easypaisa', icon: <EasypaisaIcon />, color: '#1EB055', acc: '0321-0000000', title: 'Saad Mughal' },
-    { id: 'jazzcash', name: 'JazzCash', icon: <JazzCashIcon />, color: '#ED1C24', acc: '0321-1111111', title: 'Saad Mughal' },
-    { id: 'nayapay', name: 'NayaPay', icon: <NayaPayIcon />, color: '#8B2CF5', acc: '0321-2222222', title: 'Saad Mughal' },
-    { id: 'bank', name: 'Bank Transfer', icon: <BankIcon />, color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Gravity Studio' }
+    { id: 'easypaisa', name: 'Easypaisa', color: '#1EB055', acc: '0321-0000000', title: 'Saad Mughal' },
+    { id: 'jazzcash', name: 'JazzCash', color: '#ED1C24', acc: '0321-1111111', title: 'Saad Mughal' },
+    { id: 'nayapay', name: 'NayaPay', color: '#8B2CF5', acc: '0321-2222222', title: 'Saad Mughal' },
+    { id: 'bank', name: 'Bank Transfer', color: '#1C1C1C', acc: '0000-1111-2222-3333', title: 'Threada Corp' }
   ];
 
   useGSAP(() => {
@@ -77,11 +49,6 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const truncate = (str: string, maxLen: number = 1000) => {
-    if (!str) return '';
-    return str.length > maxLen ? str.substring(0, maxLen) + '...' : str;
   };
 
   const submitOrder = async () => {
@@ -116,11 +83,6 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
     const providerInfo = PROVIDERS.find(p => p.id === selectedProvider);
 
-    // Safe base64 encoding for URL link
-    const slimJson = JSON.stringify(slimOrder);
-    const encodedOrder = encodeURIComponent(btoa(unescape(encodeURIComponent(slimJson))));
-    const kitchenPrintLink = `${window.location.origin}${window.location.pathname}?receipt=${encodedOrder}&autoPrint=1`;
-
     try {
       // 1. Upload payment screenshot if digital payment
       let screenshotUrl: string | null = null;
@@ -154,7 +116,7 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         }
       }
 
-      // 2. Save order to Supabase database (PRIMARY - Kitchen Dashboard)
+      // 2. Save order to Supabase
       console.log('Attempting to save order to Supabase:', orderId);
 
       const { data: insertedOrder, error: dbError } = await supabase.from('orders').insert({
@@ -173,16 +135,12 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
 
       if (dbError) {
         console.error('Order DB insert failed:', dbError);
-        // Alert so user knows there was an issue (but still proceed)
-        alert(`Order placed! Note: Kitchen notification may be delayed. Error: ${dbError.message}`);
-      } else {
-        console.log('Order saved successfully:', insertedOrder);
+        alert(`Order placed! Note: Notification may be delayed. Error: ${dbError.message}`);
       }
 
       onOrderSuccess(orderData);
     } catch (e) {
       console.error("Order submission critical error:", e);
-      // Still show success to user so they don't get stuck
       onOrderSuccess(orderData);
     } finally {
       setIsSubmitting(false);
@@ -192,129 +150,180 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
   if (!isOpen) return null;
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-[300] bg-[#FDFCFB] transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none">
-      <div className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-black/5 flex-shrink-0 bg-[#FDFCFB] z-20">
-        <h2 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tighter text-[#1C1C1C]">Check<span className="text-[#D97B8D]">out</span></h2>
-        <button onClick={onClose} className="p-3 bg-black text-white rounded-full hover:bg-[#D97B8D] transition-colors shadow-xl">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M18 6L6 18M6 6l12 12" /></svg>
+    <div ref={containerRef} className="fixed inset-0 z-[300] bg-white transform translate-y-full flex flex-col h-[100dvh] w-screen overflow-hidden overscroll-none">
+      {/* HEADER */}
+      <div className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-black flex-shrink-0 bg-white z-20">
+        <h2 className="font-heading text-3xl md:text-5xl font-black uppercase tracking-tighter text-black">CHECKOUT</h2>
+        <button onClick={onClose} className="p-2 hover:bg-black hover:text-white transition-colors border border-transparent hover:border-black">
+          <X className="w-6 h-6" />
         </button>
       </div>
 
       <div
         ref={scrollAreaRef}
         data-lenis-prevent
-        className="flex-1 overflow-y-auto bg-[#FDFCFB] px-6 py-10 md:px-12 relative touch-pan-y no-scrollbar"
+        className="flex-1 overflow-y-auto bg-white px-6 py-10 md:px-12 relative touch-pan-y no-scrollbar"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="max-w-2xl mx-auto space-y-10 md:space-y-12 pb-32">
-          {/* STEP 01: INFO */}
-          <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'info' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
-            <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
-              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">01</span> Delivery Details
-            </h3>
-            <div className="grid gap-4 md:gap-6">
-              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-              <input type="tel" placeholder="PHONE" className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
-              <textarea placeholder="FULL ADDRESS" rows={2} className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-lg md:text-xl focus:border-[#D97B8D] transition-colors resize-none" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+        <div className="max-w-2xl mx-auto space-y-16 pb-32">
 
-              <div className="pt-2">
-                <p className="text-[7px] font-black uppercase tracking-[0.4em] text-black/20 mb-2">Delivery Instructions</p>
+          {/* STEP 01: SHIPPING */}
+          <div className={`space-y-8 transition-opacity duration-500 ${step === 'info' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+            <div className="flex items-center gap-4 border-b border-black pb-2">
+              <span className="font-mono text-xs bg-black text-white px-2 py-1">01</span>
+              <h3 className="font-heading text-xl uppercase tracking-widest">Shipping Details</h3>
+            </div>
+
+            <div className="grid gap-8">
+              <div className="group">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 group-focus-within:text-black transition-colors">Full Name</label>
+                <input
+                  type="text"
+                  className="w-full bg-transparent border-b border-gray-200 py-2 font-heading text-xl md:text-2xl uppercase tracking-wide focus:outline-none focus:border-black transition-colors rounded-none placeholder-gray-200"
+                  placeholder="ENTER NAME"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+
+              <div className="group">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 group-focus-within:text-black transition-colors">Contact Number</label>
+                <input
+                  type="tel"
+                  className="w-full bg-transparent border-b border-gray-200 py-2 font-heading text-xl md:text-2xl uppercase tracking-wide focus:outline-none focus:border-black transition-colors rounded-none placeholder-gray-200"
+                  placeholder="ENTER PHONE"
+                  value={formData.phone}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+
+              <div className="group">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 group-focus-within:text-black transition-colors">Delivery Address</label>
                 <textarea
-                  placeholder="GATE CODE, DROP-OFF SPOTS, ETC."
                   rows={2}
-                  className="w-full bg-transparent border-b border-black/10 p-3 md:p-4 font-black uppercase tracking-widest text-sm md:text-base focus:border-[#D97B8D] transition-colors resize-none"
+                  className="w-full bg-transparent border-b border-gray-200 py-2 font-heading text-xl md:text-2xl uppercase tracking-wide focus:outline-none focus:border-black transition-colors rounded-none placeholder-gray-200 resize-none"
+                  placeholder="FULL ADDRESS"
+                  value={formData.address}
+                  onChange={e => setFormData({ ...formData, address: e.target.value })}
+                />
+              </div>
+
+              <div className="group">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 group-focus-within:text-black transition-colors">Delivery Notes (Optional)</label>
+                <textarea
+                  rows={2}
+                  className="w-full bg-transparent border-b border-gray-200 py-2 font-sans text-sm md:text-base uppercase focus:outline-none focus:border-black transition-colors rounded-none placeholder-gray-200 resize-none"
+                  placeholder="Gate code, landmarks, etc."
                   value={formData.deliveryNotes}
                   onChange={e => setFormData({ ...formData, deliveryNotes: e.target.value })}
                 />
               </div>
             </div>
+
             {step === 'info' && (
               <button
                 onClick={() => { setStep('payment'); scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 disabled={!formData.name || !formData.phone || !formData.address}
-                className="w-full bg-black text-[#D97B8D] py-5 md:py-6 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] md:text-[12px] shadow-2xl disabled:opacity-20 active:scale-95 transition-all"
+                className="w-full bg-black text-white py-6 mt-8 font-heading text-lg uppercase tracking-widest hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-4 group"
               >
-                Next Step
+                Proceed to Payment
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             )}
           </div>
 
-          {/* STEP 02: METHOD */}
-          <div className={`space-y-6 md:space-y-8 transition-opacity duration-300 ${step === 'payment' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
-            <h3 className="font-black uppercase text-[10px] tracking-[0.6em] text-black/30 flex items-center gap-4">
-              <span className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px]">02</span> Payment Method
-            </h3>
+          {/* STEP 02: PAYMENT */}
+          <div className={`space-y-8 transition-opacity duration-500 ${step === 'payment' ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+            <div className="flex items-center gap-4 border-b border-black pb-2">
+              <span className="font-mono text-xs bg-black text-white px-2 py-1">02</span>
+              <h3 className="font-heading text-xl uppercase tracking-widest">Payment Method</h3>
+            </div>
 
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <button onClick={() => setPaymentMethod('cash')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'cash' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
-                <span className="text-3xl md:text-4xl">💵</span>
-                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Cash on Delivery</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                onClick={() => setPaymentMethod('cash')}
+                className={`p-6 border flex flex-col items-start gap-4 transition-all text-left group ${paymentMethod === 'cash' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-black/50'}`}
+              >
+                <Banknote className="w-8 h-8 stroke-1" />
+                <div>
+                  <h4 className="font-heading text-lg uppercase tracking-tight">Cash on Delivery</h4>
+                  <p className="text-xs text-gray-500 font-mono mt-1">Pay when you receive.</p>
+                </div>
+                <div className={`w-4 h-4 rounded-full border border-black ml-auto mt-auto flex items-center justify-center ${paymentMethod === 'cash' ? 'bg-black' : ''}`}>
+                  {paymentMethod === 'cash' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                </div>
               </button>
-              <button onClick={() => setPaymentMethod('digital')} className={`p-4 md:p-6 border-2 rounded-3xl flex flex-col items-center gap-3 transition-all ${paymentMethod === 'digital' ? 'border-[#D97B8D] bg-[#F2DCE0]' : 'border-black/5 opacity-50'}`}>
-                <span className="text-3xl md:text-4xl">📱</span>
-                <span className="font-black uppercase text-[9px] md:text-[10px] tracking-widest text-center">Bank Transfer</span>
+
+              <button
+                onClick={() => setPaymentMethod('digital')}
+                className={`p-6 border flex flex-col items-start gap-4 transition-all text-left group ${paymentMethod === 'digital' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-black/50'}`}
+              >
+                <CreditCard className="w-8 h-8 stroke-1" />
+                <div>
+                  <h4 className="font-heading text-lg uppercase tracking-tight">Bank Transfer</h4>
+                  <p className="text-xs text-gray-500 font-mono mt-1">Direct deposit or wallet.</p>
+                </div>
+                <div className={`w-4 h-4 rounded-full border border-black ml-auto mt-auto flex items-center justify-center ${paymentMethod === 'digital' ? 'bg-black' : ''}`}>
+                  {paymentMethod === 'digital' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                </div>
               </button>
             </div>
 
             {paymentMethod === 'digital' && (
-              <div className="space-y-6 pt-2 animate-in fade-in slide-in-from-top-4 duration-500">
-                <p className="font-black uppercase text-[9px] tracking-[0.4em] text-black/30 text-center">Choose Your Provider</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-                  {PROVIDERS.map(p => (
-                    <button
-                      key={p.id}
-                      onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
-                      className={`group p-3 md:p-4 border-2 rounded-2xl flex flex-col items-center gap-3 transition-all ${selectedProvider === p.id ? 'border-[#D97B8D] bg-[#F2DCE0]/50' : 'border-black/5 opacity-60'}`}
-                      style={{ borderColor: selectedProvider === p.id ? p.color : undefined }}
-                    >
-                      <div className={`transition-transform duration-300 ${selectedProvider === p.id ? 'scale-110' : 'group-hover:scale-105'}`}>
-                        {p.icon}
-                      </div>
-                      <span className={`font-black uppercase text-[7px] md:text-[8px] tracking-widest text-center leading-tight transition-colors ${selectedProvider === p.id ? 'text-[#1C1C1C]' : 'text-black/40'}`}>
-                        {p.name}
-                      </span>
-                    </button>
-                  ))}
+              <div className="space-y-8 pt-4 animate-fade-in">
+                <div>
+                  <p className="font-heading text-sm uppercase tracking-widest mb-4">Select Provider</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {PROVIDERS.map(p => (
+                      <button
+                        key={p.id}
+                        onClick={() => { setSelectedProvider(p.id); setScreenshot(null); }}
+                        className={`p-4 border transition-all text-center flex flex-col items-center justify-center gap-2 ${selectedProvider === p.id ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}
+                      >
+                        <span className="font-heading text-xs uppercase tracking-wider">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {selectedProvider && (
-                  <div className="bg-[#1C1C1C] text-white p-5 md:p-6 rounded-3xl space-y-4 shadow-xl border border-[#D97B8D]/20">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Holder</p>
-                        <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</p>
+                  <div className="bg-gray-50 p-6 border border-gray-200 space-y-6">
+                    <div className="grid gap-4">
+                      <div className="flex justify-between items-center border-b border-black/10 pb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Account Title</span>
+                        <span className="font-mono text-sm uppercase">{PROVIDERS.find(p => p.id === selectedProvider)?.title}</span>
                       </div>
-                      <div>
-                        <p className="text-[7px] uppercase tracking-[0.4em] text-[#D97B8D] mb-1">Account Number</p>
-                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10">
-                          <p className="font-black text-xs md:text-sm uppercase tracking-widest">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</p>
-                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-[8px] font-black text-[#D97B8D] border border-[#D97B8D]/30 px-3 py-1.5 rounded uppercase hover:bg-[#D97B8D] hover:text-[#1C1C1C] transition-all">COPY</button>
+                      <div className="flex justify-between items-center border-b border-black/10 pb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Account Number</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-sm md:text-base font-bold tracking-wider">{PROVIDERS.find(p => p.id === selectedProvider)?.acc}</span>
+                          <button onClick={() => navigator.clipboard.writeText(PROVIDERS.find(p => p.id === selectedProvider)?.acc || '')} className="text-gray-400 hover:text-black">
+                            <Copy className="w-3 h-3" />
+                          </button>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-white/10">
-                      <p className="text-[8px] uppercase tracking-[0.3em] text-white/40 mb-3 italic">Please attach a photo of your receipt</p>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Proof of Payment</p>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className={`w-full py-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-4 transition-all overflow-hidden ${screenshot ? 'border-[#D97B8D] bg-[#D97B8D]/10' : 'border-white/10 hover:border-white/30'}`}
+                        className={`w-full py-8 border border-dashed transition-all flex flex-col items-center justify-center gap-3 group ${screenshot ? 'border-black bg-white' : 'border-gray-300 hover:border-black hover:bg-white'}`}
                       >
                         {screenshot ? (
-                          <div className="flex items-center gap-4 w-full px-4 animate-in fade-in zoom-in-95 duration-300">
-                            <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-[#D97B8D] flex-shrink-0 bg-white">
-                              <img src={screenshot} alt="Receipt Preview" className="w-full h-full object-cover" />
+                          <div className="flex items-center gap-4 w-full px-6">
+                            <img src={screenshot} alt="Receipt" className="w-12 h-12 object-cover border border-gray-200" />
+                            <div className="text-left">
+                              <span className="block font-heading text-sm uppercase">Receipt Attached</span>
+                              <span className="block text-xs text-gray-400">Click to change</span>
                             </div>
-                            <div className="flex flex-col items-start overflow-hidden">
-                              <span className="font-black uppercase text-[10px] tracking-widest text-[#D97B8D] whitespace-nowrap">Receipt Attached!</span>
-                              <span className="text-[7px] uppercase tracking-widest text-white/40 truncate w-full">Tap to replace file</span>
-                            </div>
-                            <div className="ml-auto w-8 h-8 bg-[#D97B8D] rounded-full flex items-center justify-center text-white text-[12px] font-bold">✓</div>
+                            <Check className="ml-auto w-5 h-5 text-black" />
                           </div>
                         ) : (
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">📸</span>
-                            <span className="font-black uppercase text-[9px] tracking-widest text-white/60">Upload Payment Proof</span>
-                          </div>
+                          <>
+                            <Upload className="w-6 h-6 text-gray-400 group-hover:text-black transition-colors" />
+                            <span className="font-heading text-xs uppercase tracking-widest text-gray-500 group-hover:text-black">Upload Screenshot</span>
+                          </>
                         )}
                       </button>
                       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
@@ -325,14 +334,14 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
             )}
 
             {step === 'payment' && (
-              <div className="flex flex-col sm:flex-row gap-3 pt-6">
-                <button onClick={() => setStep('info')} className="flex-1 border-2 border-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest active:bg-black/5 transition-colors">Go Back</button>
+              <div className="flex flex-col sm:flex-row gap-4 pt-8">
+                <button onClick={() => setStep('info')} className="flex-1 py-4 font-heading text-sm uppercase tracking-widest hover:underline text-gray-500 hover:text-black text-center">Back</button>
                 <button
                   onClick={submitOrder}
                   disabled={isSubmitting || (paymentMethod === 'digital' && (!selectedProvider || !screenshot))}
-                  className="flex-[2] bg-[#D97B8D] text-black py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl disabled:opacity-50 active:scale-95 transition-all"
+                  className="flex-[2] bg-black text-white py-5 font-heading text-lg uppercase tracking-widest shadow-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-900 transition-all flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? 'Processing...' : 'Finish Order'}
+                  {isSubmitting ? 'Processing...' : `Pay Rs. ${totalPrice.toLocaleString()}`}
                 </button>
               </div>
             )}
@@ -340,14 +349,13 @@ const CheckoutOverlay: React.FC<CheckoutOverlayProps> = ({ isOpen, onClose, cart
         </div>
       </div>
 
-      <div className="p-6 md:px-12 md:py-8 border-t border-black/5 bg-[#FDFCFB] flex justify-between items-center flex-shrink-0 z-30 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+      <div className="p-6 md:px-12 md:py-8 border-t border-black bg-white flex justify-between items-center flex-shrink-0 z-30">
         <div>
-          <p className="font-black uppercase text-[7px] md:text-[8px] tracking-[0.6em] text-black/30 mb-1">Total to Pay</p>
-          <p className="font-display text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-[#D97B8D] leading-none">Rs. {totalPrice}</p>
+          <p className="font-bold uppercase text-[9px] tracking-[0.2em] text-gray-400 mb-1">Total Amount</p>
+          <p className="font-heading text-4xl md:text-5xl font-black tracking-tighter text-black leading-none">Rs. {totalPrice.toLocaleString()}</p>
         </div>
         <div className="text-right hidden sm:block">
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">GRAVITY</p>
-          <p className="font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] text-black/20">STUDIO</p>
+          <p className="font-bold uppercase text-[9px] tracking-[0.2em] text-gray-300">SECURE CHECKOUT</p>
         </div>
       </div>
 
