@@ -88,7 +88,7 @@ export const PRODUCTS: FashionProduct[] = [
   // WOMAN
   {
     id: 'structure-trench',
-    name: "Structure Trench Coat",
+    name: "Classic Trench Coat",
     category: 'Outerwear',
     gender: 'Woman',
     tagline: "Timeless Layer",
