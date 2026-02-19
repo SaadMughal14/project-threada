@@ -61,7 +61,7 @@ export const ProductDetail: React.FC = () => {
     return (
         <>
             {/* MOBILE LAYOUT (Premium Design - Brand Theme) */}
-            <div className="lg:hidden min-h-screen bg-white pb-32 font-sans">
+            <div className="lg:hidden min-h-screen bg-[var(--cream-vanilla)] pb-32 font-sans">
                 {/* Navigation Overlay */}
                 <div className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
                     <Link to="/" className="w-12 h-12 bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center pointer-events-auto text-black active:scale-95 transition-transform border border-black/5">
@@ -73,7 +73,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
 
                 {/* Main Image Card (Sharp Edges) */}
-                <div className="mx-4 mt-4 h-[55vh] bg-[#F0F0F0] relative overflow-hidden border border-black/5">
+                <div className="mx-4 mt-4 h-[55vh] bg-[#E5E5E5] relative overflow-hidden border border-black/5">
                     <img
                         src={cloudinaryLoader({ src: product.image, width: 800 })}
                         alt={product.name}
@@ -109,28 +109,28 @@ export const ProductDetail: React.FC = () => {
                             <Star size={12} fill="currentColor" /> 4.9
                         </div>
                         <span>1.5k+ Reviews</span>
-                        <span className="w-1 h-1 bg-gray-300"></span>
+                        <span className="w-1 h-1 bg-black/10"></span>
                         <span>2.4k+ Sold</span>
                     </div>
 
                     {/* Price Row */}
                     <div className="flex items-end gap-3 mb-8">
                         <span className="text-3xl font-black text-black">${currentPrice}</span>
-                        <span className="text-xl text-gray-400 line-through decoration-2 font-medium">${originalPrice}</span>
+                        <span className="text-xl text-black/30 line-through decoration-2 font-medium">${originalPrice}</span>
                         <span className="bg-black text-white text-[10px] font-bold px-3 py-1 mb-1.5 ml-1 uppercase tracking-wider">-50%</span>
                     </div>
 
                     {/* Tabs (Boxy) */}
-                    <div className="bg-gray-100 p-1 flex mb-10 relative">
+                    <div className="bg-black/5 p-1 flex mb-10 relative">
                         <button
                             onClick={() => setActiveTab('details')}
-                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'details' ? 'bg-white shadow-sm text-black border-black/5' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'details' ? 'bg-white shadow-sm text-black border-black/5' : 'text-black/40 hover:text-black'}`}
                         >
                             Details
                         </button>
                         <button
                             onClick={() => setActiveTab('specs')}
-                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'specs' ? 'bg-white shadow-sm text-black border-black/5' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border border-transparent ${activeTab === 'specs' ? 'bg-white shadow-sm text-black border-black/5' : 'text-black/40 hover:text-black'}`}
                         >
                             Specs
                         </button>
@@ -139,7 +139,10 @@ export const ProductDetail: React.FC = () => {
                     {/* Selectors (Square/Sharp) */}
                     <div className="space-y-8 mb-8">
                         <div>
-                            <span className="text-xs font-black mb-4 block text-black uppercase tracking-widest">Select Size</span>
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xs font-black block text-black uppercase tracking-widest">Select Size</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest underline decoration-1 text-black/40 cursor-pointer hover:text-black">Size Guide</span>
+                            </div>
                             <div className="flex gap-3">
                                 {sizes.map(size => (
                                     <button
