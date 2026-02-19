@@ -68,7 +68,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$320",
     color: "#F8FAFC",
     materials: ["Knit Blend", "EVA Foam", "Rubber"],
-    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -81,7 +81,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$180",
     color: "#D4D4D8",
     materials: ["Heavy Canvas", "Leather Trim"],
-    image: "https://images.unsplash.com/photo-1590874103328-3af75de2e1fb?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
 
@@ -96,7 +96,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$390",
     color: "#C2B280",
     materials: ["Cotton Gabardine", "Water Repellent"],
-    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1620799140408-ed5341cd2432?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
