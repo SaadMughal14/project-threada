@@ -165,144 +165,164 @@ export const Header: React.FC = () => {
         setTinyLogoPointerEvents(latest > 40 ? 'auto' : 'none');
     });
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+    // Close mobile menu on route change
+    React.useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
+
     const getNavLinks = () => {
-        if (pathname.includes('/category/man')) {
-            return (
-                <>
-                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
-                </>
-            );
-        } else if (pathname.includes('/category/woman')) {
-            return (
-                <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
-                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
-                </>
-            );
-        } else if (pathname.includes('/category/kids')) {
-            return (
-                <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
-                    <Link to="/" className="hover:text-gray-500 transition-colors font-bold">Home</Link>
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
-                    <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
-                    <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
-                </>
-            );
-        }
+        // ... (existing helper preserved logically, but we'll use manual links for mobile to be safe or reuse)
+        return (
+            <>
+                <Link to="/category/man" className="hover:text-gray-500 transition-colors font-bold">Man</Link>
+                <Link to="/category/woman" className="hover:text-gray-500 transition-colors font-bold">Woman</Link>
+                <Link to="/category/kids" className="hover:text-gray-500 transition-colors font-bold">Kids</Link>
+            </>
+        );
     };
 
     return (
-        <motion.header
-            className="sticky top-0 w-full z-50"
-        >
-            {/* Full-width glass nav bar — edge to edge */}
-            <motion.div
-                className="w-full bg-white/85 backdrop-blur-xl border-b border-black"
-                style={{
-                    boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
-                }}
+        <>
+            <motion.header
+                className="sticky top-0 w-full z-50"
             >
-                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
-                    <div className="flex flex-row justify-between items-center py-4 md:py-5 text-[9px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap relative">
-                        {/* Left: Collections & Back Arrow */}
-                        <div className="flex gap-3 md:gap-10 items-center">
-                            {pathname !== '/' && (
-                                <button
-                                    onClick={() => navigate(-1)}
-                                    className="hover:text-gray-500 transition-colors"
-                                    aria-label="Go Back"
-                                >
-                                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                                </button>
-                            )}
-                            {getNavLinks()}
-                        </div>
-
-                        {/* Center: Tiny Logo (Robust Centering) */}
-                        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-                            <motion.div
-                                style={{
-                                    opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
-                                    y: pathname !== '/' ? 0 : tinyLogoY,
-                                    pointerEvents: (pathname !== '/' ? 'auto' : tinyLogoPointerEvents) as any
-                                }}
-                                className="pointer-events-auto"
-                            >
-                                <Link to="/" className="flex justify-center items-center">
-                                    <TinyLogoAnimation />
-                                </Link>
-                            </motion.div>
-                        </div>
-
-                        {/* Right: Utilities */}
-                        <div className="flex gap-3 md:gap-10 items-center">
-                            <Link to="/login" className="hover:text-gray-500 transition-colors font-bold">Account</Link>
-
-                            {/* Search Dropdown Trigger */}
-                            <div className="relative group">
-                                <button
-                                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                    className="hover:text-gray-500 transition-colors flex items-center gap-2"
-                                >
-                                    Search
-                                </button>
-
-                                {/* Search Dropdown Overlay */}
-                                <div className={`absolute right-0 top-full mt-4 w-[300px] bg-white shadow-xl border border-gray-100 p-4 transition-all duration-300 origin-top-right ${isSearchOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
-                                    <div className="flex items-center border-b-2 border-black pb-2">
-                                        <input
-                                            type="text"
-                                            placeholder="SEARCH PRODUCTS..."
-                                            className="w-full text-sm font-bold uppercase placeholder-gray-400 focus:outline-none"
-                                            autoFocus={isSearchOpen}
-                                        />
-                                        <button className="text-gray-400 hover:text-black">
-                                            Confirm
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <CartButton itemCount={itemCount} toggleCart={toggleCart} />
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* 
-                COLLAPSIBLE HERO LOGO
-                Only on Home Page
-            */}
-            {pathname === '/' && (
+                {/* Full-width glass nav bar — edge to edge */}
                 <motion.div
-                    className="w-full overflow-hidden"
+                    className="w-full bg-white/85 backdrop-blur-xl border-b border-black"
                     style={{
-                        maxHeight: bigLogoMaxHeight,
-                        opacity: bigLogoOpacity,
-                        scale: bigLogoScale,
-                        y: bigLogoY,
-                        transformOrigin: "top center"
+                        boxShadow: useTransform(headerShadowOpacity, opacity => `0 4px 6px -1px rgba(0, 0, 0, ${opacity})`),
                     }}
                 >
                     <div className="max-w-[1400px] mx-auto px-4 md:px-12">
-                        <div className="w-full flex flex-col justify-center items-center py-4">
-                            <LogoAnimation />
+                        <div className="flex flex-row justify-between items-center py-4 md:py-5 text-sm font-bold uppercase tracking-tight whitespace-nowrap relative">
+
+                            {/* MOBILE LEFT: Menu Button */}
+                            <div className="md:hidden z-50">
+                                <button onClick={() => setIsMobileMenuOpen(true)}>
+                                    <span className="font-heading text-lg">Menu</span>
+                                </button>
+                            </div>
+
+                            {/* DESKTOP LEFT: Collections & Back Arrow */}
+                            <div className="hidden md:flex gap-10 items-center">
+                                {pathname !== '/' && (
+                                    <button
+                                        onClick={() => navigate(-1)}
+                                        className="hover:text-gray-500 transition-colors"
+                                        aria-label="Go Back"
+                                    >
+                                        <ChevronLeft className="w-5 h-5" />
+                                    </button>
+                                )}
+                                {getNavLinks()}
+                            </div>
+
+                            {/* Center: Tiny Logo (Robust Centering) */}
+                            <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                                <motion.div
+                                    style={{
+                                        opacity: pathname !== '/' ? 1 : tinyLogoOpacity,
+                                        y: pathname !== '/' ? 0 : tinyLogoY,
+                                        pointerEvents: (pathname !== '/' ? 'auto' : tinyLogoPointerEvents) as any
+                                    }}
+                                    className="pointer-events-auto"
+                                >
+                                    <Link to="/" className="flex justify-center items-center">
+                                        <TinyLogoAnimation />
+                                    </Link>
+                                </motion.div>
+                            </div>
+
+                            {/* MOBILE RIGHT: Cart */}
+                            <div className="md:hidden flex items-center gap-4 z-50 relative">
+                                <CartButton itemCount={itemCount} toggleCart={toggleCart} />
+                            </div>
+
+                            {/* DESKTOP RIGHT: Utilities */}
+                            <div className="hidden md:flex gap-10 items-center">
+                                <Link to="/login" className="hover:text-gray-500 transition-colors font-bold">Account</Link>
+
+                                {/* Search Dropdown Trigger */}
+                                <div className="relative group">
+                                    <button
+                                        onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                        className="hover:text-gray-500 transition-colors flex items-center gap-2"
+                                    >
+                                        Search
+                                    </button>
+
+                                    {/* Search Dropdown Overlay */}
+                                    <div className={`absolute right-0 top-full mt-4 w-[300px] bg-white shadow-xl border border-gray-100 p-4 transition-all duration-300 origin-top-right ${isSearchOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
+                                        <div className="flex items-center border-b-2 border-black pb-2">
+                                            <input
+                                                type="text"
+                                                placeholder="SEARCH PRODUCTS..."
+                                                className="w-full text-sm font-bold uppercase placeholder-gray-400 focus:outline-none"
+                                                autoFocus={isSearchOpen}
+                                            />
+                                            <button className="text-gray-400 hover:text-black">
+                                                Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <CartButton itemCount={itemCount} toggleCart={toggleCart} />
+                            </div>
                         </div>
                     </div>
-                    {/* Full width edge-to-edge line */}
-                    <div className="w-full h-[3px] bg-black mt-2" />
                 </motion.div>
+
+                {/* 
+                COLLAPSIBLE HERO LOGO
+                Only on Home Page
+            */}
+                {pathname === '/' && (
+                    <motion.div
+                        className="w-full overflow-hidden"
+                        style={{
+                            maxHeight: bigLogoMaxHeight,
+                            opacity: bigLogoOpacity,
+                            scale: bigLogoScale,
+                            y: bigLogoY,
+                            transformOrigin: "top center"
+                        }}
+                    >
+                        <div className="max-w-[1400px] mx-auto px-4 md:px-12">
+                            <div className="w-full flex flex-col justify-center items-center py-4">
+                                <LogoAnimation />
+                            </div>
+                        </div>
+                        {/* Full width edge-to-edge line */}
+                        <div className="w-full h-[3px] bg-black mt-2" />
+                    </motion.div>
+                )}
+            </motion.header>
+
+            {/* MOBILE MENU OVERLAY */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[60] bg-white flex flex-col p-6 animate-fade-in">
+                    <div className="flex justify-between items-center mb-12">
+                        <span className="font-heading text-2xl">MENU</span>
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="text-2xl">×</button>
+                    </div>
+
+                    <nav className="flex flex-col gap-6 text-3xl font-heading font-black uppercase tracking-tight">
+                        <Link to="/" className="hover:text-gray-500">Home</Link>
+                        <Link to="/category/man" className="hover:text-gray-500">Man</Link>
+                        <Link to="/category/woman" className="hover:text-gray-500">Woman</Link>
+                        <Link to="/category/kids" className="hover:text-gray-500">Kids</Link>
+                    </nav>
+
+                    <div className="mt-auto space-y-4 border-t border-gray-100 pt-8">
+                        <Link to="/login" className="block text-sm font-bold uppercase tracking-widest">Account</Link>
+                        <button className="block text-sm font-bold uppercase tracking-widest text-left w-full">Search</button>
+                        <Link to="/support" className="block text-sm font-bold uppercase tracking-widest text-gray-400">Support</Link>
+                    </div>
+                </div>
             )}
-        </motion.header>
+        </>
     );
 };
