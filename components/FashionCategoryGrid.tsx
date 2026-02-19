@@ -49,11 +49,11 @@ export const FashionCategoryGrid = () => {
                 </div>
             </div>
 
-            {/* Row 1 */}
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 mb-10 border-b border-gray-200 pb-10">
+            {/* Mobile: Horizontal Scroll / Desktop: Grid */}
+            <div className="flex overflow-x-auto snap-x gap-4 pb-6 md:grid md:grid-cols-2 md:gap-8 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                 {/* Card 1 */}
-                <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[3/2] mb-3">
+                <div className="relative group cursor-pointer min-w-[280px] snap-center">
+                    <div className="overflow-hidden aspect-[3/2] mb-3 rounded-2xl md:rounded-none">
                         <img
                             src="/cat-summer.png"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -70,8 +70,8 @@ export const FashionCategoryGrid = () => {
                 </div>
 
                 {/* Card 2 */}
-                <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[3/2] mb-3">
+                <div className="relative group cursor-pointer min-w-[280px] snap-center">
+                    <div className="overflow-hidden aspect-[3/2] mb-3 rounded-2xl md:rounded-none">
                         <img
                             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -86,13 +86,10 @@ export const FashionCategoryGrid = () => {
                     </div>
                     <h3 className="text-xl font-heading font-bold uppercase tracking-tight">Art of Beat</h3>
                 </div>
-            </div>
 
-            {/* Row 2 */}
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8">
                 {/* Card 3 */}
-                <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[3/2] mb-3">
+                <div className="relative group cursor-pointer min-w-[280px] snap-center">
+                    <div className="overflow-hidden aspect-[3/2] mb-3 rounded-2xl md:rounded-none">
                         <img
                             src="/cat-street.png"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -109,8 +106,8 @@ export const FashionCategoryGrid = () => {
                 </div>
 
                 {/* Card 4 */}
-                <div className="relative group cursor-pointer">
-                    <div className="overflow-hidden aspect-[3/2] mb-3">
+                <div className="relative group cursor-pointer min-w-[280px] snap-center">
+                    <div className="overflow-hidden aspect-[3/2] mb-3 rounded-2xl md:rounded-none">
                         <img
                             src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

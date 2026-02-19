@@ -63,8 +63,38 @@ export const Homepage = () => {
     return (
         <main className="max-w-[1400px] mx-auto px-4 md:px-12 pb-20">
 
-            {/* Editorial Hero: Text Top / 3D Canvas Bottom */}
-            <section className="mb-20">
+            {/* Mobile Header (Welcome & Promo) */}
+            <div className="md:hidden mt-4 mb-10">
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" alt="User" className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Welcome Back!</p>
+                            <h3 className="text-sm font-black uppercase tracking-tight">Jason Jacktion</h3>
+                        </div>
+                    </div>
+                    <button className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm">
+                        <span className="text-lg">🛍️</span>
+                    </button>
+                </div>
+
+                <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden bg-black text-white p-6 flex flex-col justify-center shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1507680434567-5739c8cb31db?auto=format&fit=crop&q=80&w=800" className="absolute inset-0 w-full h-full object-cover opacity-60" alt="Spring Collection" />
+                    <div className="relative z-10">
+                        <p className="text-xs font-medium mb-1 opacity-90">Your Spring</p>
+                        <h2 className="text-3xl font-black uppercase leading-none mb-2">Collection</h2>
+                        <div className="text-4xl font-black text-white mb-2">50% OFF</div>
+                        <p className="text-[10px] opacity-70 mb-4">For selected spring style</p>
+                        <button className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-5 py-2 rounded-full text-xs font-bold uppercase">Shop Now</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Desktop Hero (Hidden on Mobile) */}
+            <section className="hidden md:block mb-20">
+                {/* ... existing hero content ... */}
                 <div className="flex justify-between items-start pt-6 pb-4 mb-2 border-b border-black">
                     <p className="w-1/3 text-xs md:text-base font-light leading-tight tracking-tight">
                         Every thread tells <br />
@@ -78,10 +108,11 @@ export const Homepage = () => {
                 </div>
 
                 <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden relative border-b-[1.5px] border-white/20 bg-[radial-gradient(circle_at_50%_40%,_#3a3a3a_0%,_#0a0a0a_70%,_#000000_100%)]">
-                    {/* Noise Overlay for Premium Texture */}
+                    {/* ... (keep existing hero internals) ... */}
+                    {/* Noise Overlay */}
                     <div className="absolute inset-0 opacity-[0.04] pointer-events-none z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNuKSIvPjwvc3ZnPg==')]"></div>
 
-                    {/* SANDWICH LAYER 1: Background Text */}
+                    {/* SANDWICH LAYER 1 */}
                     <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden -ml-[4vw]">
                         <h1
                             className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
@@ -133,7 +164,6 @@ export const Homepage = () => {
                                     color="#c8d4e0"
                                 />
 
-                                {/* Studio environment as the actual visible background */}
                                 <Environment preset="studio" />
 
                                 <OrbitControls
@@ -150,7 +180,7 @@ export const Homepage = () => {
                         </Suspense>
                     </div>
 
-                    {/* SANDWICH LAYER 3: Foreground Glassy Text */}
+                    {/* SANDWICH LAYER 3 */}
                     <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none select-none overflow-hidden -ml-[4vw]">
                         <h1
                             className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap"
@@ -169,60 +199,69 @@ export const Homepage = () => {
             </section>
 
             {/* Best Seller Section */}
-            <section className="mb-24">
-                <div className="border-t-[1.5px] border-black mb-6"></div> {/* Refined Line */}
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Best Seller</h2>
-                    <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-2">
-                        See All <span className="text-sm">↗</span>
+            <section className="mb-12 md:mb-24">
+                <div className="border-t-[1.5px] border-black mb-6 hidden md:block"></div>
+                <div className="flex justify-between items-center mb-6 md:mb-8">
+                    <h2 className="font-heading text-2xl md:text-6xl uppercase font-black tracking-tighter">Top Collection</h2>
+                    <Link to="/" className="text-[10px] md:text-xs font-bold uppercase hover:underline flex items-center gap-2 text-gray-400">
+                        More
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+                {/* Mobile: Horizontal Scroll / Desktop: Grid */}
+                <div className="flex overflow-x-auto snap-x gap-4 pb-6 md:grid md:grid-cols-3 md:gap-8 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                     {PRODUCTS.slice(0, 3).map((product: any) => (
-                        <ProductCard
-                            key={product.id}
-                            product={{
-                                id: product.id,
-                                name: product.name,
-                                price: parseInt(product.price.replace(/[^0-9]/g, '')),
-                                image: product.image,
-                                category: product.category,
-                                images: [product.image] // Pass single image as array for now, verifying backend data structure is important though
-                            }}
-                        />
+                        <div key={product.id} className="min-w-[160px] md:min-w-0 snap-center">
+                            <ProductCard
+                                product={{
+                                    id: product.id,
+                                    name: product.name,
+                                    price: parseInt(product.price.replace(/[^0-9]/g, '')),
+                                    image: product.image,
+                                    category: product.category,
+                                    images: [product.image]
+                                }}
+                            />
+                        </div>
                     ))}
                 </div>
-                <div className="border-b-[1.5px] border-black mt-16"></div> {/* Refined Line */}
+                <div className="border-b-[1.5px] border-black mt-8 md:mt-16 hidden md:block"></div>
             </section>
 
             {/* Latest Arrivals Section */}
             <section className="mb-24">
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="font-heading text-4xl md:text-6xl uppercase font-black tracking-tighter">Latest Arrivals</h2>
-                    <Link to="/" className="text-xs font-bold uppercase hover:underline flex items-center gap-2">
-                        See All <span className="text-sm">↗</span>
+                <div className="flex justify-between items-center mb-6 md:mb-10">
+                    <h2 className="font-heading text-2xl md:text-6xl uppercase font-black tracking-tighter">New Arrivals</h2>
+                    <Link to="/" className="text-[10px] md:text-xs font-bold uppercase hover:underline flex items-center gap-2 text-gray-400">
+                        More
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                <div className="flex overflow-x-auto snap-x gap-4 pb-6 md:grid md:grid-cols-4 md:gap-8 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                     {PRODUCTS.slice(3, 7).map((product: any) => (
-                        <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block relative">
-                            <div className="bg-[#F4F4F4] mb-6 aspect-square overflow-hidden relative">
+                        <Link to={`/products/${product.id}`} key={product.id} className="group cursor-pointer block relative min-w-[200px] snap-center">
+                            <div className="bg-[#F4F4F4] mb-3 md:mb-6 aspect-[3/4] md:aspect-square overflow-hidden relative rounded-2xl md:rounded-none">
                                 <img
                                     src={product.image}
                                     className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-700"
                                 />
                                 <button
                                     onClick={(e) => handleQuickAdd(e, product)}
-                                    className="absolute bottom-4 right-4 bg-white text-black px-4 py-2 text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                    className="absolute bottom-4 right-4 bg-white text-black px-4 py-2 text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black hover:text-white hidden md:block" // Hidden on mobile for clutter-free
                                 >
                                     Quick Add +
                                 </button>
+                                {/* Mobile Heart Icon */}
+                                <button className="absolute top-3 right-3 w-8 h-8 bg-white/50 backdrop-blur rounded-full flex items-center justify-center md:hidden">
+                                    <span className="text-sm">♡</span>
+                                </button>
                             </div>
-                            <div className="flex justify-between items-center text-sm font-bold uppercase border-b border-gray-300 pb-3">
-                                <span>{product.name}</span>
-                                <span>{product.price}</span>
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-center text-sm font-bold uppercase md:border-b md:border-gray-300 md:pb-3">
+                                <span className="truncate">{product.name}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[#D97B8D]">${parseInt(product.price.replace(/[^0-9]/g, ''))}</span>
+                                    <span className="text-[10px] text-gray-400">⭐ 5.0</span>
+                                </div>
                             </div>
                         </Link>
                     ))}
