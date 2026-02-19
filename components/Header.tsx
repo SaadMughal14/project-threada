@@ -134,6 +134,7 @@ export const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const pathname = location.pathname;
+    const isProductPage = pathname.includes('/products/');
 
     const { scrollY } = useScroll();
 
@@ -186,7 +187,7 @@ export const Header: React.FC = () => {
     return (
         <>
             <motion.header
-                className="sticky top-0 w-full z-50"
+                className={`sticky top-0 w-full z-50 ${isProductPage ? 'hidden md:block' : ''}`}
             >
                 {/* Full-width glass nav bar — edge to edge */}
                 <motion.div
