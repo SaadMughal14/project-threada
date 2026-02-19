@@ -68,7 +68,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$320",
     color: "#F8FAFC",
     materials: ["Knit Blend", "EVA Foam", "Rubber"],
-    image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
@@ -96,7 +96,7 @@ export const PRODUCTS: FashionProduct[] = [
     price: "$390",
     color: "#C2B280",
     materials: ["Cotton Gabardine", "Water Repellent"],
-    image: "https://images.unsplash.com/photo-1620799140408-ed5341cd2432?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?auto=format&fit=crop&q=80&w=800",
     videoBackground: "",
   },
   {
